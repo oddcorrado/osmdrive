@@ -28,17 +28,65 @@ import {
 // import { Vector3 } from '@babylonjs/core/Maths/math.vector' 
 import { ShadowGeneratorSceneComponent } from '@babylonjs/core/Lights/Shadows/shadowGeneratorSceneComponent'
 import { Texture } from '@babylonjs/core/Materials/Textures/texture'
+import { DynamicTexture } from '@babylonjs/core/Materials/Textures/dynamicTexture'
 import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { Path3D } from '@babylonjs/core/Maths/math.path'
 import { Color3 } from '@babylonjs/core/Maths/math.color'
 import { ways, buildings } from './map'
 import {CubeTexture} from '@babylonjs/core/Materials/Textures/cubeTexture'
-// import BuildingTexture from './building.png'
 
-console.log(ways)
+
 // Required side effects to populate the Create methods on the mesh class. Without this, the bundle would be smaller but the createXXX methods from mesh would not be accessible.
 import "@babylonjs/core/Meshes/meshBuilder";
+
+const planes = []
+function textPanel(text, x, y, z) {
+        //Set font
+        var font_size = 48;
+        var font = `bold ${font_size} px Arial`
+        
+        //Set height for plane
+        var planeHeight = 3;
+        
+        //Set height for dynamic texture
+        var DTHeight = 1.5 * font_size; //or set as wished
+        
+        //Calcultae ratio
+        var ratio = planeHeight/DTHeight;
+        
+        //Use a temporay dynamic texture to calculate the length of the text on the dynamic texture canvas
+        var temp = new DynamicTexture("DynamicTexture", 64, scene);
+        var tmpctx = temp.getContext();
+        tmpctx.font = font;
+        var DTWidth = tmpctx.measureText(text).width + 8;
+        
+        //Calculate width the plane has to be 
+        var planeWidth = DTWidth * ratio;
+    
+        //Create dynamic texture and write the text
+        var dynamicTexture = new DynamicTexture("DynamicTexture", {width:DTWidth, height:DTHeight}, scene, false);
+        var textMat = new StandardMaterial("mat", scene);
+        textMat.diffuseTexture = dynamicTexture;
+        textMat.diffuseColor = new Color3(1, 1, 1)
+        textMat.emissiveColor = new Color3(1, 1 , 1)
+        dynamicTexture.drawText(text, null, null, font, "#000000", "#ffffff", true);
+        
+        //Create plane and set dynamic texture as material
+        const plane1 = MeshBuilder.CreatePlane('plane', {width:planeWidth, height:planeHeight}, scene);
+        plane1.position.x = x
+        plane1.position.y = y
+        plane1.position.z = z
+        const plane2 = MeshBuilder.CreatePlane('plane', {width:planeWidth, height:planeHeight}, scene);
+        plane2.position.x = x
+        plane2.position.y = y
+        plane2.position.z = z
+        plane2.rotation.y = Math.PI
+        plane1.material = textMat;
+        plane2.material = textMat;
+        planes.push(plane1)
+        planes.push(plane2)
+}
 
 // Get the canvas element from the DOM.
 const canvas = document.getElementById("renderCanvas");
@@ -82,13 +130,13 @@ var material = new StandardMaterial("grid", scene);
 // shadowGenerator.usePoissonSampling = true
 
 // Our built-in 'sphere' shape. Params: name, subdivs, size, scene
-var sphere = Mesh.CreateSphere("sphere1", 16, 2, scene);
+// var sphere = Mesh.CreateSphere("sphere1", 16, 2, scene);
 
 // Move the sphere upward 1/2 its height
-sphere.position.y = 2;
+// sphere.position.y = 2;
 
 // Affect a material
-sphere.material = material;
+// sphere.material = material;
 
 const groundMat = new StandardMaterial("groundMat", scene);
 groundMat.alpha = 1;
@@ -143,6 +191,7 @@ ways.forEach(way => {
     // lines.push(MeshBuilder.CreateLines("ways", {points: right}, scene))
     const ribbon = MeshBuilder.CreateRibbon("ribbon", { pathArray: [right, left] },  scene )
     ribbon.material = roadMat
+    textPanel(way.name, curve[0].x, 4, curve[0].z)
     // ribbon.receiveShadows = true;
 })
 
@@ -173,7 +222,9 @@ skyboxMaterial.specularColor = new Color3(0, 0, 0);
 skyboxMaterial.emissiveColor = new Color3(0.05, 0, 0)
 skybox.material = skyboxMaterial;
 
+
 // Render every frame
 engine.runRenderLoop(() => {
+    planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
     scene.render();
 });
