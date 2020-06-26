@@ -41,6 +41,7 @@ import { PhysicsEngine } from '@babylonjs/core/Physics/physicsEngine'
 import { PhysicsImpostor} from '@babylonjs/core/Physics/physicsImpostor'
 import CANNON  from 'cannon'
 import { KeyboardEventTypes} from '@babylonjs/core/Events/keyboardEvents'
+import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
 
 // Required side effects to populate the Create methods on the mesh class. Without this, the bundle would be smaller but the createXXX methods from mesh would not be accessible.
 import "@babylonjs/core/Meshes/meshBuilder";
@@ -288,41 +289,62 @@ let rotdir = 0
 
 camera.parent = car
 
+const leftJoystick = new VirtualJoystick(true)
+const rightJoystick = new VirtualJoystick(false)
+
+leftJoystick.setJoystickSensibility(4)
+rightJoystick.setJoystickSensibility(4)
+
+let steer = 0
+let pedal = 0
 // Render every frame
 engine.runRenderLoop(() => {
-    // console.log(moveF, moveB, rotateL, rotateR)
     planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
-    scene.render();
-
+    scene.render()
     let vel = car.physicsImpostor.getLinearVelocity()
     if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
          angle = Math.atan2(vel.z, vel.x)
     }
-     
-    console.log('angle ' + angle + ' ' + speed)
-    if(rotateL){ //p
-        rotSpeed = Math.min(0.03, rotSpeed + 0.0005)
-        rotdir = 1
-        angle += rotSpeed
-    }
-    else if(rotateR){ //p
-        rotSpeed =  Math.min(0.03, rotSpeed + 0.0005)
-        rotdir = -1
-        
-    }
-    else if(moveF){ //b
-        speed += 0.1
-    }
-    else if(moveB){ //v
-        speed = Math.max(0, speed - 0.5)
-    }
 
-    if(!rotateR && !rotateL) { rotSpeed = Math.max(0, rotSpeed - 0.0005) }    
-    angle += rotSpeed * rotdir   
-   // mesh.physicsImpostor.setAngularVelocity(new BABYLON.Vector3(0, 0, 0))
-   const newVel = new Vector3(speed * Math.cos(angle), vel.y , speed * Math.sin(angle))
-   car.physicsImpostor.setLinearVelocity(newVel)
+    // JOYSTICK
+    if(true) {
+        steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x : steer * 0.95
+        pedal = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
+    
+    
+        speed = Math.max(0, Math.min(20, speed + pedal))
+        angle += -steer * 0.012
+    
+        const adjustSpeed = Math.max(0, speed - 5 * Math.abs(steer))
+        const newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
+        car.physicsImpostor.setLinearVelocity(newVel)
+        car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
+    } else {
+        // console.log('angle ' + angle + ' ' + speed)
+        if(rotateL){ //p
+            rotSpeed = Math.min(0.03, rotSpeed + 0.0005)
+            rotdir = 1
+            angle += rotSpeed
+        }
+        else if(rotateR){ //p
+            rotSpeed =  Math.min(0.03, rotSpeed + 0.0005)
+            rotdir = -1
+            
+        }
+        else if(moveF){ //b
+            speed += 0.1
+        }
+        else if(moveB){ //v
+            speed = Math.max(0, speed - 0.5)
+        }
 
-   car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
+    
+        if(!rotateR && !rotateL) { rotSpeed = Math.max(0, rotSpeed - 0.0005) }    
+        angle += rotSpeed * rotdir   
 
+
+        const newVel = new Vector3(speed * Math.cos(angle), vel.y , speed * Math.sin(angle))
+        car.physicsImpostor.setLinearVelocity(newVel)
+        car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
+    }
 });
