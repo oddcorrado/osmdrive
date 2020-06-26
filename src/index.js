@@ -312,8 +312,8 @@ engine.runRenderLoop(() => {
         pedal = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
     
     
-        speed = Math.max(0, Math.min(20, speed + pedal))
-        angle += -steer * 0.012
+        speed = Math.max(0, Math.min(12, speed + pedal))
+        angle += -steer * 0.02
     
         const adjustSpeed = Math.max(0, speed - 5 * Math.abs(steer))
         const newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
