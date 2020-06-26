@@ -35,7 +35,12 @@ import { Path3D } from '@babylonjs/core/Maths/math.path'
 import { Color3 } from '@babylonjs/core/Maths/math.color'
 import { ways, buildings } from './map'
 import {CubeTexture} from '@babylonjs/core/Materials/Textures/cubeTexture'
-
+import { CannonJSPlugin } from '@babylonjs/core/Physics/Plugins/cannonJSPlugin'
+import { PhysicsEngineComponent } from '@babylonjs/core/Physics/physicsEngineComponent'
+import { PhysicsEngine } from '@babylonjs/core/Physics/physicsEngine'
+import { PhysicsImpostor} from '@babylonjs/core/Physics/physicsImpostor'
+import CANNON  from 'cannon'
+import { KeyboardEventTypes} from '@babylonjs/core/Events/keyboardEvents'
 
 // Required side effects to populate the Create methods on the mesh class. Without this, the bundle would be smaller but the createXXX methods from mesh would not be accessible.
 import "@babylonjs/core/Meshes/meshBuilder";
@@ -98,10 +103,10 @@ const engine = new Engine(canvas);
 var scene = new Scene(engine);
 
 // This creates and positions a free camera (non-mesh)
-var camera = new FreeCamera("camera1", new Vector3(0, 30, 0), scene);
+var camera = new FreeCamera("camera1", new Vector3(0, 3, -5), scene);
 
 // This targets the camera to scene origin
-camera.setTarget(Vector3.Zero());
+camera.setTarget(new Vector3(0, 0, 50));
 
 // This attaches the camera to the canvas
 camera.attachControl(canvas, true);
@@ -185,7 +190,7 @@ ways.forEach(way => {
     const curve = path3D.getCurve();
     
     const left = curve.map ((p,i) => p.add(normals[i].scale(4)))
-    const right = curve.map ((p,i) => p.subtract(normals[i].scale(3)))
+    const right = curve.map ((p,i) => p.subtract(normals[i].scale(4)))
     // lines.push(MeshBuilder.CreateLines("ways", {points: curve}, scene))
     // lines.push(MeshBuilder.CreateLines("ways", {points: left}, scene))
     // lines.push(MeshBuilder.CreateLines("ways", {points: right}, scene))
@@ -220,11 +225,104 @@ skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
 skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
 skyboxMaterial.specularColor = new Color3(0, 0, 0);
 skyboxMaterial.emissiveColor = new Color3(0.05, 0, 0)
+
 skybox.material = skyboxMaterial;
 
+scene.fogMode = Scene.FOGMODE_EXP
+scene.fogDensity = 0.003
+scene.fogColor = new Color3(1, 1, 0.95)
+
+
+// PHYSICS
+var gravityVector = new Vector3(0,-0.81, 0);
+var physicsPlugin = new CannonJSPlugin(true, 10, CANNON);
+
+scene.enablePhysics(gravityVector, physicsPlugin)
+
+// Our built-in 'sphere' shape. Params: name, subdivs, size, scene
+var car = MeshBuilder.CreateBox('box', {height: 2, width: 2, depth: 4 }, scene)
+
+// Move the sphere upward 1/2 its height
+car.position.z = -20;
+car.position.x = -10;
+car.position.y = 20
+car.physicsImpostor = new PhysicsImpostor(car, PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0, friction: 0 }, scene);
+ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0, friction: 0 }, scene);
+
+let moveF, moveB, rotateL, rotateR = false
+
+scene.onKeyboardObservable.add((kbInfo) => {
+    // console.log(kbInfo.event.keyCode)
+    switch (kbInfo.type) {
+    case KeyboardEventTypes.KEYDOWN:
+        if(kbInfo.event.key==='z'){
+            moveF=true}
+        if(kbInfo.event.key==='s'){
+            moveB=true}
+        if(kbInfo.event.key==='q'){
+            rotateL=true}
+        if(kbInfo.event.key==='d'){
+            rotateR=true}
+        break;
+    case KeyboardEventTypes.KEYUP:   
+        if(kbInfo.event.key==='z'){
+            moveF=false
+        }
+        if(kbInfo.event.key==='q'){
+            rotateL=false
+        }
+        if(kbInfo.event.key==='s'){
+            moveB=false
+        }
+        if(kbInfo.event.key==='d'){
+            rotateR=false
+        }
+        break;
+    }
+});
+
+let speed= 0
+let angle = 0
+let rotSpeed = 0
+let rotdir = 0
+
+camera.parent = car
 
 // Render every frame
 engine.runRenderLoop(() => {
+    // console.log(moveF, moveB, rotateL, rotateR)
     planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
     scene.render();
+
+    let vel = car.physicsImpostor.getLinearVelocity()
+    if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
+         angle = Math.atan2(vel.z, vel.x)
+    }
+     
+    console.log('angle ' + angle + ' ' + speed)
+    if(rotateL){ //p
+        rotSpeed = Math.min(0.03, rotSpeed + 0.0005)
+        rotdir = 1
+        angle += rotSpeed
+    }
+    else if(rotateR){ //p
+        rotSpeed =  Math.min(0.03, rotSpeed + 0.0005)
+        rotdir = -1
+        
+    }
+    else if(moveF){ //b
+        speed += 0.1
+    }
+    else if(moveB){ //v
+        speed = Math.max(0, speed - 0.5)
+    }
+
+    if(!rotateR && !rotateL) { rotSpeed = Math.max(0, rotSpeed - 0.0005) }    
+    angle += rotSpeed * rotdir   
+   // mesh.physicsImpostor.setAngularVelocity(new BABYLON.Vector3(0, 0, 0))
+   const newVel = new Vector3(speed * Math.cos(angle), vel.y , speed * Math.sin(angle))
+   car.physicsImpostor.setLinearVelocity(newVel)
+
+   car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
+
 });
