@@ -42,6 +42,7 @@ import { PhysicsImpostor} from '@babylonjs/core/Physics/physicsImpostor'
 import CANNON  from 'cannon'
 import { KeyboardEventTypes} from '@babylonjs/core/Events/keyboardEvents'
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
+import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientationCamera'
 
 // Required side effects to populate the Create methods on the mesh class. Without this, the bundle would be smaller but the createXXX methods from mesh would not be accessible.
 import "@babylonjs/core/Meshes/meshBuilder";
@@ -104,10 +105,13 @@ const engine = new Engine(canvas);
 var scene = new Scene(engine);
 
 // This creates and positions a free camera (non-mesh)
-var camera = new FreeCamera("camera1", new Vector3(0, 3, -5), scene);
+// var camera = new FreeCamera("camera1", new Vector3(0, 3, -5), scene);
+
+// This creates and positions a device orientation camera 	
+var camera = new DeviceOrientationCamera("DevOr_camera", new BABYLON.Vector3(0, 0, 0), scene);
 
 // This targets the camera to scene origin
-camera.setTarget(new Vector3(0, 0, 50));
+camera.setTarget(new Vector3(0, 0, 50))
 
 // This attaches the camera to the canvas
 camera.attachControl(canvas, true);
@@ -246,7 +250,7 @@ var car = MeshBuilder.CreateBox('box', {height: 2, width: 2, depth: 4 }, scene)
 // Move the sphere upward 1/2 its height
 car.position.z = -20;
 car.position.x = -10;
-car.position.y = 20
+car.position.y = 3
 car.physicsImpostor = new PhysicsImpostor(car, PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0, friction: 0 }, scene);
 ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0, friction: 0 }, scene);
 
@@ -313,7 +317,7 @@ engine.runRenderLoop(() => {
     
     
         speed = Math.max(0, Math.min(12, speed + pedal))
-        angle += -steer * 0.02
+        angle += -steer * 0.025
     
         const adjustSpeed = Math.max(0, speed - 5 * Math.abs(steer))
         const newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
