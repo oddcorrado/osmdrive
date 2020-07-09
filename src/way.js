@@ -8,6 +8,9 @@ import { Color3 } from '@babylonjs/core/Maths/math.color'
 import { Texture } from '@babylonjs/core/Materials/Textures/texture'
 import { Path3D } from '@babylonjs/core/Maths/math.path'
 import textPanel from './textPanel'
+import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
+
+const paths = []
 
 export default function createWays(scene, planes) {
     const roadMat = new StandardMaterial("mat2", scene);
@@ -22,15 +25,20 @@ export default function createWays(scene, planes) {
     roadMat.diffuseTexture = roadTexture
 
     ways.forEach(way => {
-
-
         const points = way.points.map( point => new Vector3(point.x, 0.1, point.y))
         const path3D = new Path3D(points);
         const normals = path3D.getNormals();
         const curve = path3D.getCurve();
         
+
         const left = curve.map ((p,i) => p.add(normals[i].scale(4)))
         const right = curve.map ((p,i) => p.subtract(normals[i].scale(4)))
+
+        const pathLeft3D = new Path3D(left.concat());
+        const pathRight3D = new Path3D(right.concat().reverse());
+        paths.push(pathLeft3D)
+        paths.push(pathRight3D)
+        
         // lines.push(MeshBuilder.CreateLines("ways", {points: curve}, scene))
         // lines.push(MeshBuilder.CreateLines("ways", {points: left}, scene))
         // lines.push(MeshBuilder.CreateLines("ways", {points: right}, scene))
@@ -39,4 +47,36 @@ export default function createWays(scene, planes) {
         textPanel(scene, way.name, curve[0].x, 4, curve[0].z, planes)
         // ribbon.receiveShadows = true;
     })
+}
+
+function distanceToCurve(position, path) {
+    const pointOnCurve = path.getPointAt(path.getClosestPositionTo(position))
+
+    return (position.subtract(pointOnCurve).length())
+}
+
+export function getWayDir(position) {
+    let first = 1000000000
+    let second = 1000000000
+    let third = 1000000000
+    let index = -1
+
+    paths.forEach((path, i) => {
+        const d = distanceToCurve(position, path)
+        if (d < first) {
+            index = i
+            third = second
+            second = first
+            first = d
+        }
+    })
+
+    // if(third - first < 30) { index = - 1 }
+    // console.log(third - first, first, second, third)
+    if(index !== -1) {
+        const path = paths[index]
+        return path.getTangentAt(path.getClosestPositionTo(position), true)
+    }
+
+    return null
 }

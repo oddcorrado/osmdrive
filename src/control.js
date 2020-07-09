@@ -1,6 +1,7 @@
 import { KeyboardEventTypes} from '@babylonjs/core/Events/keyboardEvents'
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
 import { Vector3 } from '@babylonjs/core/Maths/math'
+import { getWayDir } from './way'
 
 let speed= 0
 let angle = 0
@@ -10,7 +11,8 @@ let steer = 0
 let pedal = 0
 let leftJoystick = null
 let rightJoystick = null
-
+let pace = 0
+let dir = new Vector3(1, 0, 0)
 
 function setup(scene) {
     let moveF, moveB, rotateL, rotateR = false
@@ -54,6 +56,12 @@ function setup(scene) {
 
 
 function loop(car) {
+    if(pace++ > 20) {
+        pace = 0
+        dir = getWayDir(car.position)
+    }
+
+
     let vel = car.physicsImpostor.getLinearVelocity()
     if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
          angle = Math.atan2(vel.z, vel.x)
@@ -67,6 +75,11 @@ function loop(car) {
     
         speed = Math.max(0, Math.min(12, speed + pedal))
         angle += -steer * 0.025
+
+        const dirAngle = Math.atan2(dir.z, dir.x)
+        if(!leftJoystick.pressed && Math.abs(dirAngle - angle) < 1) {
+            angle = dirAngle * 0.1 + angle * 0.9
+        }
     
         const adjustSpeed = Math.max(0, speed - 20 * Math.abs(steer))
         const newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
