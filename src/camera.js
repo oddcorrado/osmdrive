@@ -14,7 +14,7 @@ export default function createCamera(scene, canvas) {
     camera.lockedTarget = new Vector3(0, 0, 50)
 
     // This attaches the camera to the canvas
-    camera.attachControl(canvas, true);
+    //camera.attachControl(canvas, true);// this camera doesnt need to move
 
     return camera
 }

@@ -16,9 +16,10 @@ let dir = new Vector3(1, 0, 0)
 
 function setup(scene) {
     let moveF, moveB, rotateL, rotateR = false
+    let toggleCamera = false;
 
     scene.onKeyboardObservable.add((kbInfo) => {
-        // console.log(kbInfo.event.keyCode)
+    // console.log(kbInfo.event.keyCode)
         switch (kbInfo.type) {
         case KeyboardEventTypes.KEYDOWN:
             if(kbInfo.event.key==='z'){

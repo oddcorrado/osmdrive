@@ -9,7 +9,11 @@ import createLights from './light'
 import createGround from './ground'
 import control from './control'
 import createCar from './car'
+import botshandler from './bots'
 import setupPhysics from './physics'
+import createFreeCamera from './freecamera'
+import toggleCamera from './togglecamera'
+import createMenu from './menu.js'
 
 const planes = []
 
@@ -17,15 +21,24 @@ const planes = []
 const canvas = document.getElementById('renderCanvas')
 const engine = new Engine(canvas);
 const scene = new Scene(engine);
-const ground = createGround(scene)
-const camera = createCamera(scene, canvas)
+const ground = createGround(scene);
+const camera = createCamera(scene, canvas);//NORMAL CAMERA
+const freecamera = createFreeCamera(scene, canvas);
+scene.activeCamera = camera; 
+
 createWays(scene, planes)
 createBuildings(scene)
 createSkybox(scene)
 createLights(scene)
-const car = createCar(scene)
-setupPhysics(scene, ground, car)
+toggleCamera(scene, camera, freecamera, false);
 
+const car = createCar(scene)
+//test Bots
+const bots = botshandler.createBots(scene)//COMMENT TO REMOVE BOTS
+//endtest
+
+createMenu(scene, camera, freecamera, bots);
+setupPhysics(scene, ground, car, bots)
 control.setup(scene)
 camera.parent = car
 
@@ -34,4 +47,5 @@ engine.runRenderLoop(() => {
     planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
     scene.render()
     control.loop(car)
+    botshandler.loop(bots)
 })
