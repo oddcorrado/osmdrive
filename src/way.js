@@ -28,6 +28,9 @@ export default function createWays(scene, planes) {
     roadTexture.uScale = 20
     roadMat.diffuseTexture = roadTexture
 
+    createRootJunctions(ways)
+    rootPaths = createRootPaths(ways)
+
     ways.forEach(way => {
         const points = way.points.map( point => new Vector3(point.x, 0.1, point.y))
         const path3D = new Path3D(points);
@@ -54,6 +57,36 @@ export default function createWays(scene, planes) {
         textPanel(scene, way.name, curve[0].x, 4, curve[0].z, planes)
         // ribbon.receiveShadows = true;
     })
+}
+
+const rootJunctions = []
+let rootPaths = []
+
+function createRootJunctions(ways) {
+    const points = []
+    ways.forEach(way => {
+        way.points.forEach(point => points.push(new Vector3(point.x, 0.1, point.y)))
+    })
+
+    points.forEach ((point, i) => {
+        const close = points.find((check, ii) => point.subtract(check).length() < 0.1 && i !== ii )
+        if(close != null) {
+            if(rootJunctions.find(junction => close.subtract(junction).length() < 0.1 ) == null) {
+                rootJunctions.push(close)
+            }
+        }
+    })
+}
+
+function createRootPaths(ways) {
+    const paths = ways.map(way => {
+        const nodes = way.points.map(point => ({
+            point: new Vector3(point.x, 0.1, point.y),
+            junctionIndex: rootJunctions.findIndex(junction => junction.subtract(new Vector3(point.x, 0.1, point.y)).length() < 0.1)
+        }))
+        return nodes
+    })
+    return paths
 }
 
 function distanceToCurve(position, path) {
@@ -91,14 +124,18 @@ export function getWayDir(position) {
 export function toggleDebugWays() {
     enableDebug = !enableDebug
 
-    paths.forEach((path, i) => {
+    rootPaths.forEach((path, i) => {
         console.log(path._curve)
-        let li = Mesh.CreateLines('li', path._curve, globalScene)
+        const curve = path.map(n => n.point)
+        let li = Mesh.CreateLines('li', curve, globalScene)
         li.position.y = li.position.y + 0.1
-        li.color = path.type === 'left' ? Color3.Red() : Color3.Green()
-        path._curve.forEach(point => {
-            let m = MeshBuilder.CreateBox("box", {size: 0.5}, globalScene)
-            m.position = point
+        li.color = Color3.Red()
+        path.forEach(node => {
+            if(node.junctionIndex > 0) {
+                let m = MeshBuilder.CreateSphere("sphere", {radius: 1}, globalScene)
+                m.position = node.point
+            }
+
         })
     })
 }
