@@ -34,7 +34,11 @@ toggleCamera(scene, camera, freecamera, false);
 
 const car = createCar(scene)
 //test Bots
-const bots = botshandler.createBots(scene)//COMMENT TO REMOVE BOTS
+const bots = botshandler.createBots(scene)
+bots.forEach(bot => {//comment too enable bots by default
+    bot.isVisible = false;
+    bot.setEnabled(false);
+})
 //endtest
 
 createMenu(scene, camera, freecamera, bots);

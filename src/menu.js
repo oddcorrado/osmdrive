@@ -18,7 +18,7 @@ export default function createMenu(scene, camera, freecamera, bots){
     btnCam.style.top = "50px"
     btnCam.style.right = "0px"
 
-    btnBots.innerText = "Disable bots"
+    btnBots.innerText = "Enable bots"
     btnBots.style.zIndex = 10;
     btnBots.style.position = "absolute"
     btnBots.style.top = "70px"
@@ -46,7 +46,7 @@ export default function createMenu(scene, camera, freecamera, bots){
 
     btnBots.onclick = () => {
         console.log(bots);
-        btnBots.innerText = (btnBots.innerHTML == 'Enable Bots' ? 'Disable Bots' : 'Enable Bots')
+        btnBots.innerText = (btnBots.innerHTML == 'Enable Bots' ? 'Enable Bots' : 'Disable Bots')
         bots.forEach(bot => {
             bot.isVisible = (bot.isVisible ? false : true)
             bot.setEnabled(bot.isVisible ? true : false)
