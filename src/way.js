@@ -2,6 +2,7 @@
 import { ways } from './map'
 import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
+import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { Vector3 } from '@babylonjs/core/Maths/math'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { Color3 } from '@babylonjs/core/Maths/math.color'
@@ -9,8 +10,11 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture'
 import { Path3D } from '@babylonjs/core/Maths/math.path'
 import textPanel from './textPanel'
 import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
+import { scene as globalScene } from './index'
 
 const paths = []
+
+let enableDebug = false
 
 export default function createWays(scene, planes) {
     const roadMat = new StandardMaterial("mat2", scene);
@@ -34,8 +38,11 @@ export default function createWays(scene, planes) {
         const left = curve.map ((p,i) => p.add(normals[i].scale(4)))
         const right = curve.map ((p,i) => p.subtract(normals[i].scale(4)))
 
-        const pathLeft3D = new Path3D(left.concat());
-        const pathRight3D = new Path3D(right.concat().reverse());
+        const pathLeft3D = new Path3D(left.concat())
+        const pathRight3D = new Path3D(right.concat().reverse())
+
+        pathLeft3D.type = 'left'
+        pathRight3D.type = 'right'
         paths.push(pathLeft3D)
         paths.push(pathRight3D)
         
@@ -79,4 +86,19 @@ export function getWayDir(position) {
     }
 
     return null
+}
+
+export function toggleDebugWays() {
+    enableDebug = !enableDebug
+
+    paths.forEach((path, i) => {
+        console.log(path._curve)
+        let li = Mesh.CreateLines('li', path._curve, globalScene)
+        li.position.y = li.position.y + 0.1
+        li.color = path.type === 'left' ? Color3.Red() : Color3.Green()
+        path._curve.forEach(point => {
+            let m = MeshBuilder.CreateBox("box", {size: 0.5}, globalScene)
+            m.position = point
+        })
+    })
 }

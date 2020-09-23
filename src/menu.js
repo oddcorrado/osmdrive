@@ -1,9 +1,11 @@
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
+import { toggleDebugWays } from './way'
 
 export default function createMenu(scene, camera, freecamera, bots){
     var btnJ = document.createElement("button")
     var btnCam = document.createElement("button")
     var btnBots = document.createElement("button")
+    var btnWays = document.createElement("button")
 
     btnJ.innerText = "Disable Joysticks"
     btnJ.style.zIndex = 10;
@@ -24,9 +26,16 @@ export default function createMenu(scene, camera, freecamera, bots){
     btnBots.style.top = "70px"
     btnBots.style.right = "0px"
 
+    btnWays.innerText = "Show ways"
+    btnWays.style.zIndex = 10;
+    btnWays.style.position = "absolute"
+    btnWays.style.top = "90px"
+    btnWays.style.right = "0px"
+
     document.body.appendChild(btnCam)
     document.body.appendChild(btnJ)
     document.body.appendChild(btnBots)
+    document.body.appendChild(btnWays)
 
     btnJ.onclick = () => {
         if (VirtualJoystick.Canvas.style.zIndex == "-1"){
@@ -51,5 +60,8 @@ export default function createMenu(scene, camera, freecamera, bots){
             bot.isVisible = (bot.isVisible ? false : true)
             bot.setEnabled(bot.isVisible ? true : false)
         })
+    }
+    btnWays.onclick = () => {
+        toggleDebugWays()
     }
 }

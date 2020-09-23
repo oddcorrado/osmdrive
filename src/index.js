@@ -20,7 +20,7 @@ const planes = []
 // Get the canvas element from the DOM.
 const canvas = document.getElementById('renderCanvas')
 const engine = new Engine(canvas);
-const scene = new Scene(engine);
+export const scene = new Scene(engine);
 const ground = createGround(scene);
 const camera = createCamera(scene, canvas);//NORMAL CAMERA
 const freecamera = createFreeCamera(scene, canvas);
