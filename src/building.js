@@ -26,18 +26,6 @@ function textureCreator(scene, source, uS, vS){
     return tmpTxtur
 }
 
-function randomTexture(scene, way, mats){
-    var tmpTextures = []
-    var u,v = 0;
-    var idx=-1;
-    console.log(textureCollection)
-  
-    //randomnumber
-    //get uv depending on ribbon size;
-    console.log('final text', tmpTextures)
-    return 
-}
-
 export default function createBuildings(scene) {
     var mats = [[],[],[],[],[]];
     var textureCollection = createTextureCollection(scene);
@@ -51,7 +39,6 @@ export default function createBuildings(scene) {
            mats[y][i].diffuseTexture = txtr.texture
        })
    })
-   console.log(textureCollection)
   
     
 
@@ -61,7 +48,6 @@ export default function createBuildings(scene) {
 
         const ribbon = MeshBuilder.CreateRibbon("building", { pathArray: [floorPoints, roofPoints] },  scene )
 
-        console.log(mats)
         ribbon.material = mats[0][0];
       
         if (way.levels > 12){

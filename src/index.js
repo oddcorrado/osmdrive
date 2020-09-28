@@ -14,9 +14,10 @@ import setupPhysics from './physics'
 import createFreeCamera from './freecamera'
 import toggleCamera from './togglecamera'
 import createMenu from './menu.js'
+import dressMap from './dressmap'
+import createDetailedCar from './detailedcar'
 
 const planes = []
-
 // Get the canvas element from the DOM.
 const canvas = document.getElementById('renderCanvas')
 const engine = new Engine(canvas);
@@ -31,8 +32,11 @@ createBuildings(scene)
 createSkybox(scene)
 createLights(scene)
 toggleCamera(scene, camera, freecamera, false);
+dressMap(scene)
+const car = createCar(scene);
 
-const car = createCar(scene)
+//createDetailedCar(scene);
+
 //test Bots
 const bots = botshandler.createBots(scene)
 bots.forEach(bot => {//comment too enable bots by default

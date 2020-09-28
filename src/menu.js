@@ -28,7 +28,8 @@ export default function createMenu(scene, camera, freecamera, bots){
     document.body.appendChild(btnJ)
     document.body.appendChild(btnBots)
 
-    btnJ.onclick = () => {
+
+    function disableJoysticks() {
         if (VirtualJoystick.Canvas.style.zIndex == "-1"){
             VirtualJoystick.Canvas.style.zIndex = "4";
             btnJ.innerText = "Disable Joysticks";
@@ -39,9 +40,12 @@ export default function createMenu(scene, camera, freecamera, bots){
         }
     }
 
+    btnJ.onclick = () => {disableJoysticks()}
+    
     btnCam.onclick = () => {
         scene.activeCamera = (scene.activeCamera === freecamera ? camera : freecamera)
-        console.log('deactivate joysticks to use freecamera')
+        disableJoysticks()
+        console.log('joysticks were deactivated to use freecamera')
     }
 
     btnBots.onclick = () => {
