@@ -65,6 +65,7 @@ export default function createMenu(scene, camera, freecamera, bots){
             bot.setEnabled(bot.isVisible ? true : false)
         })
     }
+    
     btnWays.onclick = () => {
         toggleDebugWays()
     }

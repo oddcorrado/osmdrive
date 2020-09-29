@@ -30,7 +30,7 @@ export default function createWays(scene, planes) {
 
     createRootJunctions(ways)
     rootPaths = createRootPaths(ways)
-
+    getSideforTrees(ways);//DEBUG
     ways.forEach(way => {
         const points = way.points.map( point => new Vector3(point.x, 0.1, point.y))
         const path3D = new Path3D(points);
@@ -77,6 +77,91 @@ function createRootJunctions(ways) {
         }
     })
 }
+
+function getInterPos(curr, next){
+    var tab = [{}]
+    var x = curr.x;
+    var y = curr.y;
+    var i = 0;
+    //var treeNb = getNumberofTree()
+/*
+    if (curr.x < next.x) {
+        while (x < next.x){
+            x += 5;
+            tab.push({x: x, y: null})
+        }
+    } else {
+        while (x > next.x){
+            x -= 5;
+            tab.push({x: x, y: null})
+        }
+    }
+    console.log(curr, next)
+    if (curr.y < next.y) {
+       while (y < next.y){
+            y += 5;
+           tab[i].y = y;
+            i++;
+       }
+   } else {
+       while (y > next.y){
+            y -= 5;
+            tab[i].y = y;
+            i++;
+       }
+   }*/
+   return tab;
+}
+
+function getSideforTrees(ways){
+    var options = {
+        diameterTop:2, 
+        diameterBottom: 2, 
+        height: 80, 
+        tessellation: 10, 
+        subdivisions: 1
+    }
+    console.log(ways);
+    var tmpway;
+    ways.forEach(way => {
+    for (var i = 0; i < way.points.length-1; i++){
+            var currentP = way.points[i]
+            var nextP = way.points[i+1]
+            var posTab = getInterPos(currentP, nextP);
+            console.log('tab', posTab)
+            
+           // var pil = new MeshBuilder.CreateCylinder('test', options);
+            //pil.position = new Vector3(point.x, 1, point.y);
+        }
+    })
+}
+
+// function getSideforTrees(ways){
+//     console.log(ways)
+//     var tmpway;
+
+//     ways.forEach(way => {
+//         if (way.name === 'Boulevard de la Villette') {
+//             tmpway = way;
+//             return;
+//         }
+//     })
+//     console.log(tmpway);
+
+//     var options = {
+//         diameterTop:2, 
+//         diameterBottom: 2, 
+//         height: 80, 
+//         tessellation: 10, 
+//         subdivisions: 1
+//     }
+//     tmpway.points.forEach(point => {
+//         console.log('created');
+//         var pil = new MeshBuilder.CreateCylinder('test', options);
+//         pil.position = new Vector3(point.x, 1, point.y);
+//     })
+    
+// }
 
 function createRootPaths(ways) {
     const paths = ways.map(way => {

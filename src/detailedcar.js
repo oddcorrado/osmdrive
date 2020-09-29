@@ -1,17 +1,20 @@
 import  '@babylonjs/loaders/OBJ'
 import {SceneLoader} from '@babylonjs/core/Loading/sceneLoader'
-import { Vector3 } from '@babylonjs/core/Maths/math';
+import { Vector3, Axis, Space } from '@babylonjs/core/Maths/math';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
+import setupPhysics from './physics'
+import { DefaultLoadingScreen } from '@babylonjs/core/Loading/loadingScreen';
 
-function getCar(){
-  
-}
 
-export default function createDetailedCar (scene) {
-  new SceneLoader.ImportMesh('', "../mesh/Car/", "Chevrolet_Camaro_SS_High.obj", scene,function (newMesh){
-    console.log(newMesh)
-    var newnew = Mesh.MergeMeshes(newMesh, true, true, function(test){
-      console.log(test);
-    });
+export default function createDetailedCar (scene, camera, container) {
+  return new SceneLoader.ImportMeshAsync('', "../mesh/Car/", "Chevrolet_Camaro_SS_High.obj", scene).then(function(newMesh) {
+    var car = Mesh.MergeMeshes(newMesh['meshes'], true, true, null, false, true);
+
+    car.position = new Vector3(-10, 4, -50);
+    car.scalingDeterminant = 0.6;
+    camera.parent = car;
+    setupPhysics(scene, car);
+    container.meshes.push(car);
+    return car;
   })
 }
