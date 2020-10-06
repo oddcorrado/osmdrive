@@ -27,7 +27,8 @@ const ground = createGround(scene);
 const camera = createCamera(scene, canvas);//NORMAL CAMERA
 const freecamera = createFreeCamera(scene, canvas);
 scene.activeCamera = camera; 
-var switchcar = 'old'
+var switchcar = 'old';
+var tmpcar;
 
 //Creates environements and camera
 createSkybox(scene)
@@ -37,14 +38,15 @@ toggleCamera(scene, camera, freecamera, false);
 //Container to handle multiple meshes, useful to duplicate without reloading
 var container = new AssetContainer(scene);
 
+//Creates cars meshes
+createDetailedCar(scene, camera, container);
+var car = createCar(scene);
+
 //Create main meshes 
 createWays(scene, planes)
 createBuildings(scene)
-dressMap(scene, container)
-
-//Creates cars meshes
-var car = createCar(scene);
-createDetailedCar(scene, camera, container);
+dressMap(scene)
+//create loading depending on props;
 
 const bots = botshandler.createBots(scene)
 bots.forEach(bot => {//comment to disable bots by default
@@ -63,9 +65,9 @@ camera.parent = car;
 engine.runRenderLoop(() => {
     planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
     scene.render()
-   if (switchcar === 'old' && container['meshes'][0]){
+   if (switchcar === 'old' && (tmpcar = container['meshes'].find(mesh => mesh.name == 'detailedcar'))){
        switchcar = 'new';
-       car = container.meshes[0];
+       car = tmpcar;
    }
     control.loop(car)
 

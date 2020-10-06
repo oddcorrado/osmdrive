@@ -30,7 +30,6 @@ export default function createWays(scene, planes) {
 
     createRootJunctions(ways)
     rootPaths = createRootPaths(ways)
-    getSideforTrees(ways);//DEBUG
     ways.forEach(way => {
         const points = way.points.map( point => new Vector3(point.x, 0.1, point.y))
         const path3D = new Path3D(points);
@@ -54,7 +53,7 @@ export default function createWays(scene, planes) {
         // lines.push(MeshBuilder.CreateLines("ways", {points: right}, scene))
         const ribbon = MeshBuilder.CreateRibbon("ribbon", { pathArray: [right, left] },  scene )
         ribbon.material = roadMat
-        textPanel(scene, way.name, curve[0].x, 4, curve[0].z, planes)
+        textPanel(scene, way.name, curve[0].x, 10, curve[0].z, planes)
         // ribbon.receiveShadows = true;
     })
 }
@@ -77,40 +76,25 @@ function createRootJunctions(ways) {
         }
     })
 }
-
+//
 function getInterPos(curr, next){
-    var tab = [{}]
-    var x = curr.x;
-    var y = curr.y;
-    var i = 0;
-    //var treeNb = getNumberofTree()
-/*
-    if (curr.x < next.x) {
-        while (x < next.x){
-            x += 5;
-            tab.push({x: x, y: null})
-        }
-    } else {
-        while (x > next.x){
-            x -= 5;
-            tab.push({x: x, y: null})
-        }
-    }
-    console.log(curr, next)
-    if (curr.y < next.y) {
-       while (y < next.y){
-            y += 5;
-           tab[i].y = y;
-            i++;
-       }
-   } else {
-       while (y > next.y){
-            y -= 5;
-            tab[i].y = y;
-            i++;
-       }
-   }*/
-   return tab;
+    var xD = next.x - curr.x;
+    var yD = next.y - curr.y;
+    var dist = Math.sqrt(Math.pow(xD, 2) + Math.pow(yD, 2));
+    var fract = 20 / dist;
+    
+    var newp = (xD > yD ? {
+        xR: (curr.x + xD * fract) + 8,
+        yR: (curr.y + yD * fract),
+        xL: (curr.x + xD * fract) - 8,
+        yL: (curr.y + yD * fract)
+    } : {
+        xR: (curr.x + xD * fract),
+        yR: (curr.y + yD * fract) + 8,
+        xL: (curr.x + xD * fract),
+        yL: (curr.y + yD * fract) - 8
+    })
+    return newp;
 }
 
 function getSideforTrees(ways){
@@ -124,44 +108,21 @@ function getSideforTrees(ways){
     console.log(ways);
     var tmpway;
     ways.forEach(way => {
-    for (var i = 0; i < way.points.length-1; i++){
+    for (var i = 1; i < way.points.length-1; i++){
             var currentP = way.points[i]
             var nextP = way.points[i+1]
+            console.log(nextP);
             var posTab = getInterPos(currentP, nextP);
-            console.log('tab', posTab)
-            
-           // var pil = new MeshBuilder.CreateCylinder('test', options);
-            //pil.position = new Vector3(point.x, 1, point.y);
+            //console.log(posTab);
+           var Lcol = new MeshBuilder.CreateCylinder('test', options);
+           var Rcol = new MeshBuilder.CreateCylinder('test', options);
+
+            Lcol.position = new Vector3(posTab['xL'], 1, posTab['yL']);
+            Rcol.position = new Vector3(posTab['xR'], 1, posTab['yR']);
         }
     })
 }
-
-// function getSideforTrees(ways){
-//     console.log(ways)
-//     var tmpway;
-
-//     ways.forEach(way => {
-//         if (way.name === 'Boulevard de la Villette') {
-//             tmpway = way;
-//             return;
-//         }
-//     })
-//     console.log(tmpway);
-
-//     var options = {
-//         diameterTop:2, 
-//         diameterBottom: 2, 
-//         height: 80, 
-//         tessellation: 10, 
-//         subdivisions: 1
-//     }
-//     tmpway.points.forEach(point => {
-//         console.log('created');
-//         var pil = new MeshBuilder.CreateCylinder('test', options);
-//         pil.position = new Vector3(point.x, 1, point.y);
-//     })
-    
-// }
+//
 
 function createRootPaths(ways) {
     const paths = ways.map(way => {
