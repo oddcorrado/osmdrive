@@ -21,7 +21,7 @@ export function createTextureCollection (scene){
             {texture: textureCreator(scene, '../textures/smallbuilding3.jpg', 10, 1)}
         ],
         [
-            {texture: textureCreator(scene, '../textures/building.png', 10, 1)},//type 2 (medium)
+            {texture: textureCreator(scene, '../textures/building.png', 10, 3)},//type 2 (medium)
             {texture: textureCreator(scene, '../textures/mediumbuilding.jpg', 10, 1)},
             {texture: textureCreator(scene, '../textures/mediumbuilding2.jpg', 10, 1)}
         ],
