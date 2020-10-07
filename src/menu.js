@@ -4,74 +4,87 @@ import {disableTrees} from './dressmap'
 
 var camPosInterval;
 
-export default function createMenu(scene, camera, freecamera, bots){
-    var btnJ = document.createElement("button")
-    var btnCam = document.createElement("button")
-    var btnBots = document.createElement("button")
-    var btnWays = document.createElement("button")
-    var camFresh = document.createElement("div");
-    var btnTrees = document.createElement("button");
-
-    camFresh.style.position = 'absolute';
-    camFresh.style.top = '5px';
-    camFresh.style.right = '0px';
-    camFresh.style.height = '30px';
-    camFresh.style.color = 'dark yellow';
-    camFresh.style.display = 'none';
-
-    btnJ.innerText = "Disable Joysticks"
-    btnJ.style.zIndex = 10;
-    btnJ.style.position = "absolute"
-    btnJ.style.top = "30px"
-    btnJ.style.right = "0px"
-    btnJ.style.color = "green"
-
-    btnCam.innerText = "Camera Switch (C)"
-    btnCam.style.zIndex = 10;
-    btnCam.style.position = "absolute"
-    btnCam.style.top = "50px"
-    btnCam.style.right = "0px"
+function buttonCreator(style, content){
+    var tmpBtn = document.createElement('button');
     
-    btnBots.innerText = "Enable bots"
-    btnBots.style.zIndex = 10;
-    btnBots.style.position = "absolute"
-    btnBots.style.top = "70px"
-    btnBots.style.right = "0px"
-    btnBots.style.color = "red"
+    tmpBtn.innerText = content.text;
+    tmpBtn.style.backgroundColor = style.color;
+    tmpBtn.style.top = style.top;
+    tmpBtn.style.color = 'white';
+    tmpBtn.style.opacity = '0.6';
+    tmpBtn.style.position = 'absolute';
+    tmpBtn.style.borderRadius = '8px';
+    tmpBtn.style.zIndex = 10;
+    tmpBtn.style.right = '0px';
+    tmpBtn.style.display = style.display;
+    return tmpBtn;
+}
 
+function divCreator(style, content){
+    var tmpDiv = document.createElement('div');
 
-    btnWays.innerText = "Show ways"
-    btnWays.style.zIndex = 10;
-    btnWays.style.position = "absolute"
-    btnWays.style.top = "90px"
-    btnWays.style.right = "0px"
+    tmpDiv.style.top = style.top;
+    tmpDiv.style.right = style.right;
+    tmpDiv.style.height = style.height;
+    tmpDiv.style.color = style.color; 
+    tmpDiv.style.right = style.right;
+    tmpDiv.style.fontSize = style.fontSize;
+    tmpDiv.style.position = 'absolute';
+    tmpDiv.style.display = style.display;
+    tmpDiv.id = content.id;
+    tmpDiv.innerText = content.text;
+    tmpDiv.fontWeight = '800';
+    return tmpDiv;
+}
 
-    btnTrees.innerText = "Disable trees"
-    btnTrees.style.zIndex = 10;
-    btnTrees.style.position = "absolute"
-    btnTrees.style.top = "110px"
-    btnTrees.style.right = "0px"
+export default function createMenu(scene, camera, freecamera, bots, grids){
+    var btnMenu = buttonCreator({top: '50px', color:'black', display: 'block'},{text: 'Debug Menu'});
+    var btnJ = buttonCreator({top: '50px', color:'green', display: 'none'},{text: 'Disable Joysticks'});
+    var btnCam = buttonCreator({top:'30px', color: 'black', display: 'none'},{text: 'Camera Switch (C)'});
+    var btnBots = buttonCreator({top: '70px', color:'red', display: 'none'},{text: 'Enable Bots'});
+    var btnGrids = buttonCreator({top: '90px', color:'red', display: 'none'},{text: 'Enable Grids'});
+    var btnTrees = buttonCreator({top: '1300px', color:'red', display: 'none'},{text: 'Enable Trees'});
+    var btnWays = buttonCreator({top: '110px', color:'black', display: 'none'},{text: 'Show Ways'});
+    var camFresh = divCreator({top: '1vh', right: '1vw', height: '30px', color: 'black', display: 'none'}, {text: '', id:'position'});
+    var speedFresh = divCreator({top: '93vh', right: '89vw', height: '90px', color: 'black', display: 'block', fontSize: '2rem'}, {text: 'none', id: 'speed'});
+    var btnDivArray = [btnMenu, btnCam, btnJ, btnBots, btnWays, camFresh, speedFresh, btnGrids];
 
-    document.body.appendChild(btnCam)
-    document.body.appendChild(btnJ)
-    document.body.appendChild(btnBots)
-    document.body.appendChild(btnWays)
-    document.body.appendChild(camFresh)
-    // document.body.appendChild(btnTrees)
+    btnDivArray.forEach(btn => {
+        document.body.appendChild(btn);
+    })
 
-    function disableJoysticks() {
-        if (VirtualJoystick.Canvas.style.zIndex == "-1"){
-            VirtualJoystick.Canvas.style.zIndex = "4";
-            btnJ.innerText = "Disable Joysticks";
-            btnJ.style.color = "green";
+    btnMenu.onclick = () => {
+        if (btnMenu.innerText === 'Debug Menu') {
+            btnDivArray.forEach(btn => {
+                btn.style.display = 'block';
+            })
+            btnMenu.innerText = 'Hide Menu';
+            btnMenu.style.top = '180px';
         } else {
-            VirtualJoystick.Canvas.style.zIndex = "-1";
-            btnJ.innerText = "Enable Joysticks";
-            btnJ.style.color = "red";
+            btnDivArray.forEach(btn => {
+                if (btn != btnMenu)
+                    btn.style.display = 'none';
+            })
+            btnMenu.innerText = 'Debug Menu';
+            btnMenu.style.top = '50px';
         }
     }
 
-    btnJ.onclick = () => {disableJoysticks()}
+    var disableJoysticks = () => {
+        if (VirtualJoystick.Canvas.style.zIndex == "-1"){
+            VirtualJoystick.Canvas.style.zIndex = "4";
+            btnJ.innerText = "Disable Joysticks";
+            btnJ.style.backgroundColor = "green";
+        } else {
+            VirtualJoystick.Canvas.style.zIndex = "-1";
+            btnJ.innerText = "Enable Joysticks";
+            btnJ.style.backgroundColor = "red";
+        }
+    }
+
+    btnJ.onclick = () => {
+        disableJoysticks();
+    }
     
     btnCam.onclick = () => {
         scene.activeCamera = (scene.activeCamera === freecamera ? camera : freecamera)
@@ -79,17 +92,18 @@ export default function createMenu(scene, camera, freecamera, bots){
             clearInterval(camPosInterval);
             camFresh.style.display = 'none';
             console.log('joysticks were deactivated to use freecamera')
-        } else {
             disableJoysticks();
+        } else {
             showPosCam();
             camFresh.style.display = 'block';
+            disableJoysticks();
         }
     }
 
     btnBots.onclick = () => {
         console.log(bots);
-        btnBots.innerText = (btnBots.innerHTML == 'Enable Bots' ? 'Enable Bots' : 'Disable Bots')
-        btnBots.style.color = (btnBots.innerHTML == 'Enable Bots' ? 'red' : 'green')
+        btnBots.innerText = (btnBots.innerHTML == 'Disable Bots' ? 'Enable Bots' : 'Disable Bots')
+        btnBots.style.backgroundColor = (btnBots.innerHTML == 'Disable Bots' ? 'green' : 'red')
         bots.forEach(bot => {
             bot.isVisible = (bot.isVisible ? false : true)
             bot.setEnabled(bot.isVisible ? true : false)
@@ -101,6 +115,18 @@ export default function createMenu(scene, camera, freecamera, bots){
         disableTrees();
     }
     
+    btnGrids.onclick = () => {
+        if (btnGrids.innerText == 'Disable Grids'){
+           btnGrids.innerHTML = 'Enable Grids';
+            btnGrids.style.backgroundColor =  'red';
+            grids.forEach(grid => grid.visibility = 0);
+        } else {
+            btnGrids.innerHTML = 'Disable Grids';
+            btnGrids.style.backgroundColor =  'green';
+            grids.forEach(grid => grid.visibility = 1);
+        }
+    }
+
     btnWays.onclick = () => {
         toggleDebugWays()
     }

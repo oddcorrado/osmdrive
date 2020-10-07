@@ -39,13 +39,13 @@ toggleCamera(scene, camera, freecamera, false);
 var container = new AssetContainer(scene);
 
 //Creates cars meshes
-createDetailedCar(scene, camera, container);
+//createDetailedCar(scene, camera, container);
 var car = createCar(scene);
 
 //Create main meshes 
 createWays(scene, planes)
-createBuildings(scene)
-dressMap(scene)
+var grids = createBuildings(scene)
+//dressMap(scene)
 //create loading depending on props;
 
 const bots = botshandler.createBots(scene)
@@ -54,7 +54,7 @@ bots.forEach(bot => {//comment to disable bots by default
     bot.setEnabled(false);
 })
 
-createMenu(scene, camera, freecamera, bots);
+createMenu(scene, camera, freecamera, bots, grids);
 setupPhysics(scene, ground, car, bots)
 
 

@@ -56,6 +56,8 @@ function setup(scene) {
 
 
 function loop(car) {
+    var speedDiv = document.getElementById('speed');
+
     if(pace++ > 20) {
         pace = 0
         dir = getWayDir(car.position)
@@ -63,6 +65,8 @@ function loop(car) {
 
 
     let vel = car.physicsImpostor.getLinearVelocity()
+    speedDiv.innerText = `${(Math.abs(vel.x) + Math.abs(vel.z)).toFixed()} KM/H`;
+
     if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
          angle = Math.atan2(vel.z, vel.x)
     }

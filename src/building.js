@@ -1,15 +1,13 @@
 
 import { buildings } from './map'
-import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { Vector3 } from '@babylonjs/core/Maths/math'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
-import { Color3, Color4 } from '@babylonjs/core/Maths/math.color'
+import { Color3 } from '@babylonjs/core/Maths/math.color'
 import { Texture } from '@babylonjs/core/Materials/Textures/texture'
 import {createTextureCollection} from './textureCollection'
-import { LinesMesh } from '@babylonjs/core/Meshes/linesMesh'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
-import { Material } from '@babylonjs/core/Materials/material'
+import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
 
 function materialCreator(scene, name){
     const tmpMat = new StandardMaterial(name, scene);
@@ -29,98 +27,109 @@ function textureCreator(scene, source, uS, vS){
     return tmpTxtur
 }
 
+function createSquare(squa, scene){
+
+    var customMesh = new Mesh("custom", scene);
+    var vertexData = new VertexData();
+    var mat = new StandardMaterial("mat", scene);
+    var color = new Color3(1,0,0);
+    var positions = [squa.botL.x, squa.botL.y, squa.botL.z, squa.botR.x, squa.botR.y, squa.botR.z, squa.topL.x, squa.topL.y, squa.topL.z, squa.topR.x, squa.topR.y, squa.topR.z]
+    var indices = [0, 1, 2, 0, 2, 3, 0, 3, 1]
+
+    vertexData.positions = positions;
+    vertexData.indices = indices;
+    vertexData.applyToMesh(customMesh);
+     
+    mat.wireframe = true;
+    mat.backFaceCulling = false;
+    mat.disableLighting = false;
+     
+    customMesh.material = mat;
+    customMesh.material.diffuseColor = color;
+    customMesh.material.emissiveColor = color;
+    return customMesh;
+ }
+
+function getGridFromSide(pointA, pointB, nbPoints, levels){
+    var tmpPoints = [];
+
+    if (nbPoints === 0) {
+        for (var z = 0; z < levels; z++){
+            tmpPoints.push({
+                botL: new Vector3(pointA.x, z * 3, pointA.y),
+                topL: new Vector3(pointA.x, (z + 1) * 3, pointA.y),
+                botR: new Vector3(pointB.x, z * 3, pointB.y),
+                topR: new Vector3(pointB.x, (z + 1) * 3, pointB.y)
+            })
+        }
+    } else {
+        for (var i = 0; i < nbPoints; i++) {
+            for (var z = 0; z < levels; z++){
+                    tmpPoints.push({
+                        botL: new Vector3(((pointA.x - pointB.x) / nbPoints) * i + pointB.x, z * 3, ((pointA.y - pointB.y) / nbPoints) * i + pointB.y),
+                        topL: new Vector3(((pointA.x - pointB.x) / nbPoints) * i + pointB.x, (z + 1) * 3, ((pointA.y - pointB.y) / nbPoints) * i + pointB.y),
+                        botR: new Vector3(((pointA.x - pointB.x) / nbPoints) * (i + 1) + pointB.x, z * 3, ((pointA.y - pointB.y) / nbPoints) * (i + 1) + pointB.y),
+                        topR: new Vector3(((pointA.x - pointB.x) / nbPoints) * (i + 1) + pointB.x, (z + 1) * 3, ((pointA.y - pointB.y) / nbPoints) * (i + 1) + pointB.y)
+                    })
+            }
+        }
+    }
+
+    return tmpPoints;
+}
+
 export default function createBuildings(scene) {
     var mats = [[],[],[],[],[]];
     var textureCollection = createTextureCollection(scene);
-  
-    
-    //get wall size before creating texture?
-    //put random here?
+    var grid = [];
+    var tmpGrid;
+    var gridMesh = [];
+
    textureCollection.forEach((txtrType, y = 0) => {
        txtrType.forEach((txtr, i = 0) => {
            mats[y].push(materialCreator(scene, `mat${y,i}`))
            mats[y][i].diffuseTexture = txtr.texture
        })
-   })
-  
-    
-
-
+   }) 
 
    
-   const floorPoints = buildings[0].points.map( point => new Vector3(point.x, 0.1, point.y))
-   const roofPoints = buildings[0].points.map( point => new Vector3(point.x, buildings[0].levels * 3, point.y))
+   
 
-   const ribbon = MeshBuilder.CreateRibbon("building", { pathArray: [floorPoints, roofPoints] },  scene )
-   console.log('', floorPoints);
-   ribbon.material = (mats[3][Math.random() * mats[3].length | 0]);
-  
-   var options = {
-    diameterTop:0.1, 
-    diameterBottom: 0.1, 
-    height: 40, 
-    tessellation: 10, 
-    subdivisions: 1,
-    }
+    buildings.forEach((way, y = 0) => {
+        var ln = way.points.length;
+        for (var i = 0; i < ln; i++){
+            var pointA = way.points[i];
+            var pointB = (i === ln - 1 ? way.points[0] : way.points[i+1]);
+            var numberOfPoints = (Math.round(Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointB.y - pointB.y, 2)) / 2));
 
-    var points = []; 
+            var newGrid = getGridFromSide(pointA, pointB, numberOfPoints, way.levels);
+            tmpGrid = [...grid, ...newGrid];
+            grid = tmpGrid;
 
-    var ln = buildings[0].points.length;
-    console.log(ln);
-
-    for (var i = 0; i < ln; i+=1){
-
-       var pointA = buildings[0].points[i];
-       var pointB = (i === ln - 1 ? buildings[0].points[0] : buildings[0].points[i+1]);
-       var numberOfPoints = (Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointB.y - pointB.y, 2)) / 3 | 0);
-
-        console.log(numberOfPoints);
-        for (var z = 0; z <= numberOfPoints; z++) {
-            var botL = new MeshBuilder.CreateSphere('sp', {}, scene);
-            var topL = botL.clone();
-
-            //getSquares
-
-            console.log(new Vector3((pointA.x - pointB.x) / numberOfPoints * z + pointB.x, 0, (pointA.y - pointB.y) / numberOfPoints * z + pointB.y));
-            botL.position = new Vector3((pointA.x - pointB.x) / numberOfPoints * z + pointB.x, 0, (pointA.y - pointB.y) / numberOfPoints * z + pointB.y);
-            topL.position = new Vector3((pointA.x - pointB.x) / numberOfPoints * z + pointB.x, buildings[0].levels, (pointA.y - pointB.y) / numberOfPoints * z + pointB.y)
-            points.push(
-                        {botL: new Vector3((pointA.x - pointB.x) / numberOfPoints * z + pointB.x, 0, (pointA.y - pointB.y) / numberOfPoints * z + pointB.y)},
-                        {topL: new Vector3((pointA.x - pointB.x) / numberOfPoints * z + pointB.x, 0/*height*/, (pointA.y - pointB.y) / numberOfPoints * z + pointB.y)},
-                        {botR: new Vector3((pointA.x - pointB.x) / numberOfPoints * z + pointB.x, 0/*height*/, (pointA.y - pointB.y) / numberOfPoints * z + pointB.y)},
-                        {topR: new Vector3((pointA.x - pointB.x) / numberOfPoints * z + pointB.x, 0/*height*/, (pointA.y - pointB.y) / numberOfPoints * z + pointB.y)}
-            );
-            console.log(points.pop());
-          //  var Lcol = new MeshBuilder.CreateCylinder('test', options);
+            //debug wireframe
+            if (y == 52){
+                //Gives the number of grid in a wall + the size of the wall
+                //console.log(numberOfPoints, Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointB.y - pointB.y, 2)))
+                newGrid.forEach(sq => {
+                    gridMesh.push(createSquare(sq, scene));
+                })
+            }
         }
-    }
-/*
-    buildings[0].points.map(point => {
-        var Lcol = new MeshBuilder.CreateCylinder('test', options);
-        Lcol.position = new Vector3(point.x, 0, point.y);      
-    })
-*/
-   
-   
-    buildings.forEach((way, i = 0) => {
+       
+      
 
-        if (way.points.lenght < i){
-        var point1 = new Vector3(way.points[i].x, 0, way.points[i+1].y);
-        var point2 = new Vector3(way.points[i].x, 0, way.points[i+1].y);
-        var line = MeshBuilder.CreateLines('lines', {points: [point1, point2]}, scene)
-            line.material = new StandardMaterial("myMaterial", scene);
-            line.material.diffuseColor = new Color3(1,0,0);
-            line.material.emissiveColor = new Color3(1,0,0);
-        }
-    
-        //test square buildings
-        
         const floorPoints = way.points.map( point => new Vector3(point.x, 0.1, point.y))
         const roofPoints = way.points.map( point => new Vector3(point.x, way.levels * 3, point.y))
-
-        const ribbon = MeshBuilder.CreateRibbon("building", { pathArray: [floorPoints, roofPoints] },  scene )
-        console.log('floor', floorPoints);
-      
+        const ribbon = MeshBuilder.CreateRibbon("building", { pathArray: [floorPoints, roofPoints] },  scene )      
+        //const ribbon = MeshBuilder.CreateRibbon("building", { pathArray: [grid.bot, roofPoints] },  scene )
+        /*
+        ** each building is created wall by wall, each has a Vector that defines one angle.
+        ** each is created by giving to CreateRibbon an array containing all Vectors of one building
+        ** to create ribbon with the new grid system
+        ** group grid points by type (floor/ground), do it as grid are loaded
+        ** get how ribbon are created, and adapt grids to the CreateRibbon
+        */
+        //texture random selector
         if (way.levels > 12){
            ribbon.material = (mats[4][Math.random() * mats[4].length | 0]);
         } else if (way.levels >= 6){
@@ -133,4 +142,7 @@ export default function createBuildings(scene) {
             ribbon.material = (mats[0][Math.random() * mats[0].length | 0]);
         }
     })
+
+    gridMesh.visibility = 0;
+    return gridMesh;
 }
