@@ -11,6 +11,8 @@ import { Path3D } from '@babylonjs/core/Maths/math.path'
 import textPanel from './textPanel'
 import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
 import { scene as globalScene } from './index'
+// import { Quaternion } from '@babylonjs/core/Maths/math'
+
 
 const paths = []
 
@@ -28,8 +30,20 @@ export default function createWays(scene, planes) {
     roadTexture.uScale = 20
     roadMat.diffuseTexture = roadTexture
 
+    // find the junctions
     createRootJunctions(ways)
+
+    // create the root paths
     rootPaths = createRootPaths(ways)
+
+    // create the lanes
+    rootLanes = createRootLanes(rootPaths)
+
+    // update the root lanes junctions
+    // projectJunctions(rootLanes)
+
+    // remove old junctions from root lanes
+
     ways.forEach(way => {
         const points = way.points.map( point => new Vector3(point.x, 0.1, point.y))
         const path3D = new Path3D(points);
@@ -60,13 +74,19 @@ export default function createWays(scene, planes) {
 
 const rootJunctions = []
 let rootPaths = []
+let rootLanes = []
+let rootLaneJunctions = []
 
+// Creates an array of root junctions based on point distance
 function createRootJunctions(ways) {
     const points = []
+    // gather all points
     ways.forEach(way => {
         way.points.forEach(point => points.push(new Vector3(point.x, 0.1, point.y)))
     })
 
+    // for each point find if there are any close point
+    // if found add it to the root junction list if not already there
     points.forEach ((point, i) => {
         const close = points.find((check, ii) => point.subtract(check).length() < 0.1 && i !== ii )
         if(close != null) {
@@ -76,6 +96,128 @@ function createRootJunctions(ways) {
         }
     })
 }
+
+// create the root path with junctions marked
+// juunction index is a junction id based on index inthe junction array
+function createRootPaths(ways) {
+    const paths = ways.map(way => {
+        const nodes = way.points.map(point => ({
+            point: new Vector3(point.x, 0.1, point.y),
+            junctionIndex: rootJunctions.findIndex(junction => junction.subtract(new Vector3(point.x, 0.1, point.y)).length() < 0.1)
+        }))
+        return nodes
+    })
+    return paths
+}
+
+// create the root lanes based on the paths
+function createRootLanes(paths) {
+    const up = new Vector3(0, 1, 0)
+    const down = new Vector3(0, -1, 0)
+    let nodeId = 0;
+
+    const lanes = paths.map((path, pathIndex) => {
+        const left = path.map((node, nodeIndex) => {
+            const index = Math.max(nodeIndex, 1)
+            const current = new Vector3(path[index].point.x, path[index].point.y, path[index].point.z)
+            const prev = new Vector3(path[index - 1].point.x, path[index - 1].point.y, path[index - 1].point.z)
+            const point = node.point.add(current.subtract(prev).cross(up).normalize().scale(2))
+            if(node.junctionIndex !== -1) {
+                rootLaneJunctions.push({
+                    laneIndex: pathIndex,
+                    nodeId,
+                    isLeft: true,
+                    junctionIndex: node.junctionIndex
+                })
+            }
+            return ({
+                point,
+                nodeId,
+                junctionIndex: node.junctionIndex
+            })
+        })
+        nodeId++
+        const right = path.map((node, nodeIndex) => {
+            const index = Math.max(nodeIndex, 1)
+            const current = new Vector3(path[index].point.x, path[index].point.y, path[index].point.z)
+            const prev = new Vector3(path[index - 1].point.x, path[index - 1].point.y, path[index - 1].point.z)
+            const point = node.point.add(current.subtract(prev).cross(down).normalize().scale(2))
+            if(node.junctionIndex !== -1) {
+                rootLaneJunctions.push({
+                    laneIndex: pathIndex,
+                    nodeId,
+                    isLeft: false,
+                    junctionIndex: node.junctionIndex
+                })
+            }
+            return ({
+                point,
+                nodeId,
+                junctionIndex: node.junctionIndex
+            })
+        })
+        return ({left, right})
+    })
+    return lanes
+}
+
+function getNodeIndexInLane(laneIndex, isLeft, nodeId) {
+    const path = rootLanes[laneIndex]
+    const lane = isLeft ? path.left : path.right
+    let node = null
+
+    return lane.findIndex(n => n.nodeId === nodeId)
+}
+
+function getNodeInLane(laneIndex, isLeft, index) {
+    const path = rootLanes[laneIndex]
+    const lane = isLeft ? path.left : path.right
+    let node = null
+
+    return lane[index]
+}
+
+// DEBUG ME
+function projectJunctions(lanes) {
+    console.log("PROJECT", rootLaneJunctions)
+    lanes.forEach((lane, laneIndex) => {
+        lane.left.forEach((node) => {
+            if(node.junctionIndex != -1) {
+                const siblings = rootLaneJunctions.filter( j => 
+                    j.junctionIndex === node.junctionIndex
+                    && (!j.isLeft
+                    || j.laneIndex !== laneIndex))
+                console.log("PROJECT", node.junctionIndex, laneIndex, siblings)
+                siblings.forEach(s => {
+                    const index = getNodeIndexInLane(s.laneIndex, s.isLeft, s.nodeId)
+                    if(index !== -1 && index < lanes[s.laneIndex].left.length - 1) {
+                        console.log("PROJECT", s.laneIndex, s.isLeft, index)
+                        const sNode = getNodeInLane(s.laneIndex, s.isLeft, index)
+                        const sNodeN = getNodeInLane(s.laneIndex, s.isLeft, index + 1)
+
+                        const u = new Vector3(sNodeN.point.x - sNode.point.x, sNodeN.point.y - sNode.point.y, sNodeN.point.z - sNode.point.z)
+                        const v = new Vector3(node.point.x - sNode.point.x, node.point.y - node.point.y, node.point.z - node.point.z)
+
+                        const dot = Vector3.Dot(u, v)
+
+                        const tx = u.scale(Math.sqrt(Math.abs(dot)) / u.length())
+
+                        const newVector = tx.add(new Vector3(sNode.point.x, sNode.point.y, sNode.point.w))
+                        const newNode = {
+                            point : { x: newVector.x, y: newVector.y, z: newVector.z },
+                            nodeId : 33,
+                            junctionIndex: node.junctionIndex
+                        }
+
+                        console.log("PROJECT", sNode, newNode, sNodeN)
+                    }
+                    
+                })
+            }
+        })
+    })
+}
+
 //
 function getInterPos(curr, next){
     var xD = next.x - curr.x;
@@ -121,18 +263,6 @@ function getSideforTrees(ways){
             Rcol.position = new Vector3(posTab['xR'], 1, posTab['yR']);
         }
     })
-}
-//
-
-function createRootPaths(ways) {
-    const paths = ways.map(way => {
-        const nodes = way.points.map(point => ({
-            point: new Vector3(point.x, 0.1, point.y),
-            junctionIndex: rootJunctions.findIndex(junction => junction.subtract(new Vector3(point.x, 0.1, point.y)).length() < 0.1)
-        }))
-        return nodes
-    })
-    return paths
 }
 
 function distanceToCurve(position, path) {
@@ -183,5 +313,22 @@ export function toggleDebugWays() {
             }
 
         })
+    })
+
+    rootLanes.forEach((lane, i) => {
+        const curveLeft = lane.left.map(n => n.point)
+        const curveRight = lane.right.map(n => n.point)
+        let liLeft = Mesh.CreateLines('li', curveLeft, globalScene)
+        let liRight = Mesh.CreateLines('li', curveRight, globalScene)
+        liLeft.position.y = liLeft.position.y + 0.1
+        liRight.position.y = liRight.position.y + 0.1
+        liLeft.color = Color3.Blue()
+        liRight.color = Color3.Green()
+        /* path.forEach(node => {
+            if(node.junctionIndex > 0) {
+                let m = MeshBuilder.CreateSphere("sphere", {radius: 1}, globalScene)
+                m.position = node.point
+            }
+        }) */
     })
 }
