@@ -17,6 +17,7 @@ import createMenu from './menu.js'
 import dressMap from './dressmap'
 import createDetailedCar from './detailedcar'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
+import createButtons from './drivebuttons'
 
 const planes = []
 // Get the canvas element from the DOM.
@@ -55,9 +56,10 @@ bots.forEach(bot => {//comment to disable bots by default
 })
 
 createMenu(scene, camera, freecamera, bots, grids);
+createButtons(scene);
 setupPhysics(scene, ground, car, bots)
 
-
+control.cameraloop(camera);
 control.setup(scene);
 camera.parent = car;
 // Render every frame
@@ -69,7 +71,7 @@ engine.runRenderLoop(() => {
        switchcar = 'new';
        car = tmpcar;
    }
-    control.loop(car)
-
-    botshandler.loop(bots)
+    control.loop(car)    
+   // control.cameraloop(camera, camera.clone())
+   // botshandler.loop(bots)
 })

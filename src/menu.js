@@ -4,49 +4,34 @@ import {disableTrees} from './dressmap'
 
 var camPosInterval;
 
-function buttonCreator(style, content){
+export function buttonCreator(style, content){
     var tmpBtn = document.createElement('button');
-    
+    tmpBtn.setAttribute('style', style + `; z-index: 10; position: absolute; font-weight: 800; color: white; opacity: 0.6; border-radius: 8px`);
+
     tmpBtn.innerText = content.text;
-    tmpBtn.style.backgroundColor = style.color;
-    tmpBtn.style.top = style.top;
-    tmpBtn.style.color = 'white';
-    tmpBtn.style.opacity = '0.6';
-    tmpBtn.style.position = 'absolute';
-    tmpBtn.style.borderRadius = '8px';
-    tmpBtn.style.zIndex = 10;
-    tmpBtn.style.right = '0px';
-    tmpBtn.style.display = style.display;
     return tmpBtn;
 }
 
-function divCreator(style, content){
+export function divCreator(style, content){
     var tmpDiv = document.createElement('div');
 
-    tmpDiv.style.top = style.top;
-    tmpDiv.style.right = style.right;
-    tmpDiv.style.height = style.height;
-    tmpDiv.style.color = style.color; 
-    tmpDiv.style.right = style.right;
-    tmpDiv.style.fontSize = style.fontSize;
-    tmpDiv.style.position = 'absolute';
-    tmpDiv.style.display = style.display;
+    tmpDiv.setAttribute('style', style + `;z-index: 10; position: absolute; font-weight: 800`);
+
     tmpDiv.id = content.id;
     tmpDiv.innerText = content.text;
-    tmpDiv.fontWeight = '800';
     return tmpDiv;
 }
 
-export default function createMenu(scene, camera, freecamera, bots, grids){
-    var btnMenu = buttonCreator({top: '50px', color:'black', display: 'block'},{text: 'Debug Menu'});
-    var btnJ = buttonCreator({top: '50px', color:'green', display: 'none'},{text: 'Disable Joysticks'});
-    var btnCam = buttonCreator({top:'30px', color: 'black', display: 'none'},{text: 'Camera Switch (C)'});
-    var btnBots = buttonCreator({top: '70px', color:'red', display: 'none'},{text: 'Enable Bots'});
-    var btnGrids = buttonCreator({top: '90px', color:'red', display: 'none'},{text: 'Enable Grids'});
-    var btnTrees = buttonCreator({top: '1300px', color:'red', display: 'none'},{text: 'Enable Trees'});
-    var btnWays = buttonCreator({top: '110px', color:'black', display: 'none'},{text: 'Show Ways'});
-    var camFresh = divCreator({top: '1vh', right: '1vw', height: '30px', color: 'black', display: 'none'}, {text: '', id:'position'});
-    var speedFresh = divCreator({top: '93vh', right: '89vw', height: '90px', color: 'black', display: 'block', fontSize: '2rem'}, {text: 'none', id: 'speed'});
+function setMainMenu(scene,camera,freecamera,bots,grids){
+    var btnMenu = buttonCreator('top: 50px; right: 0; background-color:black; display: block',{text: 'Debug Menu'});
+    var btnJ = buttonCreator('top: 50px; right: 0;background-color:green; display: none',{text: 'Disable Joysticks'});
+    var btnCam = buttonCreator('top:30px; right: 0;background-color: black; display: none',{text: 'Camera Switch (C)'});
+    var btnBots = buttonCreator('top: 70px; right: 0;background-color:red; display: none',{text: 'Enable Bots'});
+    var btnGrids = buttonCreator('top: 90px; right: 0;background-color:red; display: none',{text: 'Enable Grids'});
+    var btnTrees = buttonCreator('top: 1300px; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
+    var btnWays = buttonCreator('top: 110px; right: 0;background-color:black; display: none',{text: 'Show Ways'});
+    var camFresh = divCreator('top: 1vh; right: 1vw; height: 30px; display: none', {text: '', id:'position'});
+    var speedFresh = divCreator('top: 73vh; right: 76.5vw; height: 9rem; width: 10rem; display: block; color:white;font-size: 1rem', {text: 'none', id: 'speed'});
     var btnDivArray = [btnMenu, btnCam, btnJ, btnBots, btnWays, camFresh, speedFresh, btnGrids];
 
     btnDivArray.forEach(btn => {
@@ -62,7 +47,7 @@ export default function createMenu(scene, camera, freecamera, bots, grids){
             btnMenu.style.top = '180px';
         } else {
             btnDivArray.forEach(btn => {
-                if (btn != btnMenu)
+            if (btn != btnMenu)
                     btn.style.display = 'none';
             })
             btnMenu.innerText = 'Debug Menu';
@@ -85,7 +70,7 @@ export default function createMenu(scene, camera, freecamera, bots, grids){
     btnJ.onclick = () => {
         disableJoysticks();
     }
-    
+
     btnCam.onclick = () => {
         scene.activeCamera = (scene.activeCamera === freecamera ? camera : freecamera)
         if (scene.activeCamera === camera) {
@@ -136,5 +121,47 @@ export default function createMenu(scene, camera, freecamera, bots, grids){
             camFresh.innerHTML = `X: ${freecamera.position.x.toFixed(2)}   Y: ${freecamera.position.z.toFixed(2)}`;
         }, 1000)
     }
-    
+}
+
+function setControlMenu(){
+    var btnMenuControls = buttonCreator('top: 50px; left: 0; background-color:black; display: block',{text: 'Control Options'});
+    var dirSlide = buttonCreator('top: 50px; left: 0; background-color:green; display: none', {text: 'Slider'});
+    var dirAce = buttonCreator('top: 50px; left: 60px; background-color:red; display: none', {text: 'Accelerometer'});
+    var spSlide = buttonCreator('top: 70px; left: 0; background-color:green; display: none', {text: 'Slider'});
+    var spAce = buttonCreator('top: 70px; left: 60px; background-color:red; display: none', {text: 'Accelerometer'});
+    var spPedal = buttonCreator('top: 70px; left: 175px; background-color:red; display: none', {text: 'Pedal'});
+    var lookSlide = buttonCreator('top: 90px; left: 0; background-color:green; display: none', {text: 'Slider'});
+    var lookAce = buttonCreator('top: 90px; left: 60px; background-color:red; display: none', {text: 'Accelerometer'});
+
+    var controlMenuArray = [btnMenuControls, dirAce, dirSlide, spSlide, spAce, spPedal, lookAce, lookSlide];
+
+
+    controlMenuArray.forEach(btn => {
+        document.body.appendChild(btn);
+    })
+
+    btnMenuControls.onclick = () => {
+        if (btnMenuControls.innerText === 'Control Options') {
+            controlMenuArray.forEach(btn => {
+                btn.style.display = 'block';
+            })
+            btnMenuControls.innerText = 'Hide Options';
+            btnMenuControls.style.top = '150px';
+        } else {
+            controlMenuArray.forEach(btn => {
+                if (btn != btnMenuControls)
+                    btn.style.display = 'none';
+            })
+            btnMenuControls.innerText = 'Control Options';
+            btnMenuControls.style.top = '50px';
+        }
+    }
+
+    //foreachonclickcolor.
+
+}
+
+export default function createMenu(scene, camera, freecamera, bots, grids){
+    setMainMenu(scene,camera,freecamera,bots,grids);
+    setControlMenu();
 }

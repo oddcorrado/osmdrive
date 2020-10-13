@@ -52,11 +52,12 @@ function setup(scene) {
     })
 
     leftJoystick = new VirtualJoystick(true)
-    rightJoystick = new VirtualJoystick(false)
     VirtualJoystick.Canvas.style.opacity = '0';
+   // rightJoystick = new VirtualJoystick(false)
 
     leftJoystick.setJoystickSensibility(4)
-    rightJoystick.setJoystickSensibility(4)
+    //leftJoystick
+    //rightJoystick.setJoystickSensibility(4)
 }
 
 
@@ -64,17 +65,17 @@ function cameraloop(camera){
     let hostWindow = camera.getScene().getEngine().getHostWindow();
     hostWindow.addEventListener("deviceorientation", function (evt){
        sideTilt = evt.gamma;
-       //frontTilt = evt 
+       frontTilt
     });   
 }
 
 function loop(car) {
     var speedDiv = document.getElementById('speed');
 
-    // if(pace++ > 20) {
-    //     pace = 0
-    //     dir = getWayDir(car.position)
-    // }
+    if(pace++ > 20) {
+        pace = 0
+        dir = getWayDir(car.position)
+    }
 
 
     let vel = car.physicsImpostor.getLinearVelocity()
@@ -85,48 +86,85 @@ function loop(car) {
     }
 
     // JOYSTICK
-    if(true) {//touch
+    if(true) {
        var accelpedal = document.getElementById('accelerator');
         var steerWheel = document.getElementById('wheel');
         var accel = accelpedal.value;//0
-       
-        steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x : steer * 0.80;
-        speed = Math.max(0, Math.min(12, speed + accel));
-        
-
-        steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;//touch
-        steerWheel.value = leftJoystick.deltaPosition.x * 90;//touch
-      
-    } else if (true){
         //var accel = //accelero
-
+        //steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x : steer * 0.80//touch
         if (tilt < 60) {
             tilt = 60
         } else if (tilt > 120){
             tilt = 120;
         }
-
         steer = (tilt - 90)/maxTilt;
+
+        speed = Math.max(0, Math.min(12, speed + accel))
+        
+
+        //steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;//touch
+        //steerWheel.value = leftJoystick.deltaPosition.x * 90;//touch
         steerWheel.style.transform = `rotateZ(${((tilt-90)/maxTilt)*90}deg)`;//accelero
         steerWheel.value = (tilt - 90) / maxTilt;//accelero
-    } else if(true) {//OLD Joysticks function
+
+        angle += -steer * 0.025
+
+        const dirAngle = Math.atan2(dir.z, dir.x)
+        if(!leftJoystick.pressed && Math.abs(dirAngle - angle) < 1) {
+            angle = dirAngle * 0.1 + angle * 0.9
+        }
+    
+        const adjustSpeed = Math.max(0, speed - 10 * Math.abs(steer))
+       //const adjustSpeed = Math.max(0, speed)
+        const newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
+        car.physicsImpostor.setLinearVelocity(newVel)
+        car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
+    } 
+    else if(true) {//OLD Joysticks function
         steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x : steer * 0.95
         pedal = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
     
-        speed = Math.max(0, Math.min(12, speed + pedal))    
-    }
-
-    angle += -steer * 0.025
-    const dirAngle = Math.atan2(dir.z, dir.x)
-
-    if(!leftJoystick.pressed && Math.abs(dirAngle - angle) < 1) {
-        angle = dirAngle * 0.1 + angle * 0.9
-    }
     
-    const adjustSpeed = Math.max(0, speed - 10 * Math.abs(steer))//brakes when turning strong turns change speed - [?] value to make it more or less effective
-    const newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
-    car.physicsImpostor.setLinearVelocity(newVel)
-    car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
+        speed = Math.max(0, Math.min(12, speed + pedal))
+        angle += -steer * 0.025
+
+        const dirAngle = Math.atan2(dir.z, dir.x)
+        if(!leftJoystick.pressed && Math.abs(dirAngle - angle) < 1) {
+            angle = dirAngle * 0.1 + angle * 0.9
+        }
+    
+        const adjustSpeed = Math.max(0, speed - 20 * Math.abs(steer))
+        const newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
+        car.physicsImpostor.setLinearVelocity(newVel)
+        car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
+    } else {
+        // console.log('angle ' + angle + ' ' + speed)
+        if(rotateL){ //p
+            rotSpeed = Math.min(0.03, rotSpeed + 0.0005)
+            rotdir = 1
+            angle += rotSpeed
+        }
+        else if(rotateR){ //p
+            rotSpeed =  Math.min(0.03, rotSpeed + 0.0005)
+            rotdir = -1
+            
+        }
+        else if(moveF){ //b
+            speed += 0.1
+        }
+        else if(moveB){ //v
+            speed = Math.max(0, speed - 0.5)
+        }
+
+    
+        if(!rotateR && !rotateL) { rotSpeed = Math.max(0, rotSpeed - 0.0005) }    
+        angle += rotSpeed * rotdir   
+
+
+        const newVel = new Vector3(speed * Math.cos(angle), vel.y , speed * Math.sin(angle))
+        car.physicsImpostor.setLinearVelocity(newVel)
+        car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
+    }
 }
 
 export default {
