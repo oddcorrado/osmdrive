@@ -98,6 +98,7 @@ export default function createWays(scene, planes) {
     roads = extendroads(roads)
     updateNodeIndexes()
     createAllIntersectionNodes() 
+    // processInsertionNodes()
 
     // remove old junctions from root lanes
 
@@ -139,6 +140,7 @@ let roads = []
 let rootLaneJunctions = []
 let intersectionNodes = []
 let rootLaneProjections = []
+const rootIntersections = []
 
 // Creates an array of root junctions based on point distance
 function createRootJunctions(ways) {
@@ -266,7 +268,7 @@ function extendroads(lanes) {
     return lanes
 }
 
-const rootIntersections = []
+
 function createIntersectionNodesFromNodeSegment(segment, otherSegments) {
     otherSegments.forEach(otherSegment => {
         const inter = vectorIntersecton(segment[0], segment[1], otherSegment[0], otherSegment[1])
@@ -283,6 +285,15 @@ function getNodeInLane(roadIndex, laneIndex, index) {
     return road.lanes[laneIndex]
 }
 
+function laneUpdateNodeIndexes(roadIndex, laneIndex) {
+    const lane = roads[roadIndex].lanes[laneIndex]
+    lane.forEach((node, nodeIndex) => {
+        node.nodeIndex = nodeIndex
+        node.laneIndex = laneIndex
+        node.roadIndex = roadIndex
+    })
+}
+
 function updateNodeIndexes() {
     roads.forEach((road, roadIndex) => {
         road.lanes.forEach((lane, laneIndex) => {
@@ -295,6 +306,32 @@ function updateNodeIndexes() {
     })
 }
 
+function processInsertionNodes() {
+    console.log(intersectionNodes)
+    intersectionNodes.forEach(insertion => {
+        console.log("******")
+        console.log(insertion)
+        insertion.insertionSegments.forEach(segment =>{
+            const node = {
+                roadIndex: segment.roadIndex,
+                laneIndex: segment.laneIndex,
+                point: insertion.point,
+                nodeId: 333,
+                nodeIndex:-1,
+                upwise: true,
+                junctionIndex: -2
+            }
+            console.log("******")
+            console.log(roads[segment.roadIndex].lanes[segment.laneIndex])
+            const lane = roads[segment.roadIndex].lanes[segment.laneIndex].concat()
+            lane.splice(segment.nodeIndexPrev + 1, 0, node)
+            console.log(lane)
+            roads[segment.roadIndex].lanes[segment.laneIndex] = lane
+            laneUpdateNodeIndexes(segment.roadIndex, segment.laneIndex)
+        })
+    })
+}
+
 function getNodeInRoad(roadIndex, laneIndex, nodeIndex) {
     if(nodeIndex < 0) { return null }
     const lane = roads[roadIndex].lanes[laneIndex]
@@ -302,6 +339,7 @@ function getNodeInRoad(roadIndex, laneIndex, nodeIndex) {
     if(lane[nodeIndex] == null) { console.log(roadIndex, laneIndex, nodeIndex, lane) }
     return lane[nodeIndex]
 }
+
 // gets previous and next nodes from a given lane node
 // make sure node index are clean before using this
 function getPrevNext(node) {
@@ -316,7 +354,7 @@ function getInsertionSegment(a1, a2, b1, b2) {
         laneIndex: a1.laneIndex,
         connections: [a1, a2, b1, b2],
         nodeIndexPrev: Math.min(a1.nodeIndex, a2.nodeIndex),
-        nodeIndexNext: a2.nodeIndex
+        nodeIndexNext: Math.max(a1.nodeIndex, a2.nodeIndex)
     })
 }
 
@@ -449,7 +487,7 @@ export function getWayDir(position) {
 
 export function toggleDebugWays() {
     enableDebug = !enableDebug
-
+console.log(roads)
     rootPaths.forEach((path, i) => {
         const curve = path.map(n => n.point)
         let li = Mesh.CreateLines('li', curve, globalScene)
@@ -472,12 +510,12 @@ export function toggleDebugWays() {
             li.position.y = li.position.y + 0.1
             li.color = Color3.Random()
             lane.forEach(node => {
-                if(node.junctionIndex > 0) {
-                    let m = MeshBuilder.CreateBox("box", {size: 0.6}, globalScene)
-                    m.position = node.point
+                if(node.junctionIndex < 0) {
+                    //let m = MeshBuilder.CreateBox("box", {size: 0.6}, globalScene)
+                    //m.position = node.point
                 } else {
-                    let m = MeshBuilder.CreateBox("box", {size: 0.2}, globalScene)
-                    m.position = node.point
+                    //let m = MeshBuilder.CreateBox("box", {size: 0.2}, globalScene)
+                    //m.position = node.point
                 }
             })
         })
@@ -485,7 +523,7 @@ export function toggleDebugWays() {
 
     intersectionNodes.forEach(intersection => {
         console.log(intersection)
-        let m = MeshBuilder.CreateSphere("sphere", {diameter: 0.5}, globalScene)
+        let m = MeshBuilder.CreateBox("sphere", {size: 0.5}, globalScene)
         m.position = intersection.point
     })
 
