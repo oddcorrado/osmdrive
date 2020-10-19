@@ -18,7 +18,7 @@ let sideTilt = 90;
 let frontTilt = 90;
 let esp = true;
 let maxTilt = 30;
-let mode = {dir: 'slide', spd: 'button', lk: 'slide'};
+let mode = {dir: 'slide', spd: 'button', lk: 'tilt'};
 
 export function toggleEsp(){
     esp = !esp;
@@ -150,13 +150,15 @@ function loop(car,scene) {
 
     //Speed
     if(mode.spd === 'button') {
+        VirtualJoystick.Canvas.style.opacity = '0'
         accel = accelpedal.value;//0
-       
         speed = Math.max(0, Math.min(12, speed + accel));
     } else if (mode.spd === 'slide'){
+        VirtualJoystick.Canvas.style.opacity = '0.7'
         accel = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
     } else if(mode.spd === 'tilt') {
-        var accel = frontTilt/10;
+        VirtualJoystick.Canvas.style.opacity = '0'
+        var accel = frontTilt;
     }
 
     //Look
@@ -167,7 +169,7 @@ function loop(car,scene) {
         right.style.display = 'block';
     } else if (mode.lk === 'tilt') {
     //enable buttons to look right and left
-        scene.activeCamera.lockedTarget = null
+        scene.activeCamera.lockedTarget = 0
         left.style.display = 'none';
         right.style.display = 'none';
     } else {

@@ -181,6 +181,7 @@ function setControlMenu(){
             spd.innerText = spd.innerText.replace('Button', 'Slide');
         } else if (spd.innerHTML.includes('Slide')) {
             spd.style.backgroundColor = 'rgb(84, 179, 71)';
+            
             spd.innerText = spd.innerText.replace('Slide', 'Tilt');
         } else if (spd.innerHTML.includes('Tilt')){
             spd.style.backgroundColor = 'rgb(66, 135, 245)';

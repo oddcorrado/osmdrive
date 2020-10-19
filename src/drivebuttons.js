@@ -75,7 +75,6 @@ export default function createButtons (scene){
     left.addEventListener('touchstart', function(){
         left.style.opacity = '1'
         scene.activeCamera.setTarget(new Vector3(-15, 6, 50));
-        console.log(scene.activeCamera);
     });
 
     left.addEventListener('touchend', function(){
@@ -87,7 +86,6 @@ export default function createButtons (scene){
     right.addEventListener('touchstart', function(){
         right.style.opacity = '1'
         scene.activeCamera.setTarget(new Vector3(15, 6, 50));
-        console.log(scene.activeCamera);
     });
 
     right.addEventListener('touchend', function(){

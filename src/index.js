@@ -44,7 +44,7 @@ toggleCamera(scene, camera, freecamera, false);
 var container = new AssetContainer(scene);
 
 //Creates cars meshes
-//createDetailedCar(scene, camera, internalCamera, container);
+createDetailedCar(scene, camera, internalCamera, container);
 var car = createCar(scene);
 
 //Create main meshes 
