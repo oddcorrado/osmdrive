@@ -18,6 +18,7 @@ import dressMap from './dressmap'
 import createDetailedCar from './detailedcar'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
 import createButtons from './drivebuttons'
+import {changeOptions} from './control'
 
 const planes = []
 // Get the canvas element from the DOM.
@@ -25,7 +26,10 @@ const canvas = document.getElementById('renderCanvas')
 const engine = new Engine(canvas);
 export const scene = new Scene(engine);
 const ground = createGround(scene);
+
+// Creates and sets camera 
 const camera = createCamera(scene, canvas);//NORMAL CAMERA
+const internalCamera = createCamera(scene, canvas, 1);
 const freecamera = createFreeCamera(scene, canvas);
 scene.activeCamera = camera; 
 var switchcar = 'old';
@@ -40,7 +44,7 @@ toggleCamera(scene, camera, freecamera, false);
 var container = new AssetContainer(scene);
 
 //Creates cars meshes
-//createDetailedCar(scene, camera, container);
+createDetailedCar(scene, camera, internalCamera, container);
 var car = createCar(scene);
 
 //Create main meshes 
@@ -55,12 +59,14 @@ bots.forEach(bot => {//comment to disable bots by default
     bot.setEnabled(false);
 })
 
-createMenu(scene, camera, freecamera, bots, grids);
+createMenu(scene, camera, internalCamera, freecamera, bots, grids);
 createButtons(scene);
+changeOptions();
 setupPhysics(scene, ground, car, bots)
 
 control.cameraloop(camera);
 control.setup(scene);
+//internalCamera.parent = car;
 camera.parent = car;
 // Render every frame
 
@@ -69,9 +75,9 @@ engine.runRenderLoop(() => {
     scene.render()
    if (switchcar === 'old' && (tmpcar = container['meshes'].find(mesh => mesh.name == 'detailedcar'))){
        switchcar = 'new';
+      // internalCamera.parent =  car;
        car = tmpcar;
    }
     control.loop(car)    
-   // control.cameraloop(camera, camera.clone())
    // botshandler.loop(bots)
 })

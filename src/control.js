@@ -1,6 +1,7 @@
 import { KeyboardEventTypes} from '@babylonjs/core/Events/keyboardEvents'
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
 import { Vector3 } from '@babylonjs/core/Maths/math'
+//import {getCurrent} from './menu'
 import { getWayDir } from './way'
 
 let speed= 0
@@ -8,15 +9,20 @@ let angle = 0
 let rotSpeed = 0
 let rotdir = 0
 let steer = 0
-let pedal = 0
+var accel = 0
 let leftJoystick = null
 let rightJoystick = null
 let pace = 0
 let dir = new Vector3(1, 0, 0)
 let sideTilt = 90;
 let frontTilt = 90;
+let esp = true;
 let maxTilt = 30;
+let mode = {dir: 'slide', spd: 'button', lk: 'slide'};
 
+export function toggleEsp(){
+    esp = !esp;
+}
 
 function setup(scene) {
     let moveF, moveB, rotateL, rotateR = false
@@ -54,7 +60,6 @@ function setup(scene) {
     leftJoystick = new VirtualJoystick(true)
     rightJoystick = new VirtualJoystick(false)
     VirtualJoystick.Canvas.style.opacity = '0';
-
     leftJoystick.setJoystickSensibility(4)
     rightJoystick.setJoystickSensibility(4)
 }
@@ -68,62 +73,108 @@ function cameraloop(camera){
     });   
 }
 
+export function changeOptions (){
+    var dir = document.getElementById('dir');
+    var spd = document.getElementById('spd');
+    var lk  = document.getElementById('lk');
+
+    dir.addEventListener('click', function (){
+        if (mode.dir === 'slide'){
+            mode.dir = 'tilt';
+        } else {
+            mode.dir = 'slide';
+        }
+    })
+
+
+    spd.addEventListener('click', function (){
+        if (mode.spd === 'button'){
+            mode.spd = 'slide';
+            document.getElementById('accelerator').style.display = 'none';
+            document.getElementById('brake').style.display = 'none'; 
+        } else if (mode.spd === 'slide'){
+            mode.spd = 'tilt';
+            document.getElementById('accelerator').style.display = 'none';
+            document.getElementById('brake').style.display = 'none'; 
+        } else {
+            document.getElementById('accelerator').style.display = 'block'; 
+            document.getElementById('brake').style.display = 'block'; 
+            mode.spd = 'button';
+        }
+    })
+
+    lk.addEventListener('click', function (){
+        if (mode.lk === 'slide'){
+            mode.lk = 'tilt';
+        } else if (mode.lk === 'tilt') {
+            mode.lk = 'off';
+        } else {
+            mode.lk = 'slide';
+        }
+    })    
+}
+
 function loop(car) {
     var speedDiv = document.getElementById('speed');
+    var accelpedal = document.getElementById('accelerator');
+    var steerWheel = document.getElementById('wheel');
+    let vel = car.physicsImpostor.getLinearVelocity();
 
-    // if(pace++ > 20) {
-    //     pace = 0
-    //     dir = getWayDir(car.position)
-    // }
-
-
-    let vel = car.physicsImpostor.getLinearVelocity()
     speedDiv.innerText = `${(Math.abs(vel.x) + Math.abs(vel.z)).toFixed()} KM/H`;
-
+    if(pace++ > 20) {
+        pace = 0
+        dir = getWayDir(car.position)
+    }
+    
     if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
          angle = Math.atan2(vel.z, vel.x)
     }
 
-    // JOYSTICK
-    if(true) {//touch
-       var accelpedal = document.getElementById('accelerator');
-        var steerWheel = document.getElementById('wheel');
-        var accel = accelpedal.value;//0
-       
+    // Direction
+    if (mode.dir === 'slide'){
         steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x : steer * 0.80;
-        speed = Math.max(0, Math.min(12, speed + accel));
-        
-
-        steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;//touch
-        steerWheel.value = leftJoystick.deltaPosition.x * 90;//touch
-      
-    } else if (true){
-        //var accel = //accelero
-
-        if (tilt < 60) {
-            tilt = 60
-        } else if (tilt > 120){
-            tilt = 120;
+        steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;
+        steerWheel.value = leftJoystick.deltaPosition.x * 90;
+    } else if (mode.dir === 'tilt'){
+        if (sideTilt < 60) {
+            sideTilt = 60
+        } else if (sideTilt > 120){
+            sideTilt = 120;
         }
-
-        steer = (tilt - 90)/maxTilt;
-        steerWheel.style.transform = `rotateZ(${((tilt-90)/maxTilt)*90}deg)`;//accelero
-        steerWheel.value = (tilt - 90) / maxTilt;//accelero
-    } else if(true) {//OLD Joysticks function
-        steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x : steer * 0.95
-        pedal = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
-    
-        speed = Math.max(0, Math.min(12, speed + pedal))    
+        steer = (sideTilt - 90)/maxTilt;
+        steerWheel.style.transform = `rotateZ(${((sideTilt-90)/maxTilt)*90}deg)`;
+        steerWheel.value = (sideTilt - 90) / maxTilt;
     }
 
+    //Speed
+    if(mode.spd === 'button') {
+        accel = accelpedal.value;//0
+       
+        speed = Math.max(0, Math.min(12, speed + accel));
+    } else if (mode.spd === 'slide'){
+        accel = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
+    } else if(mode.spd === 'tilt') {
+        //var accel = //accelero   
+    }
+
+    //Look
+    if (mode.lk === 'slide'){
+        //enable camera look around
+    } else if (mode.lk === 'tilt') {
+        //enable buttons to look right and left
+    } else {
+        //turn off camera rotation
+    }
+
+    speed = Math.max(0, Math.min(12, speed + accel))    
     angle += -steer * 0.025
     const dirAngle = Math.atan2(dir.z, dir.x)
 
-    if(!leftJoystick.pressed && Math.abs(dirAngle - angle) < 1) {
+     if(esp != false && (!leftJoystick.pressed /*|| sideTilt - 5 < */)  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
         angle = dirAngle * 0.1 + angle * 0.9
     }
     
-    const adjustSpeed = Math.max(0, speed - 10 * Math.abs(steer))//brakes when turning strong turns change speed - [?] value to make it more or less effective
+    const adjustSpeed = Math.max(0, speed - 10 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
     const newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
     car.physicsImpostor.setLinearVelocity(newVel)
     car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
