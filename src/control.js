@@ -18,7 +18,7 @@ let sideTilt = 90;
 let frontTilt = 90;
 let esp = true;
 let maxTilt = 30;
-let mode = {dir: 'slide', spd: 'button', lk: 'slide'};
+let mode = {dir: 'slide', spd: 'button', lk: 'tilt'};
 
 export function toggleEsp(){
     esp = !esp;
@@ -69,7 +69,7 @@ function cameraloop(camera){
     let hostWindow = camera.getScene().getEngine().getHostWindow();
     hostWindow.addEventListener("deviceorientation", function (evt){
        sideTilt = evt.gamma;
-       //frontTilt = evt 
+       frontTilt = evt.alpha
     });   
 }
 
@@ -104,12 +104,12 @@ export function changeOptions (){
     })
 
     lk.addEventListener('click', function (){
-        if (mode.lk === 'slide'){
-            mode.lk = 'tilt';
-        } else if (mode.lk === 'tilt') {
+        if (mode.lk === 'tilt'){
+            mode.lk = 'slide';
+        } else if (mode.lk === 'slide') {
             mode.lk = 'off';
         } else {
-            mode.lk = 'slide';
+            mode.lk = 'tilt';
         }
     })    
 }
@@ -118,9 +118,11 @@ function loop(car) {
     var speedDiv = document.getElementById('speed');
     var accelpedal = document.getElementById('accelerator');
     var steerWheel = document.getElementById('wheel');
+    var left = document.getElementById('left');
+    var right = document.getElementById('right');
     let vel = car.physicsImpostor.getLinearVelocity();
 
-    speedDiv.innerText = `${(Math.abs(vel.x) + Math.abs(vel.z)).toFixed()} KM/H`;
+    speedDiv.innerText = `${(Math.abs(vel.x) + Math.abs(vel.z)).toFixed()}`;
     if(pace++ > 20) {
         pace = 0
         dir = getWayDir(car.position)
@@ -154,16 +156,21 @@ function loop(car) {
     } else if (mode.spd === 'slide'){
         accel = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
     } else if(mode.spd === 'tilt') {
-        //var accel = //accelero   
+        var accel = frontTilt/10;
     }
 
     //Look
     if (mode.lk === 'slide'){
         //enable camera look around
+        left.style.display = 'block';
+        right.style.display = 'block';
     } else if (mode.lk === 'tilt') {
-        //enable buttons to look right and left
+    //enable buttons to look right and left
+        left.style.display = 'none';
+        right.style.display = 'none';
     } else {
-        //turn off camera rotation
+        left.style.display = 'none';
+        right.style.display = 'none';
     }
 
     speed = Math.max(0, Math.min(12, speed + accel))    

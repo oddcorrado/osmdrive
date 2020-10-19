@@ -17,11 +17,15 @@ export function buttonDriveCreator(style, content){
 
 
 export default function createButtons (scene){
-    var accel = buttonDriveCreator('z-index: 10; top: 80vh; right: 2vw; height:6rem;',{height: '6rem', id:'accelerator',img: '../images/gaspedal.png'});
-    var brake = buttonDriveCreator('z-index: 10; top: 85vh; right: 7.5vw; height:3.5rem;',{height: '3.5rem', id:'brake', img: '../images/brake.png'});
-    var wheel = buttonDriveCreator('z-index: 10; top: 68vh; right: 83vw; height:8rem;', {height: '8rem', id: 'wheel', img: '../images/steerwheel.png'})
-    var dashboard = buttonDriveCreator('z-index: 0; top: 68vh; right: 80.5vw; height: 9rem;', {height: '4rem', id: 'dash', img: '../images/dashboard.png'});
-    var btnDivArray = [accel, brake, wheel, dashboard];
+    var accel = buttonDriveCreator('z-index: 10; top: 73vh; right: 5vw; height:11rem;',{height: '8rem', id:'accelerator',img: '../images/gas2.svg'});
+    var brake = buttonDriveCreator('z-index: 10; top: 84.5vh; right: 14vw; height:3.5rem;',{height: '4rem', id:'brake', img: '../images/brake2.svg'});
+    var wheel = buttonDriveCreator('z-index: 10;top: 60vh; right: 78vw; height:12rem;', {height: '12rem', id: 'wheel', img: '../images/steerwheel2.svg'})
+    var dashboard = buttonDriveCreator('z-index: 0; top: 82.5vh; right: 62vw; height: 8rem;', {height: '6rem', id: 'dash', img: '../images/dashboard2.png'});
+    var left = buttonDriveCreator('opacity: 0.7; z-index: 0; top: 54vh; right: 15vw; height: 8rem;', {height: '6rem', id: 'left', img: '../images/left.svg'});
+    var right = buttonDriveCreator('opacity: 0.7; z-index: 0; top: 54vh; right: 4vw; height: 8rem;', {height: '6rem', id: 'right', img: '../images/right.png'});
+
+
+    var btnDivArray = [accel, brake, wheel, dashboard, left, right];
 
     btnDivArray.forEach(btn => {
         document.body.appendChild(btn);

@@ -66,7 +66,6 @@ setupPhysics(scene, ground, car, bots)
 
 control.cameraloop(camera);
 control.setup(scene);
-//internalCamera.parent = car;
 camera.parent = car;
 // Render every frame
 
@@ -75,7 +74,6 @@ engine.runRenderLoop(() => {
     scene.render()
    if (switchcar === 'old' && (tmpcar = container['meshes'].find(mesh => mesh.name == 'detailedcar'))){
        switchcar = 'new';
-      // internalCamera.parent =  car;
        car = tmpcar;
    }
     control.loop(car)    

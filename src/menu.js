@@ -59,7 +59,7 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     var btnWays = buttonCreator('top: 150px; right: 0;background-color:black; display: none',{text: 'Show Ways'});
     var btnTrees = buttonCreator('top: 170px; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
     var camFresh = divCreator('top: 1vh; right: 1vw; height: 30px; display: none', {text: '', id:'position'});
-    var speedFresh = divCreator('top: 73vh; right: 76.5vw; height: 9rem; width: 10rem; display: block; color:white;font-size: 1rem', {text: 'none', id: 'speed'});
+    var speedFresh = divCreator('font-family: aldrich ; text-align:center; top: 85.5vh; right: 69.5vw; height: 8rem; display: block; color: #56CCF2;font-size: 3rem', {text: 'none', id: 'speed'});
     var btnDivArray = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, camFresh, speedFresh, btnGrids, btnEsp];
 
     btnDivArray.forEach(btn => {
@@ -110,11 +110,16 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
         }
     }
 
+
     btnSwCam.onclick = () => {
         if (scene.activeCamera != internalCamera) {
+            speedFresh.setAttribute('style', 'right:57.5vw');
+            document.getElementById('dash').setAttribute('style', 'right:50vw');
             camFresh.style.display = 'none';
             scene.activeCamera = internalCamera;
         } else {
+            document.getElementById('dash').setAttribute('style', 'right:62vw');
+            speedFresh.setAttribute('style', 'right:69.5vw');
             scene.activeCamera = camera;
             clearInterval(camPosInterval);
             camFresh.style.display = 'none';
@@ -163,8 +168,7 @@ function setControlMenu(){
     var btnMenuControls = buttonCreator('top: 50px; left: 0; background-color:black; display: block',{text: 'Control Options'});
     var dir = buttonCreator('top: 50px; left: 0; background-color:rgb(66, 135, 245); display: none', {text: 'Slide Direction', id: 'dir', class: 'control-menu'});
     var spd = buttonCreator('top: 70px; left: 0; background-color:rgb(66, 135, 245); display: none', {text: 'Button Speed', id: 'spd', class: 'control-menu'});
-    var lk = buttonCreator('top: 90px; left: 0; background-color:rgb(66, 135, 245); display: none', {text: 'Slide Look', id: 'lk', class: 'control-menu'});
-    
+    var lk = buttonCreator('top: 90px; left: 0; background-color:rgb(66, 135, 245); display: none', {text: 'Tilt Look', id: 'lk', class: 'control-menu'});
     var controlMenuArray = [btnMenuControls, dir, spd, lk];
 
     dir.addEventListener('click', function(){
@@ -191,7 +195,7 @@ function setControlMenu(){
         } else if (lk.innerHTML.includes('Slide')) {
             lk.style.backgroundColor = 'rgb(84, 179, 71)';
             lk.innerText = lk.innerText.replace('Slide', 'Off');
-        } else if (lk.innerHTML.includes('Tilt')){
+        } else if (lk.innerHTML.includes('Off')){
             lk.style.backgroundColor = 'rgb(66, 135, 245)';
             lk.innerText = lk.innerText.replace('Off', 'Tilt');
         }
