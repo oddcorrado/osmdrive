@@ -31,7 +31,7 @@ const ground = createGround(scene);
 const camera = createCamera(scene, canvas);//NORMAL CAMERA
 const internalCamera = createCamera(scene, canvas, 1);
 const freecamera = createFreeCamera(scene, canvas);
-scene.activeCamera = camera; 
+scene.activeCamera = internalCamera; 
 var switchcar = 'old';
 var tmpcar;
 
@@ -44,7 +44,7 @@ toggleCamera(scene, camera, freecamera, false);
 var container = new AssetContainer(scene);
 
 //Creates cars meshes
-createDetailedCar(scene, camera, internalCamera, container);
+//createDetailedCar(scene, camera, internalCamera, container);
 var car = createCar(scene);
 
 //Create main meshes 
@@ -67,6 +67,7 @@ setupPhysics(scene, ground, car, bots)
 control.cameraloop(camera);
 control.setup(scene);
 camera.parent = car;
+internalCamera.parent = car;
 // Render every frame
 
 engine.runRenderLoop(() => {
@@ -76,6 +77,6 @@ engine.runRenderLoop(() => {
        switchcar = 'new';
        car = tmpcar;
    }
-    control.loop(car)    
+    control.loop(car, scene)    
    // botshandler.loop(bots)
 })

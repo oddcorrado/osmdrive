@@ -18,7 +18,7 @@ let sideTilt = 90;
 let frontTilt = 90;
 let esp = true;
 let maxTilt = 30;
-let mode = {dir: 'slide', spd: 'button', lk: 'tilt'};
+let mode = {dir: 'slide', spd: 'button', lk: 'slide'};
 
 export function toggleEsp(){
     esp = !esp;
@@ -114,7 +114,7 @@ export function changeOptions (){
     })    
 }
 
-function loop(car) {
+function loop(car,scene) {
     var speedDiv = document.getElementById('speed');
     var accelpedal = document.getElementById('accelerator');
     var steerWheel = document.getElementById('wheel');
@@ -162,13 +162,16 @@ function loop(car) {
     //Look
     if (mode.lk === 'slide'){
         //enable camera look around
+        scene.activeCamera.lockedTarget = new Vector3(0, 0, 50)
         left.style.display = 'block';
         right.style.display = 'block';
     } else if (mode.lk === 'tilt') {
     //enable buttons to look right and left
+        scene.activeCamera.lockedTarget = null
         left.style.display = 'none';
         right.style.display = 'none';
     } else {
+        scene.activeCamera.lockedTarget = new Vector3(0, 0, 50)
         left.style.display = 'none';
         right.style.display = 'none';
     }
@@ -188,7 +191,7 @@ function loop(car) {
 }
 
 export default {
-    loop: car => loop(car),
+    loop: (car, scene) => loop(car, scene),
     cameraloop: camera => cameraloop(camera),
     setup: scene => setup(scene)
 }

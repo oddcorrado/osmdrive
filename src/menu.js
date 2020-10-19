@@ -113,13 +113,13 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 
     btnSwCam.onclick = () => {
         if (scene.activeCamera != internalCamera) {
-            speedFresh.setAttribute('style', 'right:57.5vw');
-            document.getElementById('dash').setAttribute('style', 'right:50vw');
+            // speedFresh.setAttribute('style', 'right:57.5vw');
+            // document.getElementById('dash').setAttribute('style', 'right:50vw');
             camFresh.style.display = 'none';
             scene.activeCamera = internalCamera;
         } else {
-            document.getElementById('dash').setAttribute('style', 'right:62vw');
-            speedFresh.setAttribute('style', 'right:69.5vw');
+            // document.getElementById('dash').setAttribute('style', 'right:62vw');
+            // speedFresh.setAttribute('style', 'right:69.5vw');
             scene.activeCamera = camera;
             clearInterval(camPosInterval);
             camFresh.style.display = 'none';

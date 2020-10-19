@@ -3,7 +3,8 @@ import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientati
 import { Vector3 } from '@babylonjs/core/Maths/math'
 
 export default function createCamera(scene, canvas, mode = 0) {
-   if (mode == 0){//External
+        //var camera = new DeviceOrientationCamera("DevOr_camera", new Vector3(-10, 6, -14), scene);
+    if (mode == 0){//External
     var camera = new DeviceOrientationCamera("DevOr_camera", new Vector3(0, 6, -14), scene);
 
     camera.setTarget(new Vector3(0, 0, 50))
