@@ -522,7 +522,7 @@ console.log(roads)
     })
 
     intersectionNodes.forEach(intersection => {
-        console.log(intersection)
+        // console.log(intersection)
         let m = MeshBuilder.CreateBox("sphere", {size: 0.5}, globalScene)
         m.position = intersection.point
     })
