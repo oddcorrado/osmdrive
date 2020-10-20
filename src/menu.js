@@ -2,6 +2,7 @@ import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
 import { toggleDebugWays } from './way'
 import {disableTrees} from './dressmap'
 import {toggleEsp} from './control'
+import { Vector3 } from '@babylonjs/core/Maths/math';
 
 var camPosInterval;
 
@@ -98,6 +99,7 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 
     btnCam.onclick = () => {
         scene.activeCamera = (scene.activeCamera === freecamera ? camera : freecamera)
+        scene.activeCamera.position = new Vector3(-230, 10, -265)
         if (scene.activeCamera === camera) {
             clearInterval(camPosInterval);
             camFresh.style.display = 'none';

@@ -98,7 +98,7 @@ export default function createWays(scene, planes) {
     roads = extendroads(roads)
     updateNodeIndexes()
     createAllIntersectionNodes() 
-    // processInsertionNodes()
+    processInsertionNodes()
 
     // remove old junctions from root lanes
 
@@ -306,12 +306,30 @@ function updateNodeIndexes() {
     })
 }
 
+function bestFit (point,  roadIndex, laneIndex) {
+    const lane = roads[roadIndex].lanes[laneIndex]
+    let d = 1000000
+    let best = -1
+
+    for(let i = 1; i < lane.length; i++) {
+        const v1 = point.subtract(lane[i - 1].point)
+        const v2 = point.subtract(lane[i].point)
+
+        if(v1.length() + v2.length() < d) {
+            d = v1.length() + v2.length()
+            best = i
+        }
+    }
+
+    return best
+}
+
 function processInsertionNodes() {
     console.log(intersectionNodes)
-    intersectionNodes.forEach(insertion => {
+    intersectionNodes.forEach((insertion, i) => {
         console.log("******")
         console.log(insertion)
-        insertion.insertionSegments.forEach(segment =>{
+        insertion.insertionSegments.forEach(segment => {
             const node = {
                 roadIndex: segment.roadIndex,
                 laneIndex: segment.laneIndex,
@@ -324,7 +342,8 @@ function processInsertionNodes() {
             console.log("******")
             console.log(roads[segment.roadIndex].lanes[segment.laneIndex])
             const lane = roads[segment.roadIndex].lanes[segment.laneIndex].concat()
-            lane.splice(segment.nodeIndexPrev + 1, 0, node)
+            const insertionIndex = bestFit (node.point, segment.roadIndex, segment.laneIndex)
+            lane.splice(insertionIndex, 0, node)
             console.log(lane)
             roads[segment.roadIndex].lanes[segment.laneIndex] = lane
             laneUpdateNodeIndexes(segment.roadIndex, segment.laneIndex)
@@ -487,7 +506,7 @@ export function getWayDir(position) {
 
 export function toggleDebugWays() {
     enableDebug = !enableDebug
-console.log(roads)
+
     rootPaths.forEach((path, i) => {
         const curve = path.map(n => n.point)
         let li = Mesh.CreateLines('li', curve, globalScene)
@@ -510,12 +529,12 @@ console.log(roads)
             li.position.y = li.position.y + 0.1
             li.color = Color3.Random()
             lane.forEach(node => {
-                if(node.junctionIndex < 0) {
-                    //let m = MeshBuilder.CreateBox("box", {size: 0.6}, globalScene)
-                    //m.position = node.point
+                if(node.nodeId === 333) {
+                    let m = MeshBuilder.CreateBox("box", {size: 0.6}, globalScene)
+                    m.position = node.point
                 } else {
-                    //let m = MeshBuilder.CreateBox("box", {size: 0.2}, globalScene)
-                    //m.position = node.point
+                    let m = MeshBuilder.CreateBox("box", {size: 0.2}, globalScene)
+                    m.position = node.point
                 }
             })
         })
@@ -523,8 +542,8 @@ console.log(roads)
 
     intersectionNodes.forEach(intersection => {
         // console.log(intersection)
-        let m = MeshBuilder.CreateBox("sphere", {size: 0.5}, globalScene)
-        m.position = intersection.point
+        //let m = MeshBuilder.CreateBox("sphere", {size: 0.5}, globalScene)
+        //m.position = intersection.point
     })
 
     rootLaneProjections.forEach(node => {
