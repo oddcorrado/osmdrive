@@ -24,12 +24,19 @@ const startup = boot => {
 
     document.body.appendChild(start)
 
+    start.innerText = window.innerWidth
+
+    window.onresize = () => { start.innerText = window.innerWidth + ' x ' + window.innerHeight }
+
     start.onclick = () => {
-        if (screenfull.isEnabled) {
-            screenfull.request()
+        console.log(window.innerWidth )
+        if(window.innerWidth > 900) {
+            if (screenfull.isEnabled) {
+                screenfull.request()
+            }
+            document.body.removeChild(start)
+            boot()
         }
-        document.body.removeChild(start)
-        boot()
     }
 }
 
