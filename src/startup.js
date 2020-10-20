@@ -2,6 +2,22 @@ import screenfull from 'screenfull'
 import { divCreator } from './menu'
 
 
+const displayText = (w, h) => {
+    if( w > h) {
+        return "START"
+    } else {
+        return "PLEASE\nROTATE\nDEVICE"
+    }
+}
+
+const displayColor = (w, h) => {
+    if(window.innerWidth > window.innerHeight) {
+        return 'gray'
+    } else {
+        return 'red'
+    }
+}
+
 const startup = boot => {
     const startStyle = `
         width: 100%;
@@ -18,19 +34,22 @@ const startup = boot => {
         display: flex;
         align-items: center;
         justify-content: center;
+        text-align: center;
     `
 
-    const start = divCreator(startStyle, {id: 'startDiv', text: 'START'})
+    const start = divCreator(startStyle, {id: 'startDiv', text: displayText(window.innerWidth, window.innerHeight)})
+
+    start.style.color = displayColor(window.innerWidth, window.innerHeight)
 
     document.body.appendChild(start)
 
-    start.innerText = window.innerWidth
-
-    window.onresize = () => { start.innerText = window.innerWidth + ' x ' + window.innerHeight }
+    window.onresize = () => { 
+        start.innerText = displayText(window.innerWidth, window.innerHeight)
+        start.style.color = displayColor(window.innerWidth, window.innerHeight)
+    }
 
     start.onclick = () => {
-        console.log(window.innerWidth )
-        if(window.innerWidth > 900) {
+        if(window.innerWidth > window.innerHeight) {
             if (screenfull.isEnabled) {
                 screenfull.request()
             }
