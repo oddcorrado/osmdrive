@@ -4,9 +4,9 @@ import { divCreator } from './menu'
 
 const displayText = (w, h) => {
     if( w > h) {
-        return "START"
+        return "UBIQUITY\n\nSTART"
     } else {
-        return "PLEASE\nROTATE\nDEVICE"
+        return "UBIQUITY\n\nPLEASE\nROTATE\nDEVICE"
     }
 }
 
@@ -50,6 +50,7 @@ const startup = boot => {
 
     start.onclick = () => {
         if(window.innerWidth > window.innerHeight) {
+            start.innerText = 'UBIQUITY\nLOADING...\nPLEASE WAIT'
             if (screenfull.isEnabled) {
                 screenfull.request()
             }
