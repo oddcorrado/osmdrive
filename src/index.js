@@ -4,21 +4,21 @@ import textPanel from './textPanel'
 import createBuildings from './building'
 import createWays from './way'
 import createSkybox from './skybox'
-import createCamera from './cameras/camera'
 import createLights from './light'
 import createGround from './ground'
-import control from './control'
+import control from './controls/control'
+import {changeOptions} from './controls/control'
+import createMenu from './controls/menu.js'
 import createCar from './car'
 import botshandler from './bots'
 import setupPhysics from './physics'
 import createFreeCamera from './cameras/freecamera'
 import toggleCamera from './cameras/togglecamera'
-import createMenu from './menu.js'
+import createCamera from './cameras/camera'
 import dressMap from './dressmap'
 import createDetailedCar from './detailedcar'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
-import createButtons from './drivebuttons'
-import {changeOptions} from './control'
+import createButtons from './controls/drivebuttons'
 
 const planes = []
 // Get the canvas element from the DOM.
@@ -34,7 +34,7 @@ const freecamera = createFreeCamera(scene, canvas);
 scene.activeCamera = internalCamera; 
 var switchcar = 'old';
 var tmpcar;
-
+var oldcar;
 //Creates environements and camera
 createSkybox(scene)
 createLights(scene)
@@ -61,7 +61,7 @@ bots.forEach(bot => {//comment to disable bots by default
 
 createMenu(scene, camera, internalCamera, freecamera, bots, grids);
 createButtons(scene);
-changeOptions();
+changeOptions(scene);
 setupPhysics(scene, ground, car, bots)
 
 control.cameraloop(camera);
@@ -75,8 +75,11 @@ engine.runRenderLoop(() => {
     scene.render()
    if (switchcar === 'old' && (tmpcar = container['meshes'].find(mesh => mesh.name == 'detailedcar'))){
        switchcar = 'new';
-       car = tmpcar;
+        oldcar = car;
+        car = tmpcar;
+        oldcar.dispose();
    }
-    control.loop(car, scene)    
+   if (switchcar === 'new')
+        control.loop(car, scene)    
    // botshandler.loop(bots)
 })
