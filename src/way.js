@@ -99,6 +99,10 @@ export default function createWays(scene, planes) {
     updateNodeIndexes()
     createAllIntersectionNodes() 
     processInsertionNodes()
+    removeDummyNodes()
+    updateNodeIndexes()
+    processJunctionNodesConnections()
+
 
     // remove old junctions from root lanes
 
@@ -207,7 +211,8 @@ function createRoads(paths) {
                 nodeId,
                 nodeIndex,
                 upwise: true,
-                junctionIndex: node.junctionIndex
+                junctionIndex: node.junctionIndex,
+                type: node.junctionIndex > 0 ? 'junction:temp' : 'normal'
             }
             if(node.junctionIndex !== -1) {
                 rootLaneJunctionInsert(newNode)
@@ -227,7 +232,8 @@ function createRoads(paths) {
                 nodeId,
                 nodeIndex,
                 upwise: false,
-                junctionIndex: node.junctionIndex
+                junctionIndex: node.junctionIndex,
+                type: node.junctionIndex > 0 ? 'junction:temp' : 'normal'
             }
             if(node.junctionIndex !== -1) {
                 rootLaneJunctionInsert(newNode)
@@ -246,7 +252,8 @@ function extendSegment(n1, n2, scale) {
     return ({
         point: newPoint,
         nodeId: 556,
-        junctionIndex: -1
+        junctionIndex: -1,
+        type: 'normal:extension'
     })
 }
 
@@ -306,29 +313,42 @@ function updateNodeIndexes() {
     })
 }
 
+// IMPROVE ME !!!! NOT SURE THIS IS BULLET PROOF
 function bestFit (point,  roadIndex, laneIndex) {
     const lane = roads[roadIndex].lanes[laneIndex]
     let d = 1000000
-    let best = -1
+    let closest = -1
 
-    for(let i = 1; i < lane.length; i++) {
-        const v1 = point.subtract(lane[i - 1].point)
-        const v2 = point.subtract(lane[i].point)
-
-        if(v1.length() + v2.length() < d) {
-            d = v1.length() + v2.length()
-            best = i
+    for(let i = 0; i < lane.length; i++) {
+        const v = point.subtract(lane[i].point)
+        if(v.length() < d) {
+            d = v.length()
+            closest = i
         }
     }
 
-    return best
+    if(d < 0.0001) { return -1 }
+
+    if(closest === 0) { return 1 }
+    if(closest === lane.length - 1) { return lane.length - 2 }
+
+    const p0 = point.subtract(lane[closest - 1].point)
+    const p1 = point.subtract(lane[closest].point)
+
+    const n0 = point.subtract(lane[closest].point)
+    const n1 = point.subtract(lane[closest + 1].point)
+
+    if(Vector3.Dot(p0, p1) < Vector3.Dot(n0, n1)) {
+        return (closest)
+    }
+
+    return (closest + 1)
 }
 
 function processInsertionNodes() {
     console.log(intersectionNodes)
     intersectionNodes.forEach((insertion, i) => {
-        console.log("******")
-        console.log(insertion)
+        const insertedNodes = []
         insertion.insertionSegments.forEach(segment => {
             const node = {
                 roadIndex: segment.roadIndex,
@@ -337,16 +357,22 @@ function processInsertionNodes() {
                 nodeId: 333,
                 nodeIndex:-1,
                 upwise: true,
-                junctionIndex: -2
+                junctionIndex: insertion.junctionIndex,
+                type: 'junction'
             }
-            console.log("******")
-            console.log(roads[segment.roadIndex].lanes[segment.laneIndex])
             const lane = roads[segment.roadIndex].lanes[segment.laneIndex].concat()
             const insertionIndex = bestFit (node.point, segment.roadIndex, segment.laneIndex)
-            lane.splice(insertionIndex, 0, node)
-            console.log(lane)
-            roads[segment.roadIndex].lanes[segment.laneIndex] = lane
-            laneUpdateNodeIndexes(segment.roadIndex, segment.laneIndex)
+            if(insertionIndex > 0) {
+                node.upwise = lane[insertionIndex - 1].upwise
+                lane.splice(insertionIndex, 0, node)
+                roads[segment.roadIndex].lanes[segment.laneIndex] = lane
+                laneUpdateNodeIndexes(segment.roadIndex, segment.laneIndex)
+                insertedNodes.push(node)
+            }
+        })
+
+        insertedNodes.forEach(node => {
+            node.connections = insertedNodes
         })
     })
 }
@@ -385,9 +411,18 @@ function addIntersection(a1, a2, b1, b2) {
                 getInsertionSegment(a1, a2, b1, b2),
                 getInsertionSegment(b1, b2, a1, a2)
             ],
-            point
+            point,
+            junctionIndex: a1.junctionIndex,
         })
     }
+}
+
+function removeDummyNodes() {
+    roads.forEach(road => {
+        road.lanes = road.lanes.map (lane => {
+            return lane.filter(node => node.type === 'junction' || node.type === 'normal')
+        })
+    })
 }
 
 function createIntersectionNodesFromNode(node, otherNodes) {
@@ -424,7 +459,34 @@ function getNodeIndexInLane(roadIndex, laneIndex, nodeId) {
     return road.lanes[laneIndex].findIndex(n => n.nodeId === nodeId)
 }
 
-
+function processJunctionNodesConnections() {
+    roads.forEach(road => {
+        road.lanes.forEach(lane => {
+            lane.forEach(node => {
+                if(node.connections != null) {
+                    const nexts = []
+                    node.connections.forEach(cx => {
+                        if(node.laneIndex === cx.laneIndex && node.roadIndex === cx.roadIndex) { return }
+                        if(cx.upwise && cx.nodeIndex > 0) {
+                            nexts.push(roads[cx.roadIndex].lanes[cx.laneIndex][cx.nodeIndex - 1])
+                        }
+                        if(!cx.upwise && cx.nodeIndex < roads[cx.roadIndex].lanes[cx.laneIndex].length - 1) {
+                            nexts.push(roads[cx.roadIndex].lanes[cx.laneIndex][cx.nodeIndex + 1])
+                        }
+                    })
+                    if(node.upwise && node.nodeIndex > 0) {
+                        nexts.push(roads[node.roadIndex].lanes[node.laneIndex][node.nodeIndex - 1])
+                    }
+                    if(!node.upwise && node.nodeIndex < roads[node.roadIndex].lanes[node.laneIndex].length - 1) {
+                        nexts.push(roads[node.roadIndex].lanes[node.laneIndex][node.nodeIndex + 1])
+                    }
+                    node.nexts = nexts
+                }
+            })
+        })
+    })
+    console.log("new roads", roads)
+}
 //
 function getInterPos(curr, next){
     var xD = next.x - curr.x;
@@ -521,6 +583,7 @@ export function toggleDebugWays() {
         })
     })
 
+    console.log(roads)
     roads.forEach((road, i) => {
         road.lanes.forEach((lane) => {
             const curve = lane.map(n => n.point)
@@ -528,14 +591,42 @@ export function toggleDebugWays() {
             li.position.y = li.position.y + 0.1
             li.position.y = li.position.y + 0.1
             li.color = Color3.Random()
-            lane.forEach(node => {
-                if(node.nodeId === 333) {
-                    let m = MeshBuilder.CreateBox("box", {size: 0.6}, globalScene)
-                    m.position = node.point
-                } else {
+            lane.forEach((node, j) => {
+                const size = node.upwise
+                    ? 0.2 + j * 0.05
+                    : 0.2 + Math.max(0, 1 - j * 0.05)
+                /* if(node.type === "normal") {
                     let m = MeshBuilder.CreateBox("box", {size: 0.2}, globalScene)
                     m.position = node.point
+                } */
+                if(node.type === "junction") {
+                    const m = MeshBuilder.CreateBox("box", {size: 0.4}, globalScene)
+                    m.position = node.point
+
+                    /* if(j > 0) {
+                        const n = lane[j - 1]
+                        const mm = MeshBuilder.CreateBox("box", {size: 0.1}, globalScene)
+                        const v = n.point.subtract(node.point).normalize().scale(0.3)
+                        mm.position = node.point.add(v)
+                        mm.position.y = 0.2
+                    } */
+                    
+                    node.nexts.forEach((n) => {
+                        
+                        const mm = MeshBuilder.CreateBox("box", {size: 0.1}, globalScene)
+                        const v = n.point.subtract(node.point).normalize()
+                        mm.position = node.point.add(v)
+                        mm.position.y = 0.2
+                    })
                 }
+                /* if(node.type === "junction:temp") {
+                    let m = MeshBuilder.CreateBox("box", {size: 2}, globalScene)
+                    m.position = node.point
+                }
+                if(node.type === "normal:extension") {
+                    let m = MeshBuilder.CreateBox("box", {size: 3}, globalScene)
+                    m.position = node.point
+                } */
             })
         })
     })
