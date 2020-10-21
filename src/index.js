@@ -4,21 +4,21 @@ import textPanel from './textPanel'
 import createBuildings from './building'
 import createWays from './way'
 import createSkybox from './skybox'
-import createCamera from './cameras/camera'
 import createLights from './light'
 import createGround from './ground'
-import control from './control'
+import control from './controls/control'
+import {changeOptions} from './controls/control'
+import createMenu from './controls/menu.js'
+import createButtons from './controls/drivebuttons'
 import createCar from './car'
 import botshandler from './bots'
 import setupPhysics from './physics'
 import createFreeCamera from './cameras/freecamera'
 import toggleCamera from './cameras/togglecamera'
-import createMenu from './menu.js'
+import createCamera from './cameras/camera'
 import dressMap from './dressmap'
 import createDetailedCar from './detailedcar'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
-import createButtons from './drivebuttons'
-import {changeOptions} from './control'
 import startup from './startup'
 
 const boot = () => {
@@ -35,6 +35,7 @@ const boot = () => {
     const freecamera = createFreeCamera(scene, canvas);
     scene.activeCamera = internalCamera; 
     var switchcar = 'old';
+    var oldcar;
     var tmpcar;
     
     //Creates environements and camera
@@ -75,11 +76,14 @@ const boot = () => {
     engine.runRenderLoop(() => {
         planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
         scene.render()
-       if (switchcar === 'old' && (tmpcar = container['meshes'].find(mesh => mesh.name == 'detailedcar'))){
-           switchcar = 'new';
-           car = tmpcar;
-       }
-        control.loop(car, scene)    
+        if (switchcar === 'old' && (tmpcar = container['meshes'].find(mesh => mesh.name == 'detailedcar'))){
+            switchcar = 'new';
+             oldcar = car;
+             car = tmpcar;
+             oldcar.dispose();
+        }
+        if (switchcar === 'new')
+             control.loop(car, scene)  
        // botshandler.loop(bots)
     })
 }

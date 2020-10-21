@@ -1,6 +1,6 @@
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
-import { toggleDebugWays } from './way'
-import {disableTrees} from './dressmap'
+import { toggleDebugWays } from './../way'
+import {disableTrees} from './../dressmap'
 import {toggleEsp} from './control'
 import { Vector3 } from '@babylonjs/core/Maths/math';
 
@@ -50,6 +50,8 @@ function changeColorAndText(divs, text = ['Enable', 'Disable'], colors = ['red',
 }
 
 function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
+    // var test = divCreator('top:0; left: 0;height: 100vh; width: 50vw; border: solid 2px black', {id: 'test', text:'middle debug'})
+    // document.body.appendChild(test);// debug middle
     var btnMenu = buttonCreator('top: 50px; right: 0; background-color:black; display: block',{text: 'Debug Menu'});
     var btnJ = buttonCreator('top: 70px; right: 0;background-color:green; display: none',{text: 'Disable Joysticks'});
     var btnCam = buttonCreator('top:30px; right: 0;background-color: black; display: none',{text: 'FreeCamera Switch (C)'});
@@ -60,22 +62,27 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     var btnWays = buttonCreator('top: 150px; right: 0;background-color:black; display: none',{text: 'Show Ways'});
     var btnTrees = buttonCreator('top: 170px; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
     var camFresh = divCreator('top: 1vh; right: 1vw; height: 30px; display: none', {text: '', id:'position'});
-    var speedFresh = divCreator('font-family: aldrich ; text-align:center; top: 85.5vh; right: 69.5vw; height: 8rem; display: block; color: #56CCF2;font-size: 3rem', {text: 'none', id: 'speed'});
-    var btnDivArray = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, camFresh, speedFresh, btnGrids, btnEsp];
+    var speedFresh = divCreator('font-family: aldrich ; text-align:center; top: 85.5vh; right: 47.2vw; height: 8rem; display: block; color: #56CCF2;font-size: 3rem', {text: 'none', id: 'speed'});
+    var btnDivArrayMenu = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, btnGrids, btnEsp];
+    var divArray = [speedFresh, camFresh];
 
-    btnDivArray.forEach(btn => {
+    btnDivArrayMenu.forEach(btn => {
         document.body.appendChild(btn);
+    })
+
+    divArray.forEach(div => {
+        document.body.appendChild(div);
     })
 
     btnMenu.onclick = () => {
         if (btnMenu.innerText === 'Debug Menu') {
-            btnDivArray.forEach(btn => {
+            btnDivArrayMenu.forEach(btn => {
                 btn.style.display = 'block';
             })
             btnMenu.innerText = 'Hide Menu';
             btnMenu.style.top = '180px';
         } else {
-            btnDivArray.forEach(btn => {
+            btnDivArrayMenu.forEach(btn => {
             if (btn != btnMenu)
                     btn.style.display = 'none';
             })
@@ -166,7 +173,9 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     }
 }
 
-function setControlMenu(){
+function setControlMenu(scene){
+    // new buttons = 
+
     var btnMenuControls = buttonCreator('top: 50px; left: 0; background-color:black; display: block',{text: 'Control Options'});
     var dir = buttonCreator('top: 50px; left: 0; background-color:rgb(66, 135, 245); display: none', {text: 'Slide Direction', id: 'dir', class: 'control-menu'});
     var spd = buttonCreator('top: 70px; left: 0; background-color:rgb(66, 135, 245); display: none', {text: 'Button Speed', id: 'spd', class: 'control-menu'});
@@ -183,7 +192,7 @@ function setControlMenu(){
             spd.innerText = spd.innerText.replace('Button', 'Slide');
         } else if (spd.innerHTML.includes('Slide')) {
             spd.style.backgroundColor = 'rgb(84, 179, 71)';
-            
+
             spd.innerText = spd.innerText.replace('Slide', 'Tilt');
         } else if (spd.innerHTML.includes('Tilt')){
             spd.style.backgroundColor = 'rgb(66, 135, 245)';
@@ -205,18 +214,18 @@ function setControlMenu(){
     })
 
     btnMenuControls.onclick = () => {
-        if (btnMenuControls.innerText === 'Control Options') {
+        if (btnMenuControls.innerText === 'Control Menu') {
             controlMenuArray.forEach(btn => {
                 btn.style.display = 'block';
             })
-            btnMenuControls.innerText = 'Hide Options';
+            btnMenuControls.innerText = 'Hide';
             btnMenuControls.style.top = '150px';
         } else {
             controlMenuArray.forEach(btn => {
                 if (btn != btnMenuControls)
                     btn.style.display = 'none';
             })
-            btnMenuControls.innerText = 'Control Options';
+            btnMenuControls.innerText = 'Control Menu';
             btnMenuControls.style.top = '50px';
         }
     }
@@ -228,5 +237,5 @@ function setControlMenu(){
 
 export default function createMenu(scene, camera, freecamera, bots, grids){
     setMainMenu(scene,camera,freecamera,bots,grids);
-    setControlMenu();
+    setControlMenu(scene);
 }

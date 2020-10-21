@@ -2,7 +2,8 @@ import { KeyboardEventTypes} from '@babylonjs/core/Events/keyboardEvents'
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
 import { Vector3 } from '@babylonjs/core/Maths/math'
 //import {getCurrent} from './menu'
-import { getWayDir } from './way'
+import { getWayDir } from '../way'
+import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientationCamera'
 
 let speed= 0
 let angle = 0
@@ -15,10 +16,10 @@ let rightJoystick = null
 let pace = 0
 let dir = new Vector3(1, 0, 0)
 let sideTilt = 90;
-let frontTilt = 90;
+let frontTilt = 0;
 let esp = true;
 let maxTilt = 30;
-let mode = {dir: 'slide', spd: 'button', lk: 'tilt'};
+let mode = {dir: 'slide', spd: 'button', lk: 'tilt', gear: 'front'};
 
 export function toggleEsp(){
     esp = !esp;
@@ -69,14 +70,19 @@ function cameraloop(camera){
     let hostWindow = camera.getScene().getEngine().getHostWindow();
     hostWindow.addEventListener("deviceorientation", function (evt){
        sideTilt = evt.gamma;
-       frontTilt = evt.alpha
+       frontTilt = evt.alpha;
     });   
 }
 
-export function changeOptions (){
+export function changeOptions (scene){
     var dir = document.getElementById('dir');
     var spd = document.getElementById('spd');
     var lk  = document.getElementById('lk');
+    var left = document.getElementById('left');
+    var right = document.getElementById('right');
+    var acc = document.getElementById('accelerator');
+    var brake = document.getElementById('brake');
+    var touchZone = document.getElementById('touchzone')
 
     dir.addEventListener('click', function (){
         if (mode.dir === 'slide'){
@@ -90,39 +96,51 @@ export function changeOptions (){
     spd.addEventListener('click', function (){
         if (mode.spd === 'button'){
             mode.spd = 'slide';
-            document.getElementById('accelerator').style.display = 'none';
-            document.getElementById('brake').style.display = 'none'; 
+            acc.style.display = 'none';
+            brake.style.display = 'none'; 
         } else if (mode.spd === 'slide'){
             mode.spd = 'tilt';
-            document.getElementById('accelerator').style.display = 'none';
-            document.getElementById('brake').style.display = 'none'; 
+            acc.style.display = 'none';
+            brake.style.display = 'none'; 
         } else {
-            document.getElementById('accelerator').style.display = 'block'; 
-            document.getElementById('brake').style.display = 'block'; 
             mode.spd = 'button';
+            acc.style.display = 'block'; 
+            brake.style.display = 'block'; 
         }
     })
 
     lk.addEventListener('click', function (){
         if (mode.lk === 'tilt'){
             mode.lk = 'slide';
+            left.style.display = 'block';
+            right.style.display = 'block';
+            touchZone.style.display = 'block';
+            scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
         } else if (mode.lk === 'slide') {
             mode.lk = 'off';
+            left.style.display = 'none';
+            right.style.display = 'none';
+            touchZone.style.display = 'none';
+            scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
         } else {
-            mode.lk = 'tilt';
+            mode.lk = 'tilt';  
+            left.style.display = 'none';
+            right.style.display = 'none';
+            touchZone.style.display = 'none';
+            scene.activeCamera.lockedTarget = null;
         }
     })    
 }
 
-function loop(car,scene) {
+function loop(car) {
     var speedDiv = document.getElementById('speed');
     var accelpedal = document.getElementById('accelerator');
     var steerWheel = document.getElementById('wheel');
-    var left = document.getElementById('left');
-    var right = document.getElementById('right');
     let vel = car.physicsImpostor.getLinearVelocity();
 
-    speedDiv.innerText = `${(Math.abs(vel.x) + Math.abs(vel.z)).toFixed()}`;
+    speedDiv.innerText = `${((Math.abs(vel.x) + Math.abs(vel.z))*3.6).toFixed()}`;
+    speedDiv.style.color = (3.6*(Math.abs(vel.x) + Math.abs(vel.z))) > 50 ? 'red' : '#56CCF2';
+
     if(pace++ > 20) {
         pace = 0
         dir = getWayDir(car.position)
@@ -158,24 +176,17 @@ function loop(car,scene) {
         accel = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
     } else if(mode.spd === 'tilt') {
         VirtualJoystick.Canvas.style.opacity = '0'
-        var accel = frontTilt;
+        if (frontTilt < -10) {
+            frontTilt = -10
+        } else if (frontTilt > 10){
+            frontTilt = 10;
+        }
+        var accel = frontTilt / 100;
     }
 
-    //Look
-    if (mode.lk === 'slide'){
-        //enable camera look around
-        scene.activeCamera.lockedTarget = new Vector3(0, 0, 50)
-        left.style.display = 'block';
-        right.style.display = 'block';
-    } else if (mode.lk === 'tilt') {
-    //enable buttons to look right and left
-        scene.activeCamera.lockedTarget = 0
-        left.style.display = 'none';
-        right.style.display = 'none';
-    } else {
-        scene.activeCamera.lockedTarget = new Vector3(0, 0, 50)
-        left.style.display = 'none';
-        right.style.display = 'none';
+    //Gear
+    if (mode.gear === 'front'){
+         mode.gear = 'reverse';
     }
 
     speed = Math.max(0, Math.min(12, speed + accel))    
@@ -187,13 +198,14 @@ function loop(car,scene) {
     }
     
     const adjustSpeed = Math.max(0, speed - 10 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
-    const newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
+    var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
     car.physicsImpostor.setLinearVelocity(newVel)
+    //car.physicsImpostor.setLinearVelocity(new Vector3(-1,0,-1))
     car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
 }
 
 export default {
-    loop: (car, scene) => loop(car, scene),
+    loop: (car) => loop(car),
     cameraloop: camera => cameraloop(camera),
     setup: scene => setup(scene)
 }
