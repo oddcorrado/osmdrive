@@ -16,6 +16,7 @@ let dir = new Vector3(1, 0, 0);
 let sideTilt = 0;
 let frontTilt = -80;
 let esp = false;
+var sideSensi = 10;
 let maxTilt = 30;
 let mode = {lk: 'tilt', dir: 'slide', spd: 'button', gear: 'front'};
 
@@ -34,9 +35,9 @@ function setup(scene) {
 
 
 function cameraloop(camera){
-    var pos =document.getElementById('camerapos');
-    console.log(pos);
+    var pos = document.getElementById('camerapos');
     let hostWindow = camera.getScene().getEngine().getHostWindow();
+
     hostWindow.addEventListener("deviceorientation", function (evt){
        sideTilt = evt.beta;
        frontTilt = evt.gamma;
@@ -152,7 +153,7 @@ function loop(car) {
         if (!dir)
             dir = tmpdir;
     }
-    
+
     if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
          angle = Math.atan2(vel.z, vel.x)
     }
@@ -163,15 +164,13 @@ function loop(car) {
         steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;
         steerWheel.value = leftJoystick.deltaPosition.x * 90;
     } else if (mode.dir === 'tilt'){
-        // if (sideTilt < 60) {
-        //     sideTilt = 60
-        // } else if (sideTilt > 120){
-        //     sideTilt = 120;
-        // }
-        // steer = (sideTilt - 90)/maxTilt;
-        // steerWheel.style.transform = `rotateZ(${((sideTilt-90)/maxTilt)*90}deg)`;
-        // steerWheel.value = (sideTilt - 90) / maxTilt;
-        steer = sideTilt/10;
+        if (180 > sideTilt && sideTilt > 155 || -180 < sideTilt && sideTilt < -155) {
+            steer = (180 + sideTilt)/sideSensi;
+            steerWheel.style.transform = `rotateZ(${(180 - sideTilt)*90}deg)`;
+        } else if (-35 < sideTilt && sideTilt < 35 ) {
+            steer = sideTilt/sideSensi;
+            steerWheel.style.transform = `rotateZ(${sideTilt * 2}deg)`;
+        }
     }
 
     //Speed
@@ -184,8 +183,8 @@ function loop(car) {
     } else if(mode.spd === 'tilt') {
         VirtualJoystick.Canvas.style.opacity = '0'
         
-        accel = -(frontTilt/90);
-        console.log(accel.toFixed(2), frontTilt.toFixed(2));
+        accel = (80 + frontTilt)/60;
+        console.log(accel.toFixed(2), (frontTilt + 80).toFixed(2));
     }
 
     //Gear
