@@ -173,43 +173,61 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     }
 }
 
+export function divControlCreator (div, img, defimg){
+    var tmpDiv = document.createElement('div');
+    var tmpDefImg = document.createElement('img');
+    var tmpImg = document.createElement('img');
+
+    tmpDiv.setAttribute('style', div.style + `;width: 8vw; height: 5vh;z-index: 10; position: absolute; font-weight: 800; opacity: 0.6; border-radius: 8px`);
+    tmpImg.setAttribute('style', img.style + ';position: relative;  margin-left: 0.1rem')
+    tmpDefImg.setAttribute('style', defimg.style + ';position: relative; margin-left: 0.4rem')
+    tmpImg.src = img.src;
+    tmpDefImg.src = defimg.src;
+    tmpDiv.id = div.id;
+    tmpDiv.appendChild(tmpImg);
+    tmpDiv.appendChild(tmpDefImg);
+    return tmpDiv;
+}
+
 function setControlMenu(scene){
-    // new buttons = 
+    var lk = divControlCreator({style: 'border: solid #43c7f7 3px; background-color: #43c7f7; top: 5vh; left: 0', id: 'lk'}, {src: '../../images/eye.svg', style: 'height: 2rem'}, {src: '../../images/rotate.svg', style:'opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem'});
+    var dir = divControlCreator({style: 'border: solid #7aed6b 3px; background-color: #7aed6b; top: 12vh; left: 0', id: 'dir'}, {src: '../../images/steer.svg', style: 'opacity: 1,;margin-bot: 0.1rem; height: 1.8rem'}, {src: '../../images/tilt.svg', style:'opacity: 1; margin-bottom: 0.1rem; height: 1.8rem'});
+    var spd = divControlCreator({style: 'border: solid #f5f05f 3px; background-color: #f5f05f; top: 19vh; left: 0', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-bot: 0.1rem; height: 1.9rem'}, {src: '../../images/brake.svg', style:'opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem'});
+    var btnMenuControls = buttonCreator('top: 50px; left: 0; background-color:black; display: none',{text: 'Control Options'});
 
-    var btnMenuControls = buttonCreator('top: 50px; left: 0; background-color:black; display: block',{text: 'Control Options'});
-    var dir = buttonCreator('top: 50px; left: 0; background-color:rgb(66, 135, 245); display: none', {text: 'Slide Direction', id: 'dir', class: 'control-menu'});
-    var spd = buttonCreator('top: 70px; left: 0; background-color:rgb(66, 135, 245); display: none', {text: 'Button Speed', id: 'spd', class: 'control-menu'});
-    var lk = buttonCreator('top: 90px; left: 0; background-color:rgb(66, 135, 245); display: none', {text: 'Tilt Look', id: 'lk', class: 'control-menu'});
-    var controlMenuArray = [btnMenuControls, dir, spd, lk];
-
-    dir.addEventListener('click', function(){
-        changeColorAndText([dir], ['Slide', 'Tilt'], ['rgb(66, 135, 245)', 'rgb(66, 194, 173)']);
-    });
+    var controlMenu = [btnMenuControls, lk, dir, spd]
+    controlMenu.forEach(div => {
+        document.body.appendChild(div);
+    })
+    
+    
 
     spd.addEventListener('click', function(){
-        if (spd.innerHTML.includes('Button')) {
-            spd.style.backgroundColor = 'rgb(66, 194, 173)';
-            spd.innerText = spd.innerText.replace('Button', 'Slide');
-        } else if (spd.innerHTML.includes('Slide')) {
-            spd.style.backgroundColor = 'rgb(84, 179, 71)';
-
-            spd.innerText = spd.innerText.replace('Slide', 'Tilt');
-        } else if (spd.innerHTML.includes('Tilt')){
-            spd.style.backgroundColor = 'rgb(66, 135, 245)';
-            spd.innerText = spd.innerText.replace('Tilt', 'Button');
+        console.log('test', spd.children)
+        if (spd.children[1].src.includes('brake')){
+            spd.children[1].src = '../../images/tilt.svg';
+        } else if (spd.children[1].src.includes('tilt')) {
+            spd.children[1].src = '../../images/rotate.svg';
+        } else {
+            spd.children[1].src = '../../images/brake.svg';
         }
     })
 
     lk.addEventListener('click', function(){
-        if (lk.innerHTML.includes('Tilt')) {
-            lk.style.backgroundColor = 'rgb(66, 194, 173)';
-            lk.innerText = lk.innerText.replace('Tilt', 'Slide');
-        } else if (lk.innerHTML.includes('Slide')) {
-            lk.style.backgroundColor = 'rgb(84, 179, 71)';
-            lk.innerText = lk.innerText.replace('Slide', 'Off');
-        } else if (lk.innerHTML.includes('Off')){
-            lk.style.backgroundColor = 'rgb(66, 135, 245)';
-            lk.innerText = lk.innerText.replace('Off', 'Tilt');
+        if (lk.children[1].src.includes('nolook')){
+            lk.children[1].src = '../../images/rotate.svg';
+        } else if (lk.children[1].src.includes('rotate')) {
+            lk.children[1].src = '../../images/tilt.svg';
+        } else {
+            lk.children[1].src = '../../images/nolook.svg';
+        }
+    })
+
+    dir.addEventListener('click', function(){
+        if (dir.children[1].src.includes('tilt')){
+            dir.children[1].src = '../../images/rotate.svg';
+        } else {
+            dir.children[1].src = '../../images/tilt.svg';
         }
     })
 
@@ -230,9 +248,6 @@ function setControlMenu(scene){
         }
     }
 
-    controlMenuArray.forEach(div => {
-        document.body.appendChild(div)
-    })
 }
 
 export default function createMenu(scene, camera, freecamera, bots, grids){

@@ -39,37 +39,21 @@ export default function createButtons (scene){
 
     // DeviceOrientationEvent.requestPermission()
     window.addEventListener("contextmenu", function(e) { e.preventDefault(); })//debug to deactivate right click menu ontouch
-
-    var interAccel;
-    var interBrake;
-
+    
     accel.addEventListener('touchstart', function (){
         accel.style.transform = 'rotate3d(1, 0, 0, 45deg)';
-
-            accel.value = 0.03;
-            interAccel = setInterval(() => {
-                
-                accel.value = accel.value + 0.03;
-            }, 500)
      })
+
      accel.addEventListener('touchend', function (){
         accel.style.transform = 'rotate3d(1, 0, 0, 0deg)';
-        accel.value = 0;
-        clearInterval(interAccel);
      })
     
      brake.addEventListener('touchstart', function(){
         brake.style.transform = 'rotate3d(1, 0, 0, 45deg)';
-        accel.value = accel.value - 0.03;
-        interBrake = setInterval(() => {
-            accel.value = (accel.value <= -1 ? -1 : accel.value - 0.03);
-        }, 500)
     })
 
     brake.addEventListener('touchend', function(){
         brake.style.transform = 'rotate3d(1, 0, 0, 0deg)';
-        accel.value = 0;
-        clearInterval(interBrake);
     })
 
     touchZone.addEventListener('touchmove', function(e){

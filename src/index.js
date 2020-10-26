@@ -7,7 +7,7 @@ import createSkybox from './skybox'
 import createLights from './light'
 import createGround from './ground'
 import control from './controls/control'
-import {changeOptions} from './controls/control'
+import {setupControls} from './controls/control'
 import createMenu from './controls/menu.js'
 import createButtons from './controls/drivebuttons'
 import createCar from './car'
@@ -53,7 +53,7 @@ const boot = () => {
     //Create main meshes 
     createWays(scene, planes)
     var grids = createBuildings(scene)
-    //dressMap(scene)
+    dressMap(scene)
     //create loading depending on props;
     
     const bots = botshandler.createBots(scene)
@@ -64,7 +64,7 @@ const boot = () => {
     
     createMenu(scene, camera, internalCamera, freecamera, bots, grids);
     createButtons(scene);
-    changeOptions();
+    setupControls(scene);
     setupPhysics(scene, ground, car, bots)
     
     control.cameraloop(camera);

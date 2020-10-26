@@ -1,63 +1,29 @@
-import { KeyboardEventTypes} from '@babylonjs/core/Events/keyboardEvents'
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
 import { Vector3 } from '@babylonjs/core/Maths/math'
 //import {getCurrent} from './menu'
 import { getWayDir } from '../way'
 import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientationCamera'
 
-let speed= 0
-let angle = 0
-let rotSpeed = 0
-let rotdir = 0
-let steer = 0
-var accel = 0
-let leftJoystick = null
-let rightJoystick = null
-let pace = 0
-let dir = new Vector3(1, 0, 0)
+let speed= 0;
+let angle = 0;
+let steer = 0;
+var accel = 0;
+var btnAccel = 0;
+let leftJoystick = null;
+let rightJoystick = null;
+let pace = 0;
+let dir = new Vector3(1, 0, 0);
 let sideTilt = 90;
 let frontTilt = 0;
 let esp = true;
 let maxTilt = 30;
-let mode = {dir: 'slide', spd: 'button', lk: 'tilt', gear: 'front'};
+let mode = {lk: 'tilt', dir: 'slide', spd: 'button', gear: 'front'};
 
 export function toggleEsp(){
     esp = !esp;
 }
 
 function setup(scene) {
-    let moveF, moveB, rotateL, rotateR = false
-
-    scene.onKeyboardObservable.add((kbInfo) => {
-    // console.log(kbInfo.event.keyCode)
-        switch (kbInfo.type) {
-        case KeyboardEventTypes.KEYDOWN:
-            if(kbInfo.event.key==='z'){
-                moveF=true}
-            if(kbInfo.event.key==='s'){
-                moveB=true}
-            if(kbInfo.event.key==='q'){
-                rotateL=true}
-            if(kbInfo.event.key==='d'){
-                rotateR=true}
-            break;
-        case KeyboardEventTypes.KEYUP:   
-            if(kbInfo.event.key==='z'){
-                moveF=false
-            }
-            if(kbInfo.event.key==='q'){
-                rotateL=false
-            }
-            if(kbInfo.event.key==='s'){
-                moveB=false
-            }
-            if(kbInfo.event.key==='d'){
-                rotateR=false
-            }
-            break;
-        }
-    })
-
     leftJoystick = new VirtualJoystick(true)
     rightJoystick = new VirtualJoystick(false)
     VirtualJoystick.Canvas.style.opacity = '0';
@@ -74,7 +40,9 @@ function cameraloop(camera){
     });   
 }
 
-export function changeOptions (scene){
+export function setupControls (scene){
+    var interAccel;
+    var interBrake;
     var dir = document.getElementById('dir');
     var spd = document.getElementById('spd');
     var lk  = document.getElementById('lk');
@@ -110,6 +78,8 @@ export function changeOptions (scene){
     })
 
     lk.addEventListener('click', function (){
+        console.log(scene);
+        console.log(scene.activeCamera)
         if (mode.lk === 'tilt'){
             mode.lk = 'slide';
             left.style.display = 'block';
@@ -129,12 +99,37 @@ export function changeOptions (scene){
             touchZone.style.display = 'none';
             scene.activeCamera.lockedTarget = null;
         }
-    })    
+    })
+    
+    acc.addEventListener('touchstart', function(){
+        clearInterval(interAccel);
+        btnAccel = 0.03;
+        interAccel = setInterval(() => {
+            btnAccel = btnAccel + 0.03;
+        }, 500)
+    })
+
+    acc.addEventListener('touchend', function(){
+        clearInterval(interAccel);
+
+        btnAccel = -0.005;
+    })
+
+    brake.addEventListener('touchstart', function(){
+        btnAccel = btnAccel - 0.03;
+
+        interBrake = setInterval(() => {
+            btnAccel = (btnAccel <= -1 ? -1 : btnAccel - 0.03);
+        }, 500)
+    })
+
+    brake.addEventListener('touchend', function(){
+        clearInterval(interBrake);
+    })
 }
 
 function loop(car) {
     var speedDiv = document.getElementById('speed');
-    var accelpedal = document.getElementById('accelerator');
     var steerWheel = document.getElementById('wheel');
     let vel = car.physicsImpostor.getLinearVelocity();
 
@@ -142,8 +137,11 @@ function loop(car) {
     speedDiv.style.color = (3.6*(Math.abs(vel.x) + Math.abs(vel.z))) > 50 ? 'red' : '#56CCF2';
 
     if(pace++ > 20) {
+        var tmpdir = dir
         pace = 0
         dir = getWayDir(car.position)
+        if (!dir)
+            dir = tmpdir;
     }
     
     if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
@@ -169,8 +167,7 @@ function loop(car) {
     //Speed
     if(mode.spd === 'button') {
         VirtualJoystick.Canvas.style.opacity = '0'
-        accel = accelpedal.value;//0
-        speed = Math.max(0, Math.min(12, speed + accel));
+        accel = btnAccel;//0
     } else if (mode.spd === 'slide'){
         VirtualJoystick.Canvas.style.opacity = '0.7'
         accel = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
