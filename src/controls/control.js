@@ -38,8 +38,8 @@ function cameraloop(camera){
     console.log(pos);
     let hostWindow = camera.getScene().getEngine().getHostWindow();
     hostWindow.addEventListener("deviceorientation", function (evt){
-       sideTilt = evt.gamma;
-       frontTilt = evt.alpha;
+       sideTilt = evt.beta;
+       frontTilt = evt.gamma;
        console.log(evt);
        pos.innerText = `Alpha ${evt.alpha.toFixed(2)}, Beta ${evt.beta.toFixed(2)}, Gamma ${evt.gamma.toFixed(2)}`;
     });   
@@ -172,7 +172,7 @@ function loop(car) {
         // steer = (sideTilt - 90)/maxTilt;
         // steerWheel.style.transform = `rotateZ(${((sideTilt-90)/maxTilt)*90}deg)`;
         // steerWheel.value = (sideTilt - 90) / maxTilt;
-        steer = sideTilt;
+        steer = sideTilt * 30;
     }
 
     //Speed
@@ -184,12 +184,8 @@ function loop(car) {
         accel = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
     } else if(mode.spd === 'tilt') {
         VirtualJoystick.Canvas.style.opacity = '0'
-        if (frontTilt < -10) {
-            frontTilt = -10
-        } else if (frontTilt > 10){
-            frontTilt = 10;
-        }
-        var accel = frontTilt / 100;
+        
+        var accel = frontTilt-90;
     }
 
     //Gear
