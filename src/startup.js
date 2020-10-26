@@ -51,9 +51,9 @@ const startup = boot => {
     start.onclick = () => {
         if(window.innerWidth > window.innerHeight) {
             start.innerText = 'UBIQUITY\nLOADING...\nPLEASE WAIT'
-            if (screenfull.isEnabled) {
-                screenfull.request()
-            }
+            // if (screenfull.isEnabled) {
+            //     screenfull.request()
+            // }
             document.body.removeChild(start)
             boot()
         }

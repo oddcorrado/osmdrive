@@ -13,11 +13,12 @@ let leftJoystick = null;
 let rightJoystick = null;
 let pace = 0;
 let dir = new Vector3(1, 0, 0);
-let sideTilt = 90;
+let sideTilt = 0;
 let frontTilt = 0;
 let esp = true;
 let maxTilt = 30;
 let mode = {lk: 'tilt', dir: 'slide', spd: 'button', gear: 'front'};
+
 
 export function toggleEsp(){
     esp = !esp;
@@ -33,14 +34,22 @@ function setup(scene) {
 
 
 function cameraloop(camera){
+    var pos =document.getElementById('camerapos');
+    console.log(pos);
     let hostWindow = camera.getScene().getEngine().getHostWindow();
     hostWindow.addEventListener("deviceorientation", function (evt){
        sideTilt = evt.gamma;
        frontTilt = evt.alpha;
+       console.log(evt);
+       pos.innerText = `Alpha ${evt.alpha.toFixed(2)}, Beta ${evt.beta.toFixed(2)}, Gamma ${evt.gamma.toFixed(2)}`;
     });   
 }
 
 export function setupControls (scene){
+    document.addEventListener('DOMContentLoaded', function (){
+        console.log('test');
+        console.log(scene.activeCamera)
+    })
     var interAccel;
     var interBrake;
     var dir = document.getElementById('dir');
@@ -78,8 +87,6 @@ export function setupControls (scene){
     })
 
     lk.addEventListener('click', function (){
-        console.log(scene);
-        console.log(scene.activeCamera)
         if (mode.lk === 'tilt'){
             mode.lk = 'slide';
             left.style.display = 'block';
@@ -103,7 +110,10 @@ export function setupControls (scene){
     
     acc.addEventListener('touchstart', function(){
         clearInterval(interAccel);
-        btnAccel = 0.03;
+        if (accel > 0.03)
+            btnAccel = 0.5;
+        else
+            btnAccel = 0.03
         interAccel = setInterval(() => {
             btnAccel = btnAccel + 0.03;
         }, 500)
@@ -154,14 +164,15 @@ function loop(car) {
         steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;
         steerWheel.value = leftJoystick.deltaPosition.x * 90;
     } else if (mode.dir === 'tilt'){
-        if (sideTilt < 60) {
-            sideTilt = 60
-        } else if (sideTilt > 120){
-            sideTilt = 120;
-        }
-        steer = (sideTilt - 90)/maxTilt;
-        steerWheel.style.transform = `rotateZ(${((sideTilt-90)/maxTilt)*90}deg)`;
-        steerWheel.value = (sideTilt - 90) / maxTilt;
+        // if (sideTilt < 60) {
+        //     sideTilt = 60
+        // } else if (sideTilt > 120){
+        //     sideTilt = 120;
+        // }
+        // steer = (sideTilt - 90)/maxTilt;
+        // steerWheel.style.transform = `rotateZ(${((sideTilt-90)/maxTilt)*90}deg)`;
+        // steerWheel.value = (sideTilt - 90) / maxTilt;
+        steer = sideTilt;
     }
 
     //Speed
@@ -186,7 +197,7 @@ function loop(car) {
          mode.gear = 'reverse';
     }
 
-    speed = Math.max(0, Math.min(12, speed + accel))    
+    speed = Math.max(0, Math.min(20, speed + accel))    
     angle += -steer * 0.025
     const dirAngle = Math.atan2(dir.z, dir.x)
 
@@ -194,7 +205,7 @@ function loop(car) {
         angle = dirAngle * 0.1 + angle * 0.9
     }
     
-    const adjustSpeed = Math.max(0, speed - 10 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
+    const adjustSpeed = Math.max(0, speed - 4 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
     var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
     car.physicsImpostor.setLinearVelocity(newVel)
     //car.physicsImpostor.setLinearVelocity(new Vector3(-1,0,-1))
