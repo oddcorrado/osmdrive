@@ -3,6 +3,7 @@ import { toggleDebugWays } from './../way'
 import {disableTrees} from './../dressmap'
 import {toggleEsp} from './control'
 import { Vector3 } from '@babylonjs/core/Maths/math';
+import { buttonDriveCreator } from './drivebuttons';
 
 var camPosInterval;
 
@@ -58,13 +59,13 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     var btnSwCam = buttonCreator('top:50px; right: 0;background-color: black; display: none',{text: 'Camera Switch'});
     var btnBots = buttonCreator('top: 90px; right: 0;background-color:red; display: none',{text: 'Enable Bots'});
     var btnGrids = buttonCreator('top: 110px; right: 0;background-color:red; display: none',{text: 'Enable Grids'});
-    var btnEsp = buttonCreator('top: 130px; right: 0;background-color:green; display: none',{text: 'Disable ESP'});
+    var btnEsp = buttonCreator('top: 130px; right: 0;background-color:red; display: none',{text: 'Enable ESP'});
     var btnCamOri = buttonCreator('top: 150px; right: 0;background-color:green; display: none',{text: 'Disable Orientation Pos'});
     var btnTrees = buttonCreator('top: 170px; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
     var btnWays = buttonCreator('top: 190px; right: 0;background-color:black; display: none',{text: 'Show Ways'});
 
     var camFresh = divCreator('top: 1vh; right: 1vw; height: 30px; display: none', {text: '', id:'position'});
-    var camOriFresh = divCreator('top: 1vh; right: 50vw; width: 30wv; color: #d42a2a; height: 30px; display: block; font-size: 1.3rem;', {text: '', id:'camerapos'});
+    var camOriFresh = divCreator('top: 1vh; right: 50vw; width: 50wv; color: #d42a2a; height: 30px; display: block; font-size: 1.3rem;', {text: '', id:'camerapos'});
     var speedFresh = divCreator('font-family: aldrich ; text-align:center; top: 85.5vh; right: 47.2vw; height: 8rem; display: block; color: #56CCF2;font-size: 3rem', {text: 'none', id: 'speed'});
     var btnDivArrayMenu = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, btnGrids, btnEsp, btnCamOri];
     var divArray = [speedFresh, camFresh, camOriFresh];

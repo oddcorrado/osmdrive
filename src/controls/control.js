@@ -14,8 +14,8 @@ let rightJoystick = null;
 let pace = 0;
 let dir = new Vector3(1, 0, 0);
 let sideTilt = 0;
-let frontTilt = 0;
-let esp = true;
+let frontTilt = -80;
+let esp = false;
 let maxTilt = 30;
 let mode = {lk: 'tilt', dir: 'slide', spd: 'button', gear: 'front'};
 
@@ -40,8 +40,7 @@ function cameraloop(camera){
     hostWindow.addEventListener("deviceorientation", function (evt){
        sideTilt = evt.beta;
        frontTilt = evt.gamma;
-       console.log(evt);
-       pos.innerText = `Alpha ${evt.alpha.toFixed(2)}, Beta ${evt.beta.toFixed(2)}, Gamma ${evt.gamma.toFixed(2)}`;
+       pos.innerText = `Alpha ${evt.alpha.toFixed(2)}, Beta ${evt.beta.toFixed(2)}, Gamma ${evt.gamma.toFixed(2)} ACCEL: ${accel.toFixed(2)}`;
     });   
 }
 
@@ -172,7 +171,7 @@ function loop(car) {
         // steer = (sideTilt - 90)/maxTilt;
         // steerWheel.style.transform = `rotateZ(${((sideTilt-90)/maxTilt)*90}deg)`;
         // steerWheel.value = (sideTilt - 90) / maxTilt;
-        steer = sideTilt;
+        steer = sideTilt/10;
     }
 
     //Speed
@@ -185,7 +184,8 @@ function loop(car) {
     } else if(mode.spd === 'tilt') {
         VirtualJoystick.Canvas.style.opacity = '0'
         
-        var accel = frontTilt-90;
+        accel = -(frontTilt/90);
+        console.log(accel.toFixed(2), frontTilt.toFixed(2));
     }
 
     //Gear
@@ -200,7 +200,6 @@ function loop(car) {
      if(esp != false && (!leftJoystick.pressed /*|| sideTilt - 5 < */)  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
         angle = dirAngle * 0.1 + angle * 0.9
     }
-    
     const adjustSpeed = Math.max(0, speed - 4 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
     var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
     car.physicsImpostor.setLinearVelocity(newVel)
