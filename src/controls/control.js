@@ -172,7 +172,7 @@ function loop(car) {
         // steer = (sideTilt - 90)/maxTilt;
         // steerWheel.style.transform = `rotateZ(${((sideTilt-90)/maxTilt)*90}deg)`;
         // steerWheel.value = (sideTilt - 90) / maxTilt;
-        steer = sideTilt * 30;
+        steer = sideTilt;
     }
 
     //Speed
