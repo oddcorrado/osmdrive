@@ -3,44 +3,9 @@ import { toggleDebugWays } from './../way'
 import {disableTrees} from './../dressmap'
 import {toggleEsp} from './control'
 import { Vector3 } from '@babylonjs/core/Maths/math';
-import { buttonDriveCreator } from './drivebuttons';
+import {buttonCreator, divCreator, valueButtonCreator, divControlCreator} from '../creators/buttoncreator.js';
 
 var camPosInterval;
-
-export function buttonCreator(style, content){
-    var tmpBtn = document.createElement('button');
-    tmpBtn.setAttribute('style', style + `; z-index: 10; position: absolute; font-weight: 800; color: white; opacity: 0.6; border-radius: 8px`);
-    tmpBtn.id = content.id;
-    tmpBtn.className = content.class;
-    tmpBtn.innerText = content.text;
-    return tmpBtn;
-}
-
-
-// export function buttonIconCreator(style, content){
-    
-//     var tmpBtn = document.createElement('button');
-//     var tmpIcon = document.createElement('span');
-//     tmpBtn.style.background = 'url(../images/speedometer.svg)'
-//     tmpIcon.style.background = 'url(../images/speedometer.svg)';
-//     tmpIcon.style.height = '15px'
-
-//     tmpBtn.setAttribute('style', style + `; z-index: 10; position: absolute; font-weight: 800; color: white; opacity: 0.6; border-radius: 8px`);
-//     tmpBtn.appendChild(tmpIcon);
-//     tmpBtn.innerText = content.text;
-//     console.log(tmpBtn);
-//     return tmpBtn;
-// }
-
-export function divCreator(style, content){
-    var tmpDiv = document.createElement('div');
-
-    tmpDiv.setAttribute('style', style + `;z-index: 10; position: absolute; font-weight: 800`);
-
-    tmpDiv.id = content.id;
-    tmpDiv.innerText = content.text;
-    return tmpDiv;
-}
 
 function changeColorAndText(divs, text = ['Enable', 'Disable'], colors = ['red', 'green']){
     divs.forEach (div => {
@@ -182,29 +147,22 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     }
 }
 
-export function divControlCreator (div, img, defimg){
-    var tmpDiv = document.createElement('div');
-    var tmpDefImg = document.createElement('img');
-    var tmpImg = document.createElement('img');
-
-    tmpDiv.setAttribute('style', div.style + `;width: 8vw; height: 5vh;z-index: 10; position: absolute; font-weight: 800; opacity: 0.6; border-radius: 8px`);
-    tmpImg.setAttribute('style', img.style + ';position: relative;  margin-left: 0.1rem')
-    tmpDefImg.setAttribute('style', defimg.style + ';position: relative; margin-left: 0.4rem')
-    tmpImg.src = img.src;
-    tmpDefImg.src = defimg.src;
-    tmpDiv.id = div.id;
-    tmpDiv.appendChild(tmpImg);
-    tmpDiv.appendChild(tmpDefImg);
-    return tmpDiv;
-}
-
 function setControlMenu(scene){
-    var lk = divControlCreator({style: 'border: solid #43c7f7 3px; background-color: #43c7f7; top: 5vh; left: 0', id: 'lk'}, {src: '../../images/eye.svg', style: 'height: 2rem'}, {src: '../../images/rotate.svg', style:'opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem'});
-    var dir = divControlCreator({style: 'border: solid #7aed6b 3px; background-color: #7aed6b; top: 12vh; left: 0', id: 'dir'}, {src: '../../images/steer.svg', style: 'opacity: 1,;margin-bot: 0.1rem; height: 1.8rem'}, {src: '../../images/tilt.svg', style:'opacity: 1; margin-bottom: 0.1rem; height: 1.8rem'});
-    var spd = divControlCreator({style: 'border: solid #f5f05f 3px; background-color: #f5f05f; top: 19vh; left: 0', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-bot: 0.1rem; height: 1.9rem'}, {src: '../../images/brake.svg', style:'opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem'});
-    var btnMenuControls = buttonCreator('top: 50px; left: 0; background-color:black; display: none',{text: 'Control Options'});
+    var lk = divControlCreator({style: 'width: 8vw; height: 5vh;border: solid #43c7f7 3px; background-color: #43c7f7; top: 5vh; left: 0', id: 'lk'}, {src: '../../images/eye.svg', style: 'margin-left: 0.1rem; height: 2rem'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem'});
+    var dir = divControlCreator({style: 'width: 8vw; height: 5vh; border: solid #7aed6b 3px; background-color: #7aed6b; top: 12vh; left: 0', id: 'dir'}, {src: '../../images/steer.svg', style: 'margin-left: 0.1rem; opacity: 1,;margin-bottom: 0.1rem; height: 1.8rem'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; height: 1.8rem'});
+    var spd = divControlCreator({style: 'width: 8vw; height: 5vh;border: solid #f5f05f 3px; background-color: #f5f05f; top: 19vh; left: 0', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-left: 0.1rem; margin-bottom: 0.1rem; height: 1.9rem'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem'});
+    var ori = divControlCreator({style: 'top: 36vh; left: 0; height: 9vh; width: 6vw', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'});
+    var setori = divControlCreator({style: 'top: 38vh; left: 6vw; height: 5vh; width: 5vw', id: 'setori'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 5vh; width: 5vw'});
 
-    var controlMenu = [btnMenuControls, lk, dir, spd]
+    var btnMenuControls = buttonCreator('top: 50px; left: 0; background-color:black; display: none',{text: 'Control Options'});
+    var frontSensi = valueButtonCreator({style: 'top: 26vh;', id: 'frontsensi', idminus:'frontdec', idplus:'frontinc'}, {style:'height: 1.6rem; margin-top: 1%', src:'../../images/frontsensi.svg'});
+    var sideSensi = valueButtonCreator({style: 'top: 32vh;', id: 'sidesensi', idminus:'sidedec', idplus:'sideinc'}, {style:'height: 1.6rem; margin-top: 1%', src:'../../images/sidesensi.svg'});
+    var sensiMenu = [frontSensi, sideSensi];
+    var controlMenu = [btnMenuControls, lk, dir, spd, ori, setori];
+
+    sensiMenu.forEach(div => {
+        document.body.insertAdjacentHTML('afterbegin', div);
+    })
     controlMenu.forEach(div => {
         document.body.appendChild(div);
     })
@@ -212,23 +170,27 @@ function setControlMenu(scene){
     
 
     spd.addEventListener('click', function(){
-        console.log('test', spd.children)
-        if (spd.children[1].src.includes('brake')){
-            spd.children[1].src = '../../images/tilt.svg';
-        } else if (spd.children[1].src.includes('tilt')) {
+        if (spd.children[1].src.includes('tilt')){
             spd.children[1].src = '../../images/rotate.svg';
-        } else {
+        } else if (spd.children[1].src.includes('rotate')) {
             spd.children[1].src = '../../images/brake.svg';
+        } else {
+            spd.children[1].src = '../../images/tilt.svg';
+            lk.children[1].src = '../../images/tilt.svg';
         }
     })
 
     lk.addEventListener('click', function(){
-        if (lk.children[1].src.includes('nolook')){
-            lk.children[1].src = '../../images/rotate.svg';
-        } else if (lk.children[1].src.includes('rotate')) {
-            lk.children[1].src = '../../images/tilt.svg';
+        if (!spd.children[1].src.includes('tilt')){
+            if (lk.children[1].src.includes('nolook')){
+                lk.children[1].src = '../../images/rotate.svg';
+            } else if (lk.children[1].src.includes('rotate')) {
+                lk.children[1].src = '../../images/tilt.svg';
+            } else {
+                lk.children[1].src = '../../images/nolook.svg';
+            }
         } else {
-            lk.children[1].src = '../../images/nolook.svg';
+            lk.children[1].src = '../../images/tilt.svg';
         }
     })
 
@@ -245,12 +207,18 @@ function setControlMenu(scene){
             controlMenuArray.forEach(btn => {
                 btn.style.display = 'block';
             })
+            sensiMenu.forEach(div => {
+                div.style.display = 'block';
+            })
             btnMenuControls.innerText = 'Hide';
             btnMenuControls.style.top = '150px';
         } else {
             controlMenuArray.forEach(btn => {
                 if (btn != btnMenuControls)
                     btn.style.display = 'none';
+            })
+            sensiMenu.forEach(div => {
+                div.style.display = 'none';
             })
             btnMenuControls.innerText = 'Control Menu';
             btnMenuControls.style.top = '50px';

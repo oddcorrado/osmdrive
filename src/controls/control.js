@@ -3,6 +3,7 @@ import { Vector3 } from '@babylonjs/core/Maths/math'
 //import {getCurrent} from './menu'
 import { getWayDir } from '../way'
 import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientationCamera'
+import enumOri from '../enum/orientation'
 
 let speed= 0;
 let angle = 0;
@@ -12,13 +13,20 @@ var btnAccel = 0;
 let leftJoystick = null;
 let rightJoystick = null;
 let pace = 0;
-let dir = new Vector3(1, 0, 0);
-let sideTilt = 0;
-let frontTilt = -80;
 let esp = false;
-var sideSensi = 10;
-let maxTilt = 30;
-let mode = {lk: 'tilt', dir: 'slide', spd: 'button', gear: 'front'};
+let dir = new Vector3(1, 0, 0);
+
+let orientation = enumOri.LEFT;
+
+let sideTilt = 0;
+let sideSensi = 10;
+let sideMaxTilt = 30;//todo
+
+let frontMidAngle = 45;
+let frontTilt = -45;
+let frontSensi = 5;
+
+let mode = {lk: 'tilt', dir: 'slide', spd: 'slide', gear: 'front'};
 
 
 export function toggleEsp(){
@@ -28,7 +36,7 @@ export function toggleEsp(){
 function setup(scene) {
     leftJoystick = new VirtualJoystick(true)
     rightJoystick = new VirtualJoystick(false)
-    VirtualJoystick.Canvas.style.opacity = '0';
+    VirtualJoystick.Canvas.style.opacity = '0.7';
     leftJoystick.setJoystickSensibility(4)
     rightJoystick.setJoystickSensibility(4)
 }
@@ -37,7 +45,6 @@ function setup(scene) {
 function cameraloop(camera){
     var pos = document.getElementById('camerapos');
     let hostWindow = camera.getScene().getEngine().getHostWindow();
-
     hostWindow.addEventListener("deviceorientation", function (evt){
        sideTilt = evt.beta;
        frontTilt = evt.gamma;
@@ -46,10 +53,6 @@ function cameraloop(camera){
 }
 
 export function setupControls (scene){
-    document.addEventListener('DOMContentLoaded', function (){
-        console.log('test');
-        console.log(scene.activeCamera)
-    })
     var interAccel;
     var interBrake;
     var dir = document.getElementById('dir');
@@ -60,6 +63,48 @@ export function setupControls (scene){
     var acc = document.getElementById('accelerator');
     var brake = document.getElementById('brake');
     var touchZone = document.getElementById('touchzone')
+    var frontSensiDiv = document.getElementById('frontsensi');
+    var sideSensiDiv = document.getElementById('sidesensi');
+    var sideInc =  document.getElementById('sideinc');
+    var sideDec =  document.getElementById('sidedec');
+    var frontInc =  document.getElementById('frontinc');
+    var frontDec =  document.getElementById('frontdec');
+    var ori = document.getElementById('ori');
+    var setori = document.getElementById('setori');
+
+    ori.addEventListener('touchstart', function(){
+        orientation = (orientation == enumOri.LEFT ? enumOri.RIGHT : enumOri.LEFT);
+        ori.style.transform = ori.style.transform === 'rotateZ(180deg)' ? 'rotateZ(0)' : 'rotateZ(180deg)';
+    })
+
+    setori.addEventListener('touchstart', function(){
+        frontMidAngle = frontTilt;
+    })
+
+    sideSensiDiv.innerHTML = sideSensi;
+    frontSensiDiv.innerHTML = frontSensi;
+
+    frontInc.addEventListener('touchstart', function (){
+        if (frontSensi <= 20)
+            frontSensi = ++frontSensi;
+        frontSensiDiv.innerHTML = frontSensi;
+    })
+    frontDec.addEventListener('touchstart', function (){
+        if (frontSensi >= 1)
+            frontSensi = --frontSensi;
+        frontSensiDiv.innerHTML = frontSensi;
+    })
+    sideInc.addEventListener('touchstart', function (){
+        if (sideSensi <= 20)
+            sideSensi = ++sideSensi;
+        sideSensiDiv.innerHTML = sideSensi;
+    })
+    sideDec.addEventListener('touchstart', function (){
+        if (sideSensi >= 1)
+            sideSensi = --sideSensi;
+        sideSensiDiv.innerHTML = sideSensi;
+    })
+  
 
     dir.addEventListener('click', function (){
         if (mode.dir === 'slide'){
@@ -71,40 +116,54 @@ export function setupControls (scene){
 
 
     spd.addEventListener('click', function (){
-        if (mode.spd === 'button'){
-            mode.spd = 'slide';
-            acc.style.display = 'none';
-            brake.style.display = 'none'; 
-        } else if (mode.spd === 'slide'){
+        if (mode.spd === 'slide'){
             mode.spd = 'tilt';
+            VirtualJoystick.Canvas.style.opacity = '0'
             acc.style.display = 'none';
-            brake.style.display = 'none'; 
-        } else {
+            brake.style.display = 'none';
+        } else if (mode.spd === 'tilt'){
             mode.spd = 'button';
+            VirtualJoystick.Canvas.style.opacity = '0'
             acc.style.display = 'block'; 
             brake.style.display = 'block'; 
+        } else {
+            mode.spd = 'slide';
+            VirtualJoystick.Canvas.style.opacity = '0.7'
+            acc.style.display = 'none';
+            brake.style.display = 'none'; 
+            left.style.display = 'none';
+            right.style.display = 'none';
+            touchZone.style.display = 'none';
         }
     })
 
     lk.addEventListener('click', function (){
-        if (mode.lk === 'tilt'){
-            mode.lk = 'slide';
-            left.style.display = 'block';
-            right.style.display = 'block';
-            touchZone.style.display = 'block';
-            scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
-        } else if (mode.lk === 'slide') {
-            mode.lk = 'off';
-            left.style.display = 'none';
-            right.style.display = 'none';
-            touchZone.style.display = 'none';
-            scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
+        if (mode.spd != 'slide') {
+            if (mode.lk === 'tilt'){
+                mode.lk = 'slide';
+                left.style.display = 'block';
+                right.style.display = 'block';
+                touchZone.style.display = 'block';
+                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
+            } else if (mode.lk === 'slide') {
+                mode.lk = 'off';
+                left.style.display = 'none';
+                right.style.display = 'none';
+                touchZone.style.display = 'none';
+                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
+            } else {
+                mode.lk = 'tilt';  
+                left.style.display = 'none';
+                right.style.display = 'none';
+                touchZone.style.display = 'none';
+                scene.activeCamera.lockedTarget = null;
+            }
         } else {
-            mode.lk = 'tilt';  
+            mode.lk = 'slide';
             left.style.display = 'none';
             right.style.display = 'none';
             touchZone.style.display = 'none';
-            scene.activeCamera.lockedTarget = null;
+            scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
         }
     })
     
@@ -136,9 +195,11 @@ export function setupControls (scene){
     brake.addEventListener('touchend', function(){
         clearInterval(interBrake);
     })
+
+
 }
 
-function loop(car) {
+function loop(car, scene) {
     var speedDiv = document.getElementById('speed');
     var steerWheel = document.getElementById('wheel');
     let vel = car.physicsImpostor.getLinearVelocity();
@@ -162,30 +223,37 @@ function loop(car) {
     if (mode.dir === 'slide'){
         steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x : steer * 0.80;
         steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;
-        steerWheel.value = leftJoystick.deltaPosition.x * 90;
+        steerWheel.value = leftJoystick.deltaPosition.x * 90;//DONE
     } else if (mode.dir === 'tilt'){
-        if (180 > sideTilt && sideTilt > 155 || -180 < sideTilt && sideTilt < -155) {
-            steer = (180 + sideTilt)/sideSensi;
-            steerWheel.style.transform = `rotateZ(${(180 - sideTilt)*90}deg)`;
+        if (180 >= sideTilt && sideTilt >= 155) {
+            steer = orientation * ((sideTilt - 180)/sideSensi);
+            console.log(steer);
+            steerWheel.style.transform = `rotateZ(${orientation * ((sideTilt-180)*2)}deg)`;
+        } else if (-155 >= sideTilt && sideTilt >= -180) {
+            steer = orientation * ((sideTilt+180)/sideSensi);
+            steerWheel.style.transform = `rotateZ(${(sideTilt+180)*2}deg)`;
         } else if (-35 < sideTilt && sideTilt < 35 ) {
-            steer = sideTilt/sideSensi;
-            steerWheel.style.transform = `rotateZ(${sideTilt * 2}deg)`;
+            steer = orientation * (sideTilt/sideSensi);
+            steerWheel.style.transform = `rotateZ(${orientation * (sideTilt * 2)}deg)`;//define a max tilt
         }
     }
 
     //Speed
     if(mode.spd === 'button') {
-        VirtualJoystick.Canvas.style.opacity = '0'
         accel = btnAccel;//0
     } else if (mode.spd === 'slide'){
-        VirtualJoystick.Canvas.style.opacity = '0.7'
-        accel = rightJoystick.pressed ? rightJoystick.deltaPosition.y : 0
-    } else if(mode.spd === 'tilt') {
-        VirtualJoystick.Canvas.style.opacity = '0'
+        if (rightJoystick.pressed) {
+            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 10 : rightJoystick.deltaPosition.y / 20)
+            scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 6, 50);
+
+        } else {
+            accel = -0.001;
+            scene.activeCamera.lockedTarget = new Vector3(0, 6, 50);
+        }
         
-        accel = (80 + frontTilt)/60;
-        console.log(accel.toFixed(2), (frontTilt + 80).toFixed(2));
-    }
+    } else if(mode.spd === 'tilt') {        
+        accel = (Math.abs(frontTilt)-Math.abs(frontMidAngle))/(frontSensi*frontMidAngle);
+    } 
 
     //Gear
     if (mode.gear === 'front'){
@@ -199,7 +267,7 @@ function loop(car) {
      if(esp != false && (!leftJoystick.pressed /*|| sideTilt - 5 < */)  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
         angle = dirAngle * 0.1 + angle * 0.9
     }
-    const adjustSpeed = Math.max(0, speed - 4 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
+    const adjustSpeed = Math.max(0, speed - 2 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
     var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
     car.physicsImpostor.setLinearVelocity(newVel)
     //car.physicsImpostor.setLinearVelocity(new Vector3(-1,0,-1))
@@ -207,7 +275,7 @@ function loop(car) {
 }
 
 export default {
-    loop: (car) => loop(car),
+    loop: (car, scene) => loop(car, scene),
     cameraloop: camera => cameraloop(camera),
     setup: scene => setup(scene)
 }

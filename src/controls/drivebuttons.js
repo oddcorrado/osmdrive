@@ -1,26 +1,10 @@
-import {buttonCreator, divCreator} from './menu.js'
 import { Vector3 } from '@babylonjs/core/Maths/math';
 import { Camera } from '@babylonjs/core/Cameras/camera';
-
-// buttonCretor({style}, {content})
-
-
-export function buttonDriveCreator(style, content){
-    var tmpBtn = document.createElement('div');
-    var tmpImg = document.createElement('img');
-
-    tmpImg.src = content.img;
-    tmpImg.style.height = content.height;
-    tmpBtn.setAttribute('style', style + `position: absolute;`);
-    tmpBtn.id = content.id;
-    tmpBtn.appendChild(tmpImg);
-    return tmpBtn;
-}
-
+import {buttonDriveCreator, divCreator} from '../creators/buttoncreator'
 
 export default function createButtons (scene){
-    var accel = buttonDriveCreator('z-index: 10; top: 73vh; right: 6vw; height:11rem;',{height: '8rem', id:'accelerator',img: '../images/gas2.svg'});
-    var brake = buttonDriveCreator('z-index: 10; top: 84.5vh; right: 14vw; height:3.5rem;',{height: '4rem', id:'brake', img: '../images/brake2.svg'});
+    var accel = buttonDriveCreator('z-index: 10; top: 73vh; right: 6vw; height:11rem; display: none;',{height: '8rem', id:'accelerator',img: '../images/gas2.svg'});
+    var brake = buttonDriveCreator('z-index: 10; top: 84.5vh; right: 14vw; height:3.5rem; display: none;',{height: '4rem', id:'brake', img: '../images/brake2.svg'});
     var wheel = buttonDriveCreator('z-index: 0;top: 60vh; right: 78vw; height:12rem;', {height: '12rem', id: 'wheel', img: '../images/steerwheel2.svg'})
     var dashboard = buttonDriveCreator('z-index: 0; top: 82.2vh; right: 40vw; height: 8rem;', {height: '6rem', id: 'dash', img: '../images/dashboard2.png'});
     var left = buttonDriveCreator('opacity: 0.7; z-index: 10; top: 54vh; right: 14vw; height: 5rem;display: none;', {height: '6rem', id: 'left', img: '../images/left.svg'});

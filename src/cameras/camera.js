@@ -12,7 +12,7 @@ export default function createCamera(scene, canvas, mode = 0) {
     camera.checkCollisions = true;
    // camera.lockedTarget = new Vector3(0, -7, 50)
    } else { //internal
-    var camera = new DeviceOrientationCamera("DevOr_internalcamera", new Vector3(0, 1.5, 0), scene);
+    var camera = new DeviceOrientationCamera("DevOr_internalcamera", new Vector3(0, 1.2, 0), scene);
     
     camera.setTarget(new Vector3(0, 0, 50))
     camera.enableHorizontalDragging();
