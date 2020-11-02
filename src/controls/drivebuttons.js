@@ -11,7 +11,7 @@ export default function createButtons (scene){
     var right = buttonDriveCreator('opacity: 0.7; z-index: 10; top: 54vh; right: 5vw; height: 5rem;display: none;', {height: '6rem', id: 'right', img: '../images/right.png'});
     var touchZone = divCreator('opacity: 0.7; z-index: 10; top: 55vh; right: 5vw; height: 5rem; width: 18.5vw; display: none;', {id: 'touchzone', text:''})
     var rev = buttonDriveCreator('z-index: 10;top: 90vh; right: 0.5vw; height:12rem; opacity: 0.7;', {height: '3rem', id: 'wheel', img: '../images/reverse.png'})
-    var wheelZone = divCreator('opacity: 0.7; border: solid black 2px;z-index: 10; top: 55vh; right: 75.5vw; height: 44vh; width: 24vw; display: block;', {id: 'wheelzone', text:''})
+    var wheelZone = divCreator('opacity: 0.7; z-index: 10; top: 55vh; right: 75.5vw; height: 44vh; width: 24vw; display: block;', {id: 'wheelzone', text:''})
 
     var btnDivArray = [accel, brake, wheel, dashboard, left, right, touchZone, wheelZone, rev];
 
