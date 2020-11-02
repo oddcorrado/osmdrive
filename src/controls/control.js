@@ -87,6 +87,7 @@ export function setupControls (scene){
     })
 
     setcam.addEventListener('touchstart', function(){
+        console.log('clicked');
         defCamTilt = camTilt;
     })
 
