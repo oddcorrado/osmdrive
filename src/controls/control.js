@@ -139,6 +139,7 @@ export function setupControls (scene){
 
     lk.addEventListener('click', function (){
         if (mode.spd != 'slide') {
+            console.log('mode changed');
             if (mode.lk === 'tilt'){
                 mode.lk = 'slide';
                 left.style.display = 'block';
@@ -252,7 +253,6 @@ function loop(car, scene) {
         
     } else if(mode.spd === 'tilt') {        
         accel = (Math.abs(frontMidAngle)-Math.abs(frontTilt))/(frontSensi*frontMidAngle);
-        console.log(accel);
     } 
 
     //Gear
