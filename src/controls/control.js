@@ -245,14 +245,14 @@ function loop(car, scene) {
         if (rightJoystick.pressed) {
             accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 10 : rightJoystick.deltaPosition.y / 20)
             scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 6, 50);
-
         } else {
             accel = -0.001;
             scene.activeCamera.lockedTarget = new Vector3(0, 6, 50);
         }
         
     } else if(mode.spd === 'tilt') {        
-        accel = (Math.abs(frontTilt)-Math.abs(frontMidAngle))/(frontSensi*frontMidAngle);
+        accel = (Math.abs(frontMidAngle)-Math.abs(frontTilt))/(frontSensi*frontMidAngle);
+        console.log(accel);
     } 
 
     //Gear
