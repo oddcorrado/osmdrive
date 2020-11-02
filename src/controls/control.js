@@ -26,7 +26,10 @@ let frontMidAngle = 45;
 let frontTilt = -45;
 let frontSensi = 5;
 
-let mode = {lk: 'tilt', dir: 'slide', spd: 'slide', gear: 'front'};
+let defCamTilt = 45;
+let camTilt = 0;
+
+let mode = {lk: 'slide', dir: 'slide', spd: 'slide', gear: 'front'};
 
 
 export function toggleEsp(){
@@ -46,8 +49,9 @@ function cameraloop(camera){
     var pos = document.getElementById('camerapos');
     let hostWindow = camera.getScene().getEngine().getHostWindow();
     hostWindow.addEventListener("deviceorientation", function (evt){
-       sideTilt = evt.beta;
-       frontTilt = evt.gamma;
+        camTilt = Math.abs(evt.alpha);
+        sideTilt = evt.beta;
+        frontTilt = evt.gamma;
        pos.innerText = `Alpha ${evt.alpha.toFixed(2)}, Beta ${evt.beta.toFixed(2)}, Gamma ${evt.gamma.toFixed(2)} ACCEL: ${accel.toFixed(2)}`;
     });   
 }
@@ -71,6 +75,7 @@ export function setupControls (scene){
     var frontDec =  document.getElementById('frontdec');
     var ori = document.getElementById('ori');
     var setori = document.getElementById('setori');
+    var setcam = document.getElementById('setcam');
 
     ori.addEventListener('touchstart', function(){
         orientation = (orientation == enumOri.LEFT ? enumOri.RIGHT : enumOri.LEFT);
@@ -78,7 +83,11 @@ export function setupControls (scene){
     })
 
     setori.addEventListener('touchstart', function(){
-        frontMidAngle = frontTilt;
+        frontMidAngle = Math.abs(frontTilt);
+    })
+
+    setcam.addEventListener('touchstart', function(){
+        defCamTilt = camTilt;
     })
 
     sideSensiDiv.innerHTML = sideSensi;
@@ -135,11 +144,16 @@ export function setupControls (scene){
             right.style.display = 'none';
             touchZone.style.display = 'none';
         }
+        if (mode.lk === 'slide' && mode.spd != 'slide'){
+            left.style.display = 'block';
+            right.style.display = 'block';
+            touchZone.style.display = 'block';
+            scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
+        }
     })
 
     lk.addEventListener('click', function (){
         if (mode.spd != 'slide') {
-            console.log('mode changed');
             if (mode.lk === 'tilt'){
                 mode.lk = 'slide';
                 left.style.display = 'block';
@@ -157,7 +171,7 @@ export function setupControls (scene){
                 left.style.display = 'none';
                 right.style.display = 'none';
                 touchZone.style.display = 'none';
-                scene.activeCamera.lockedTarget = null;
+                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
             }
         } else {
             mode.lk = 'slide';
@@ -219,6 +233,10 @@ function loop(car, scene) {
     if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
          angle = Math.atan2(vel.z, vel.x)
     }
+    //Look
+    if (mode.lk === 'tilt'){
+        scene.activeCamera.lockedTarget = new Vector3(camTilt * 2 - defCamTilt * 2, 1.2, 50);
+    }
 
     // Direction
     if (mode.dir === 'slide'){
@@ -245,10 +263,10 @@ function loop(car, scene) {
     } else if (mode.spd === 'slide'){
         if (rightJoystick.pressed) {
             accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 10 : rightJoystick.deltaPosition.y / 20)
-            scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 6, 50);
+            scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
         } else {
             accel = -0.001;
-            scene.activeCamera.lockedTarget = new Vector3(0, 6, 50);
+            scene.activeCamera.lockedTarget = new Vector3(0, 1.2, 50);
         }
         
     } else if(mode.spd === 'tilt') {        

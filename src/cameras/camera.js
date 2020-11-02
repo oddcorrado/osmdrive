@@ -15,7 +15,6 @@ export default function createCamera(scene, canvas, mode = 0) {
     var camera = new DeviceOrientationCamera("DevOr_internalcamera", new Vector3(0, 1.2, 0), scene);
     
     camera.setTarget(new Vector3(0, 0, 50))
-    camera.enableHorizontalDragging();
 
    // camera.lockedTarget = new Vector3(0, -5, 70)
    }

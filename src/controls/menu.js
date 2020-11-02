@@ -151,14 +151,15 @@ function setControlMenu(scene){
     var lk = divControlCreator({style: 'width: 8vw; height: 5vh;border: solid #43c7f7 3px; background-color: #43c7f7; top: 5vh; left: 0', id: 'lk'}, {src: '../../images/eye.svg', style: 'margin-left: 0.1rem; height: 2rem'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem'});
     var dir = divControlCreator({style: 'width: 8vw; height: 5vh; border: solid #7aed6b 3px; background-color: #7aed6b; top: 12vh; left: 0', id: 'dir'}, {src: '../../images/steer.svg', style: 'margin-left: 0.1rem; opacity: 1,;margin-bottom: 0.1rem; height: 1.8rem'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; height: 1.8rem'});
     var spd = divControlCreator({style: 'width: 8vw; height: 5vh;border: solid #f5f05f 3px; background-color: #f5f05f; top: 19vh; left: 0', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-left: 0.1rem; margin-bottom: 0.1rem; height: 1.9rem'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem'});
-    var ori = divControlCreator({style: 'top: 36vh; left: 0; height: 9vh; width: 6vw', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'});
-    var setori = divControlCreator({style: 'top: 38vh; left: 6vw; height: 5vh; width: 5vw', id: 'setori'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 5vh; width: 5vw'});
+    var ori = divControlCreator({style: 'top: 37vh; left: 0; height: 9vh; width: 6vw', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'});
+    var setori = divControlCreator({style: 'top: 39vh; left: 7vw; height: 5vh; width: 5vw', id: 'setcam'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 6vh; width: 5vw'});
+    var setcam = divControlCreator({style: 'top: 39vh; left: 12vw; height: 5vh; width: 5vw', id: 'setori'}, {src: '',style: ''}, {src: '../../images/cam.svg', style:'opacity: 1; height: 6vh; width: 5vw'});
 
     var btnMenuControls = buttonCreator('top: 50px; left: 0; background-color:black; display: none',{text: 'Control Options'});
     var frontSensi = valueButtonCreator({style: 'top: 26vh;', id: 'frontsensi', idminus:'frontdec', idplus:'frontinc'}, {style:'height: 1.6rem; margin-top: 1%', src:'../../images/frontsensi.svg'});
     var sideSensi = valueButtonCreator({style: 'top: 32vh;', id: 'sidesensi', idminus:'sidedec', idplus:'sideinc'}, {style:'height: 1.6rem; margin-top: 1%', src:'../../images/sidesensi.svg'});
     var sensiMenu = [frontSensi, sideSensi];
-    var controlMenu = [btnMenuControls, lk, dir, spd, ori, setori];
+    var controlMenu = [btnMenuControls, lk, dir, spd, ori, setori, setcam];
 
     sensiMenu.forEach(div => {
         document.body.insertAdjacentHTML('afterbegin', div);
