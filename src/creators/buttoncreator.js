@@ -4,7 +4,7 @@ export function buttonDriveCreator(style, content){
     var tmpImg = document.createElement('img');
 
     tmpImg.src = content.img;
-    tmpImg.style.height = content.height;
+    tmpImg.setAttribute('style', content.style);
     tmpBtn.setAttribute('style', style + `position: absolute;`);
     tmpBtn.id = content.id;
     tmpBtn.appendChild(tmpImg);
@@ -49,7 +49,7 @@ export function divControlCreator (div, img, defimg){
 
 export function valueButtonCreator(maindiv, img){
     var div = `
-    <div style='${maindiv.style}; z-index: 10 ;background-color: #dbdbdb; width: 16vw; height: 5vh; z-index: 10; position: absolute; font-weight: 400; border-radius: 8px; opacity: 0.8;'>
+    <div id='${maindiv.mainid}' style='${maindiv.style}; z-index: 10 ;background-color: #dbdbdb; width: 16vw; height: 5vh; z-index: 10; position: absolute; font-weight: 400; border-radius: 8px; opacity: 0.8;'>
         <div id='${maindiv.idminus}' style='text-align: center;font-size: 50px; line-height: 20px; height: 5vh; width: 25%; border-right: solid black 2px; float: left'>
             -
         </div>
@@ -61,6 +61,31 @@ export function valueButtonCreator(maindiv, img){
         </div>
         <div id='${maindiv.idplus}' style='text-align: center;z-index: 10;font-size: 40px; line-height: 24px; height: 5vh; width: 25%; border-left: solid black 2px; float: left'>
             +
+        </div>
+    </div>`
+    return div;
+}
+
+export function accelerationWitness(){
+    var div = `
+    <div style='position: absolute; bottom: -4rem; right: 36vw; height: 10rem;'>
+        <div style='transform: rotateZ(180deg); height: 0.75rem; width: 2rem'>
+            <img class='accelwit' id='maxf' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
+        </div>
+        <div style='transform: rotateZ(180deg); height: 0.75rem; width: 2rem'>
+            <img class='accelwit' id='avgf' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
+        </div>
+        <div style='transform: rotateZ(180deg); height: 0.75rem; width: 2rem'>
+            <img class='accelwit' id='minf' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
+        </div>
+        <div style='height: 0.75rem; width: 2rem'>
+            <img class='accelwit' id='minb' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
+        </div>
+        <div style='height: 0.75rem; width: 2rem'>
+            <img class='accelwit' id='avgb' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
+        </div>
+        <div style='height: 0.75rem; width: 2rem'>
+            <img class='accelwit' id='maxb' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
         </div>
     </div>`
     return div;
