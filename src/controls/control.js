@@ -24,7 +24,7 @@ let sideMaxTilt = 30;//todo
 
 let frontMidAngle = 45;
 let frontTilt = -45;
-let frontSensi = 5;
+let frontSensi = 10;
 
 var cameraOffset = null;
 var currAlpha;
@@ -58,11 +58,10 @@ function cameraloop(camera){
         if (alpha<0){
             alpha += 360;
         }
-        console.log(`alpha: ${alpha}`)
         camTilt = alpha;
         sideTilt = evt.beta;
         frontTilt = evt.gamma;
-       pos.innerText = `Alpha ${evt.alpha.toFixed(2)}, Beta ${evt.beta.toFixed(2)}, Gamma ${evt.gamma.toFixed(2)} ACCEL: ${accel.toFixed(2)}`;
+       pos.innerText = `Alpha ${evt.alpha.toFixed(2)}, Beta ${evt.beta.toFixed(2)}, Gamma ${evt.gamma.toFixed(2)} ACCEL: ${accel.toFixed(2)}, ORIENTATION: ${camTilt}`;
     });   
 }
 
@@ -99,7 +98,7 @@ export function setupControls (scene){
     })
 
     setcam.addEventListener('touchstart', function(){
-        cameraOffset = currAlpha;
+         cameraOffset = currAlpha;
     })
 
     sideSensiDiv.innerHTML = sideSensi;
@@ -307,7 +306,7 @@ function loop(car, scene) {
     
     //Look
     if (mode.lk === 'tilt'){
-        scene.activeCamera.lockedTarget = new Vector3((-180 + camTilt) * 3, 1.2, 50);
+        scene.activeCamera.lockedTarget = new Vector3((camTilt-180) * -3, 1.2, 50);
     }
 
     // Direction
@@ -337,13 +336,15 @@ function loop(car, scene) {
             scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
         } else {
             accel = vel.x === 0 ? 0 : -0.001;
-            scene.activeCamera.lockedTarget = new Vector3(0, 1.2, 50);
+            scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
         }
         
-    } else if(mode.spd === 'tilt') {        
-        accel = (Math.abs(frontMidAngle)-Math.abs(frontTilt))/((frontSensi*frontMidAngle));
-        if (accel < 0){
-            accel = accel - 0.01;
+    } else if(mode.spd === 'tilt') {    
+        console.log(Math.abs(frontMidAngle)-Math.abs(frontTilt))    
+        if (Math.abs(frontMidAngle)-Math.abs(frontTilt) > 0){
+            accel = (Math.abs(frontMidAngle)-Math.abs(frontTilt))/((frontSensi*frontMidAngle));
+        } else {
+            accel = (Math.abs(frontMidAngle)-Math.abs(frontTilt))/(((frontSensi/1.5)*frontMidAngle))
         }
     } 
 

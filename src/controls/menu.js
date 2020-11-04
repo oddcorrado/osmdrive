@@ -27,7 +27,7 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     var btnEsp = buttonCreator('top: 130px; right: 0;background-color:green; display: none',{text: 'Disable ESP'});
     var btnCamOri = buttonCreator('top: 150px; right: 0;background-color:red; display: none',{text: 'Enable Orientation Pos'});
     var btnTrees = buttonCreator('top: 170px; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
-    var btnBar = buttonCreator('top: 190px; right: 0;background-color:black; display: none',{text: 'Hide TopBar'});
+    var btnBar = buttonCreator('top: 170px; right: 0;background-color:black; display: none',{text: 'Hide TopBar'});
     var btnWays = buttonCreator('top: 230px; right: 0;background-color:black; display: none',{text: 'Show Ways'});
 
     var accelWitness = accelerationWitness();

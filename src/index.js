@@ -82,7 +82,7 @@ const boot = () => {
              car = tmpcar;
              oldcar.dispose();
         }
-        if (switchcar === 'new')
+        //if (switchcar === 'new')
              control.loop(car, scene)  
        // botshandler.loop(bots)
     })
