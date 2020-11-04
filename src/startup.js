@@ -1,5 +1,5 @@
 import screenfull from 'screenfull'
-import { divCreator } from './controls/menu'
+import { divCreator } from './creators/buttoncreator'
 
 
 const displayText = (w, h) => {
