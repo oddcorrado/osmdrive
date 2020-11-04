@@ -1,7 +1,7 @@
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
 import { Vector3 } from '@babylonjs/core/Maths/math'
 //import {getCurrent} from './menu'
-import { getWayDir } from '../way'
+import { getWayDir } from '../ways/way'
 import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientationCamera'
 import enumOri from '../enum/orientation'
 

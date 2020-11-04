@@ -1,6 +1,6 @@
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { Vector3} from '@babylonjs/core/Maths/math'
-import { getWayDir } from './way'
+import { getWayDir } from './ways/way'
 import { TupleDictionary } from 'cannon';
 
 function getRandomPosition(min, max) {
