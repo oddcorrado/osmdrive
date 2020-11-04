@@ -47,11 +47,11 @@ const boot = () => {
     var container = new AssetContainer(scene);
     
     //Creates cars meshes
-    //createDetailedCar(scene, camera, internalCamera, container);
+    createDetailedCar(scene, camera, internalCamera, container);
     var car = createCar(scene);
     
     //Create main meshes 
-    //createWays(scene, planes)
+    createWays(scene, planes)
     var grids = createBuildings(scene)
     //dressMap(scene)
     //create loading depending on props;
