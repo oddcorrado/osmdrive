@@ -39,11 +39,6 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 
     document.body.insertAdjacentHTML('afterbegin', accelWitness);
 
-    setInterval(() => {
-        var event = document.createEvent('Event');
-        event.initEvent('touch' + type, true, true);     
-        event.constructor.name;
-        }, 5000)
 
     btnDivArrayMenu.forEach(btn => {
         document.body.appendChild(btn);
