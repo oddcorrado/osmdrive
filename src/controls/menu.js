@@ -28,7 +28,7 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     var btnCamOri = buttonCreator('top: 150px; right: 0;background-color:red; display: none',{text: 'Enable Orientation Pos'});
     var btnTrees = buttonCreator('top: 170px; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
     var btnWays = buttonCreator('top: 190px; right: 0;background-color:black; display: none',{text: 'Show Ways'});
-    var btnBar = buttonCreator('top: 190px; right: 0;background-color:black; display: none',{text: 'Hide TopBar'});
+    var btnBar = buttonCreator('top: 170px; right: 0;background-color:black; display: none',{text: 'Hide TopBar'});
 
     var accelWitness = accelerationWitness();
     var camFresh = divCreator('top: 1vh; right: 1vw; height: 30px; display: none', {text: '', id:'position'});
@@ -39,6 +39,10 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 
     document.body.insertAdjacentHTML('afterbegin', accelWitness);
 
+    var test = document.createElement('button');
+    setInterval(() => {
+        test.click();
+    }, 5000)
 
     btnDivArrayMenu.forEach(btn => {
         document.body.appendChild(btn);
