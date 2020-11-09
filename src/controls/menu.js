@@ -1,5 +1,5 @@
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
-import { toggleDebugWays } from './../way'
+import { toggleDebugWays } from './../ways/logic/roads'
 import {disableTrees} from './../dressmap'
 import {toggleEsp} from './control'
 import { Vector3 } from '@babylonjs/core/Maths/math';
@@ -27,8 +27,8 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     var btnEsp = buttonCreator('top: 130px; right: 0;background-color:green; display: none',{text: 'Disable ESP'});
     var btnCamOri = buttonCreator('top: 150px; right: 0;background-color:red; display: none',{text: 'Enable Orientation Pos'});
     var btnTrees = buttonCreator('top: 170px; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
-    var btnWays = buttonCreator('top: 190px; right: 0;background-color:black; display: none',{text: 'Show Ways'});
     var btnBar = buttonCreator('top: 170px; right: 0;background-color:black; display: none',{text: 'Hide TopBar'});
+    var btnWays = buttonCreator('top: 230px; right: 0;background-color:black; display: none',{text: 'Show Ways'});
 
     var accelWitness = accelerationWitness();
     var camFresh = divCreator('top: 1vh; right: 1vw; height: 30px; display: none', {text: '', id:'position'});
