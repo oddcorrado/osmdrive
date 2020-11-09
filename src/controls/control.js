@@ -19,7 +19,7 @@ let dir = new Vector3(1, 0, 0);
 let orientation = enumOri.LEFT;
 
 let sideTilt = 0;
-let sideSensi = 10;
+let sideSensi = 15;
 let sideMaxTilt = 30;//todo
 
 let frontMidAngle = 45;
@@ -271,21 +271,27 @@ function setSpeedWtinesses(vel, accel){
     speedDiv.style.color = (3.6*(Math.abs(vel.x) + Math.abs(vel.z))) > 50 ? 'red' : '#56CCF2';
 
     var divTab = document.getElementsByClassName('accelwit');
+    var neutral = document.getElementById('neutral');
     for (let div of divTab){
-        div.src = '../../images/arrow.svg';
+        div.src = '../../images/Vclear.svg';
     }
-    if (accel>0)
-        document.getElementById('minf').src = '../../images/arrowgreen.svg';
-    if (accel>0.01)
-        document.getElementById('avgf').src = '../../images/arrowblue.svg';
+    neutral.src = accel === 0 ? '../../images/greencircle.svg' : '../../images/circle.svg';
+    
+    if (accel>0.03)
+        document.getElementById('maxf').src = '../../images/Vstrong.svg';    
     if (accel>0.02)
-        document.getElementById('maxf').src = '../../images/arrowred.svg';
-    if (accel<0)
-        document.getElementById('minb').src = '../../images/arrowgreen.svg';
-    if (accel<-0.01)
-        document.getElementById('avgb').src = '../../images/arrowblue.svg';
-    if (accel<-0.02)
-        document.getElementById('maxb').src = '../../images/arrowred.svg';
+        document.getElementById('avgf').src = '../../images/Vstrong.svg';
+    if (accel>0.015)
+        document.getElementById('minf').src = '../../images/Vstrong.svg';
+    if (-0.015 < accel && accel < 0.015)
+        neutral.src = '../../images/greencircle.svg';
+    if (accel<-0.015)
+        document.getElementById('minb').src = '../../images/Vstrong.svg';
+    if (accel<-0.03)
+        document.getElementById('avgb').src = '../../images/Vstrong.svg';
+    if (accel<-0.05)
+        document.getElementById('maxb').src = '../../images/Vstrong.svg';
+  
 }
 
 function loop(car, scene) {
@@ -311,7 +317,7 @@ function loop(car, scene) {
 
     // Direction
     if (mode.dir === 'slide'){
-        steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x : steer * 0.80;
+        steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x * 1.2 : steer * 0.80;
         steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;
         steerWheel.value = leftJoystick.deltaPosition.x * 90;
     } else if (mode.dir === 'tilt'){
@@ -332,19 +338,21 @@ function loop(car, scene) {
         accel = btnAccel;//0
     } else if (mode.spd === 'slide'){
         if (rightJoystick.pressed) {
-            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 15 : rightJoystick.deltaPosition.y / 30)
+            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 5 : rightJoystick.deltaPosition.y / 12)
             scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
         } else {
             accel = vel.x === 0 ? 0 : -0.001;
             scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
         }
         
-    } else if(mode.spd === 'tilt') {    
-        console.log(Math.abs(frontMidAngle)-Math.abs(frontTilt))    
-        if (Math.abs(frontMidAngle)-Math.abs(frontTilt) > 0){
-            accel = (Math.abs(frontMidAngle)-Math.abs(frontTilt))/((frontSensi*frontMidAngle));
-        } else {
-            accel = (Math.abs(frontMidAngle)-Math.abs(frontTilt))/(((frontSensi/1.5)*frontMidAngle))
+    } else if(mode.spd === 'tilt') {
+        var currentTilt = Math.abs(frontMidAngle)-Math.abs(frontTilt);
+        if (currentTilt > 2 || currentTilt < -2) {
+            if (currentTilt > 0){
+                accel = (currentTilt)/((frontSensi*frontMidAngle));
+            } else {
+                accel = (currentTilt)/(((frontSensi/1.5)*frontMidAngle))
+            }
         }
     } 
 
@@ -356,8 +364,7 @@ function loop(car, scene) {
     speed = Math.max(0, Math.min(20, speed + accel))    
     angle += -steer * 0.025
     const dirAngle = Math.atan2(dir.z, dir.x)
-
-     if(esp != false && (!leftJoystick.pressed || (0.1 >= steer && steer >= -0.1))  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
+     if (esp === true && ((mode.dir === 'slide' && !leftJoystick.pressed) || (mode.dir === 'tilt' && 0.15 >= steer && steer >= -0.15))  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
         angle = dirAngle * 0.1 + angle * 0.9
     }
     const adjustSpeed = Math.max(0, speed - 2 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective

@@ -50,11 +50,10 @@ const boot = () => {
     createDetailedCar(scene, camera, internalCamera, container);
     var car = createCar(scene);
     
-    //Create main meshes 
+    //Create map meshes 
     createWays(scene, planes)
-    var grids = createBuildings(scene)
+    var grids// = createBuildings(scene)
     //dressMap(scene)
-    //create loading depending on props;
     
     const bots = botshandler.createBots(scene)
     bots.forEach(bot => {//comment to disable bots by default
@@ -82,7 +81,7 @@ const boot = () => {
              car = tmpcar;
              oldcar.dispose();
         }
-        //if (switchcar === 'new')
+        if (switchcar === 'new')
              control.loop(car, scene)  
        // botshandler.loop(bots)
     })

@@ -68,24 +68,31 @@ export function valueButtonCreator(maindiv, img){
 
 export function accelerationWitness(){
     var div = `
-    <div style='position: absolute; bottom: -4rem; right: 36vw; height: 10rem;'>
-        <div style='transform: rotateZ(180deg); height: 0.75rem; width: 2rem'>
-            <img class='accelwit' id='maxf' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
+    <div style='position: absolute; bottom: -3.8rem; right: 36vw; height: 10rem;'>
+        <div>
+            <div style='height: 0.75rem; width: 2rem'>
+                <img class='accelwit' id='maxf' style='height: 2rem; width: 2rem' src='../../images/Vclear.svg'></img>
+            </div>
+            <div style='height: 0.75rem; width: 2rem'>
+                <img class='accelwit' id='avgf' style='height: 2rem; width: 2rem' src='../../images/Vclear.svg'></img>
+            </div>
+            <div style='height: 0.75rem; width: 2rem'>
+                <img class='accelwit' id='minf' style='height: 2rem; width: 2rem' src='../../images/Vclear.svg'></img>
+            </div>
         </div>
-        <div style='transform: rotateZ(180deg); height: 0.75rem; width: 2rem'>
-            <img class='accelwit' id='avgf' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
+        <div>
+            <img id='neutral' src='../../images/greencircle.svg' style='height: 0.75rem; margin-left: 0.6rem; margin-top: 0.6rem'></img>
         </div>
-        <div style='transform: rotateZ(180deg); height: 0.75rem; width: 2rem'>
-            <img class='accelwit' id='minf' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
-        </div>
-        <div style='height: 0.75rem; width: 2rem'>
-            <img class='accelwit' id='minb' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
-        </div>
-        <div style='height: 0.75rem; width: 2rem'>
-            <img class='accelwit' id='avgb' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
-        </div>
-        <div style='height: 0.75rem; width: 2rem'>
-            <img class='accelwit' id='maxb' style='height: 2rem; width: 2rem' src='../../images/arrow.svg'></img>
+        <div style='margin-top: 0.4rem;'>
+            <div style='transform: rotateZ(180deg); height: 0.75rem; width: 2rem'>
+                <img class='accelwit' id='minb' style='height: 2rem; width: 2rem' src='../../images/Vclear.svg'></img>
+            </div>
+            <div style='transform: rotateZ(180deg); height: 0.75rem; width: 2rem'>
+                <img class='accelwit' id='avgb' style='height: 2rem; width: 2rem' src='../../images/Vclear.svg'></img>
+            </div>
+            <div style='transform: rotateZ(180deg); height: 0.75rem; width: 2rem'>
+                <img class='accelwit' id='maxb' style='height: 2rem; width: 2rem' src='../../images/Vclear.svg'></img>
+            </div>
         </div>
     </div>`
     return div;
