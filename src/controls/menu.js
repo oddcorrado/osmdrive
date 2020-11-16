@@ -4,6 +4,7 @@ import {disableTrees} from './../dressmap'
 import {toggleEsp} from './control'
 import { Vector3 } from '@babylonjs/core/Maths/math';
 import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness} from '../creators/buttoncreator.js';
+import type from '../enum/buttontype';
 
 var camPosInterval;
 
@@ -18,22 +19,22 @@ function changeColorAndText(divs, text = ['Enable', 'Disable'], colors = ['red',
 function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     // var test = divCreator('top:0; left: 0;height: 100vh; width: 50vw; border: solid 2px black', {id: 'test', text:'middle debug'})
     //  document.body.appendChild(test);// debug middle
-    var btnMenu = buttonCreator('top: 50px; right: 0; background-color:black; display: block',{text: 'Debug Menu'});
-    var btnJ = buttonCreator('top: 70px; right: 0;background-color:green; display: none',{text: 'Disable Joysticks'});
-    var btnCam = buttonCreator('top:30px; right: 0;background-color: black; display: none',{text: 'FreeCamera Switch (C)'});
-    var btnSwCam = buttonCreator('top:50px; right: 0;background-color: black; display: none',{text: 'Camera Switch'});
-    var btnBots = buttonCreator('top: 90px; right: 0;background-color:red; display: none',{text: 'Enable Bots'});
-    var btnGrids = buttonCreator('top: 110px; right: 0;background-color:red; display: none',{text: 'Enable Grids'});
-    var btnEsp = buttonCreator('top: 130px; right: 0;background-color:green; display: none',{text: 'Disable ESP'});
-    var btnCamOri = buttonCreator('top: 150px; right: 0;background-color:red; display: none',{text: 'Enable Orientation Pos'});
-    var btnTrees = buttonCreator('top: 170px; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
-    var btnBar = buttonCreator('top: 170px; right: 0;background-color:black; display: none',{text: 'Hide TopBar'});
-    var btnWays = buttonCreator('top: 230px; right: 0;background-color:black; display: none',{text: 'Show Ways'});
+    var btnCam = buttonCreator('top:2rem; right: 0;background-color: black; display: none',{text: 'FreeCamera Switch (C)'});
+    var btnMenu = buttonCreator('top: 2rem; right: 0; background-color:black; display: block',{text: 'Debug Menu'});
+    var btnSwCam = buttonCreator('top: 3.9rem; right: 0;background-color: black; display: none',{text: 'Camera Switch'});
+    var btnJ = buttonCreator('top: 5rem; right: 0;background-color:green; display: none',{text: 'Disable Joysticks'});
+    var btnBots = buttonCreator('top: 6.8rem; right: 0;background-color:red; display: none',{text: 'Enable Bots'});
+    var btnGrids = buttonCreator('top: 7.9rem; right: 0;background-color:red; display: none',{text: 'Enable Grids'});
+    var btnEsp = buttonCreator('top: 9rem; right: 0;background-color:green; display: none',{text: 'Disable ESP'});
+    var btnCamOri = buttonCreator('top: 10.1rem; right: 0;background-color:red; display: none',{text: 'Enable Orientation Pos'});
+    var btnTrees = buttonCreator('top: 15rem; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
+    var btnBar = buttonCreator('top: 11.8rem; right: 0;background-color:black; display: none',{text: 'Hide TopBar'});
+    var btnWays = buttonCreator('top: 12.8rem; right: 0;background-color:black; display: none',{text: 'Show Ways'});
 
     var accelWitness = accelerationWitness();
-    var camFresh = divCreator('top: 1vh; right: 1vw; height: 30px; display: none', {text: '', id:'position'});
-    var camOriFresh = divCreator('top: 1vh; right: 50vw; width: 70wv; color: #d42a2a; height: 30px; display: block; font-size: 1.3rem;display: none;', {text: '', id:'camerapos'});
-    var speedFresh = divCreator('font-family: aldrich ; text-align:center; bottom: -3rem; right: 47.2vw; height: 8rem; display: block; color: #56CCF2;font-size: 3rem', {text: 'none', id: 'speed'});
+    var camFresh = divCreator('top: 0; right: 0; height: 1rem;font-size:0.7rem; display: none', {text: '', id:'position'});
+    var camOriFresh = divCreator('top: 0; left: 0; width: 40rem; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'camerapos'});
+    var speedFresh = divCreator('font-family: aldrich ; text-align:center; bottom: 1rem; right: 19.5rem; height: 3.3rem; display: block; color: #56CCF2;font-size: 2.3rem', {text: '00', id: 'speed'});
     var btnDivArrayMenu = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, btnGrids, btnEsp, btnCamOri, btnBar];
     var divArray = [speedFresh, camFresh, camOriFresh];
 
@@ -58,14 +59,14 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
                 btn.style.display = 'block';
             })
             btnMenu.innerText = 'Hide Menu';
-            btnMenu.style.top = '210px';
+            btnMenu.style.top = '14.5rem';
         } else {
             btnDivArrayMenu.forEach(btn => {
             if (btn != btnMenu)
                     btn.style.display = 'none';
             })
             btnMenu.innerText = 'Debug Menu';
-            btnMenu.style.top = '50px';
+            btnMenu.style.top = '2rem';
         }
     }
 
@@ -157,51 +158,81 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 }
 
 function setControlMenu(scene){
-    var lk = divControlCreator({style: 'width: 7rem; height: 5vh;border: solid #43c7f7 3px; background-color: #43c7f7; top: 5vh; left: 0; ;display:none;', id: 'lk'}, {src: '../../images/eye.svg', style: 'margin-left: 0.1rem; height: 2rem; width: 2rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem;width: 1.8rem;'});
-    var dir = divControlCreator({style: 'width: 7rem; height: 5vh; border: solid #7aed6b 3px; background-color: #7aed6b; top: 12vh; left: 0 ;display:none;', id: 'dir'}, {src: '../../images/steer.svg', style: 'margin-left: 0.1rem; opacity: 1,;margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'});
-    var spd = divControlCreator({style: 'width: 7rem; height: 5vh;border: solid #f5f05f 3px; background-color: #f5f05f; top: 19vh; left: 0 ;display:none;', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-left: 0.1rem;  height: 1.9rem; width: 1.9rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-left:0.3rem; height: 1.8rem; width: 1.8rem;'});
-    var ori = divControlCreator({style: 'top: 37vh; left: 0; height: 9vh; width: 6vw; display:none;', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'});
-    var setori = divControlCreator({style: 'top: 39vh; left: 7vw; height: 5vh; width: 5vw ;display:none;', id: 'setori'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 6vh; width: 5vw'});
-    var setcam = divControlCreator({style: 'top: 39vh; left: 12vw; height: 5vh; width: 5vw ;display:none;', id: 'setcam'}, {src: '',style: ''}, {src: '../../images/cam.svg', style:'opacity: 1; height: 6vh; width: 5vw'});
-    var controlmode = divControlCreator({style: 'width: 7rem; line-height: 7vh; height: 3rem;border: solid #43c7f7 3px; background-color: #43c7f7; top: 20vh; left: 0; ;display:block;', id: 'controlmode'}, {src: '../../images/mode.svg', style: ';margin-left: 0.1rem; margin-bottom: 0.4rem; height: 3rem; width: 2.5rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 1rem; margin-left:0.7rem; height: 2rem;width: 2rem;'});
+    var btnMenuControls = buttonCreator('top: 1.3rem; width: 6rem; white-space: nowrap; left: 0; background-color:black; display: block',{text: 'Control Settings'});
+    var controlTab = [[],[]];
+    var controlMenu = ['controlmode', 'lk', 'dir', 'spd'];
+    var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam'];
+    var wasOpen = false;
 
-    var btnMenuControls = buttonCreator('top: 50px; left: 0; background-color:black; display: block',{text: 'Control Menu'});
-    var frontSensi = valueButtonCreator({style: 'top: 26vh; display:none;', mainid:'front', id: 'frontsensi', idminus:'frontdec', idplus:'frontinc'}, {style:'height: 1.6rem; margin-top: 1%', src:'../../images/frontsensi.svg'});
-    var sideSensi = valueButtonCreator({style: 'top: 32vh; display:none;', mainid: 'side', id: 'sidesensi', idminus:'sidedec', idplus:'sideinc'}, {style:'height: 1.6rem; margin-top: 1%', src:'../../images/sidesensi.svg'});
-    var sensiMenu = [frontSensi, sideSensi];
-    var controlMenu = [btnMenuControls, controlmode, lk, dir, spd, ori, setori, setcam];
+    document.body.appendChild(btnMenuControls);
+    
+    //Default
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; line-height: 7vh; height: 2rem;border: solid #43c7f7 3px; background-color: #43c7f7; top: 2.5rem; left: 0; ;display:block;', id: 'controlmode'}, {src: '../../images/mode.svg', style: ';margin-left: 0.1rem; margin-bottom: 0.4rem; height: 2rem; width: 2rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.7rem; margin-left:0.7rem; height: 1.5rem;width: 1.5rem;'}));
+    //Buttons Advanced Control Menu
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #43c7f7 3px; background-color: #43c7f7; top: 5rem; left: 0; ;display:none;', id: 'lk'}, {src: '../../images/eye.svg', style: 'margin-left: 0.1rem; height: 2rem; width: 2rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem;width: 1.8rem;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem; border: solid #7aed6b 3px; background-color: #7aed6b; top: 7.2rem; left: 0 ;display:none;', id: 'dir'}, {src: '../../images/steer.svg', style: 'margin-left: 0.1rem; opacity: 1,;margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #f5f05f 3px; background-color: #f5f05f; top: 9.4rem; left: 0 ;display:none;', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-left: 0.1rem;  height: 1.9rem; width: 1.9rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-left:0.3rem; height: 1.8rem; width: 1.8rem;'}));
+    //Buttons Sensitivity Menu
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 7rem; left: 0.2rem; height: 2rem; width: 6vw; display:none;', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 7.3rem; left: 3rem; height: 2rem; width: 5vw ;display:none;', id: 'setori'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 7.3rem; left: 5rem; height: 2rem; width: 5vw ;display:none;', id: 'setcam'}, {src: '',style: ''}, {src: '../../images/cam.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
+    document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 5rem; display:none;', mainid:'front', id: 'frontsensi', idminus:'frontdec', idplus:'frontinc'}, {style:'height: 1.2rem; margin-top: 1%', src:'../../images/frontsensi.svg'}));
+    document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 6.5rem; display:none;', mainid: 'side', id: 'sidesensi', idminus:'sidedec', idplus:'sideinc'}, {style:'height: 1.2rem; margin-top: 1%', src:'../../images/sidesensi.svg'}));
+    
 
-    sensiMenu.forEach(div => {
-        document.body.insertAdjacentHTML('afterbegin', div);
+    controlMenu.forEach(id => {
+        controlTab[type.MODE].push(document.getElementById(id));
     })
-    controlMenu.forEach(div => {
-        document.body.appendChild(div);
+    sensiMenu.forEach(id => {
+        controlTab[type.SENSI].push(document.getElementById(id));
     })
     
-    
+    btnMenuControls.onclick = () => {
+        if (btnMenuControls.innerText === 'Control Settings') {
+            controlTab[type.SENSI].forEach((btn) => {
+                btn.style.display = 'block';
+            })
+            controlTab[type.MODE].forEach((btn) => {
+                if (wasOpen === false && btn != controlmode)
+                    wasOpen = btn.style.display === 'block' ? true : false;
+                if (btn != controlmode)
+                    btn.style.display = 'none';
+            })
+            btnMenuControls.innerText = 'Hide';
+            btnMenuControls.style.top = '11rem';
+        } else {
+            controlTab[type.SENSI].forEach((btn) => {
+                btn.style.display = 'none';
+            })
+            if (wasOpen === true){
+                controlTab[type.MODE].forEach((btn) => {
+                    btn.style.display = 'block';
+                })
+            }
+            btnMenuControls.innerText = 'Control Settings';
+            btnMenuControls.style.top = '1.3rem';
+        }
+    }
 
     controlmode.addEventListener('click', function(){
         if (controlmode.children[1].src.includes('tilt')){
             controlmode.children[1].src = '../../images/rotate.svg';
-            spd.children[1].src = '../../images/rotate.svg';
-            lk.children[1].src = '../../images/rotate.svg';
-            dir.children[1].src = '../../images/rotate.svg';
         } else if (controlmode.children[1].src.includes('rotate')) {
             controlmode.children[1].src = '../../images/mode1.svg';
-            lk.children[1].src = '../../images/tilt.svg';
-            dir.children[1].src = '../../images/tilt.svg';
-            spd.children[1].src = '../../images/rotate.svg';
         } else if (controlmode.children[1].src.includes('mode1')) {
             controlmode.children[1].src = '../../images/mode2.svg';
-            spd.children[1].src = '../../images/tilt.svg';
-            lk.children[1].src = '../../images/tilt.svg';
-            dir.children[1].src = '../../images/rotate.svg';
+        } else if (controlmode.children[1].src.includes('mode2')) {
+            controlmode.children[1].src = '../../images/custom.svg';
+            controlTab[type.MODE].forEach((btn) => {
+                btn.style.display = 'block';
+            })
         } else {
+            controlTab[type.MODE].forEach((btn) => {
+                if (btn!=controlmode)
+                btn.style.display = 'none';
+            })
             controlmode.children[1].src = '../../images/tilt.svg';
-            spd.children[1].src = '../../images/tilt.svg';
-            lk.children[1].src = '../../images/tilt.svg';
-            dir.children[1].src = '../../images/tilt.svg';
-        }
+        }//here
             
     })
 
@@ -238,28 +269,7 @@ function setControlMenu(scene){
         }
     })
 
-    btnMenuControls.onclick = () => {
-        if (btnMenuControls.innerText === 'Control Menu') {
-            controlMenu.forEach(btn => {
-                btn.style.display = 'block';
-            })
-            controlmode.style.display = 'none';
-            document.getElementById('side').style.display = 'block';
-            document.getElementById('front').style.display = 'block';
-            btnMenuControls.innerText = 'Hide';
-            btnMenuControls.style.top = '250px';
-        } else {
-            controlMenu.forEach(btn => {
-                if (btn != btnMenuControls)
-                    btn.style.display = 'none';
-            })
-            controlmode.style.display = 'block';
-            document.getElementById('side').style.display = 'none';
-            document.getElementById('front').style.display = 'none';
-            btnMenuControls.innerText = 'Control Menu';
-            btnMenuControls.style.top = '50px';
-        }
-    }
+    
 
 }
 

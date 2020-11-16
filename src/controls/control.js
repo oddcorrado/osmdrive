@@ -4,8 +4,10 @@ import { Vector3 } from '@babylonjs/core/Maths/math'
 import { getWayDir } from '../ways/way'
 import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientationCamera'
 import enumOri from '../enum/orientation'
+import { scene } from '..'
+// import  from './modes.js'
 
-let speed= 0;
+let speed = 0;
 let angle = 0;
 let steer = 0;
 var accel = 0;
@@ -30,7 +32,7 @@ var cameraOffset = null;
 var currAlpha;
 let camTilt = 0;
 
-let mode = {lk: 'slide', dir: 'slide', spd: 'slide', gear: 'front', def: 'slide'};
+let mode = {lk: 'slide', dir: 'slide', spd: 'slide', gear: 'front', global: 'slide'};
 
 
 export function toggleEsp(){
@@ -41,8 +43,10 @@ function setup(scene) {
     leftJoystick = new VirtualJoystick(true)
     rightJoystick = new VirtualJoystick(false)
     VirtualJoystick.Canvas.style.opacity = '0.7';
-    leftJoystick.setJoystickSensibility(4)
-    rightJoystick.setJoystickSensibility(4)
+    // //VirtualJoystick.Canvas.style.width = '200px';
+    //VirtualJoystick.Canvas.style.display = 'none';//DEBUG
+    leftJoystick.setJoystickSensibility(6)
+    rightJoystick.setJoystickSensibility(6)
 }
 
 
@@ -57,10 +61,11 @@ function cameraloop(camera){
         var alpha = evt.alpha - cameraOffset + 180;
         if (alpha<0){
             alpha += 360;
-        }
-        camTilt = alpha;
+        }else if (alpha> 360)
+            alpha -= 180;
+        camTilt = evt.gamma > 0 ? alpha - 180 : alpha;
         sideTilt = evt.beta;
-        frontTilt = evt.gamma;
+        frontTilt = evt.gamma > 0 ? -90 : evt.gamma;
        pos.innerText = `Alpha ${evt.alpha.toFixed(2)}, Beta ${evt.beta.toFixed(2)}, Gamma ${evt.gamma.toFixed(2)} ACCEL: ${accel.toFixed(2)}, ORIENTATION: ${camTilt}`;
     });   
 }
@@ -71,11 +76,10 @@ export function setupControls (scene){
     var dir = document.getElementById('dir');
     var spd = document.getElementById('spd');
     var lk  = document.getElementById('lk');
-    var left = document.getElementById('left');
-    var right = document.getElementById('right');
     var acc = document.getElementById('accelerator');
     var brake = document.getElementById('brake');
     var touchZone = document.getElementById('touchzone')
+    var arrows = document.getElementById('arrows');
     var frontSensiDiv = document.getElementById('frontsensi');
     var sideSensiDiv = document.getElementById('sidesensi');
     var sideInc =  document.getElementById('sideinc');
@@ -86,7 +90,28 @@ export function setupControls (scene){
     var setori = document.getElementById('setori');
     var setcam = document.getElementById('setcam');
     var defmodes = document.getElementById('controlmode');
+    var currentLook;
+    var inter;
 
+    touchZone.addEventListener('touchmove', function(e){
+        clearInterval(inter);
+        var pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
+        currentLook = e.targetTouches[0].clientX - pos
+       scene.activeCamera.lockedTarget = new Vector3(currentLook, 0, 50);
+    })
+
+    touchZone.addEventListener('touchend', function(e){
+        inter = setInterval( () =>  {
+            scene.activeCamera.lockedTarget = new Vector3(currentLook, 0, 50);
+            if (-3 < currentLook && currentLook < 3) {
+                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
+                clearInterval(inter);
+            } else if (currentLook > 0)
+                currentLook -= 3;
+            else
+                currentLook +=3;
+        }, 3)
+    })
     
     ori.addEventListener('touchstart', function(){
         orientation = (orientation == enumOri.LEFT ? enumOri.RIGHT : enumOri.LEFT);
@@ -127,43 +152,50 @@ export function setupControls (scene){
   
 
     defmodes.addEventListener('touchstart',function(){
-        if (mode.def === 'slide'){
+        if (mode.global === 'slide'){
+            mode.global = 'mode1';
             Object.keys(mode).forEach(function(opt){
                 if (opt != 'gear')
-                    mode[opt] = "tilt" });
+                    mode[opt] = "tilt" 
+                });
             VirtualJoystick.Canvas.style.opacity = '0'
-            left.style.display = 'none';
-            right.style.display = 'none';
+            arrows.style.display = 'none';
             touchZone.style.display = 'none';
-        } else if (mode.def === 'tilt') {
-            mode.def = 'mode1';
+        } else if (mode.global === 'tilt') {
+            mode.global = 'mode1';
             mode.lk = 'slide';
-            left.style.display = 'block';
-            right.style.display = 'block';
+            arrows.style.display = 'block';
             touchZone.style.display = 'block';
             mode.dir = 'slide';
             mode.spd = 'tilt';
             VirtualJoystick.Canvas.style.opacity = '0';
-        } else if (mode.def === 'mode1'){
-            mode.def = 'mode2';
+        } else if (mode.global === 'mode1'){
+            mode.global = 'mode2';
             mode.lk = 'slide';
-            left.style.display = 'none';
-            right.style.display = 'none';
-            touchZone.style.display = 'none';
+            [touchZone, arrows].forEach(elem => {
+                elem.style.display = 'block';
+                elem.style.right = "32rem";
+            })
             mode.dir = 'tilt';
             VirtualJoystick.Canvas.style.opacity = '0.7';
             mode.spd = 'slide';
-        } else if (mode.def === 'mode2'){
-            mode.def = 'slide'
+        } else if (mode.global === 'mode2'){
+            [touchZone, arrows].forEach(elem => {
+                elem.style.right = "1rem";
+                elem.style.display = "none";
+            })
+            VirtualJoystick.Canvas.style.opacity = '0.7';
+            mode.global = 'custom';
+        } else if (mode.global === 'custom'){
+            mode.global = 'slide'
             Object.keys(mode).forEach(function(opt){
                 if (opt != 'gear')
                     mode[opt] = "slide" 
             });
             VirtualJoystick.Canvas.style.opacity = '0.7'
-            left.style.display = 'none';
-            right.style.display = 'none';
+            arrows.style.display = 'none';
             touchZone.style.display = 'none';
-        }
+        } 
         acc.style.display = 'none';
         brake.style.display = 'none'; 
         console.log(mode);
@@ -190,13 +222,11 @@ export function setupControls (scene){
         } else {
             mode.spd = 'slide';
             VirtualJoystick.Canvas.style.opacity = '0.7'
-            left.style.display = 'none';
-            right.style.display = 'none';
+            arrows.style.display = 'none';
             touchZone.style.display = 'none';
         }
         if (mode.lk === 'slide' && mode.spd != 'slide'){
-            left.style.display = 'block';
-            right.style.display = 'block';
+            arrows.style.display = 'block';
             touchZone.style.display = 'block';
         }
         if (mode.spd != 'button'){
@@ -209,8 +239,7 @@ export function setupControls (scene){
         if (mode.spd != 'slide') {
             if (mode.lk === 'tilt'){
                 mode.lk = 'slide';
-                left.style.display = 'block';
-                right.style.display = 'block';
+                arrows.style.display = 'block';
                 touchZone.style.display = 'block';
             } else if (mode.lk === 'slide') {
                 mode.lk = 'off';
@@ -220,13 +249,11 @@ export function setupControls (scene){
             }
         } else {
             mode.lk = 'slide';
-            left.style.display = 'none';
-            right.style.display = 'none';
+            arrows.style.display = 'none';
             touchZone.style.display = 'none';
         }
         if (mode.lk != 'slide') {
-            left.style.display = 'none';
-            right.style.display = 'none';
+            arrows.style.display = 'none';
             touchZone.style.display = 'none';
         }
     })
@@ -291,7 +318,13 @@ function setSpeedWtinesses(vel, accel){
         document.getElementById('avgb').src = '../../images/Vstrong.svg';
     if (accel<-0.05)
         document.getElementById('maxb').src = '../../images/Vstrong.svg';
-  
+}
+
+function isLookingAround(scene){
+    if (-5 < scene.activeCamera.lockedTarget.x && scene.activeCamera.lockedTarget.x < 5)
+        return false;
+    else
+        return true;
 }
 
 function loop(car, scene) {
@@ -299,7 +332,7 @@ function loop(car, scene) {
     let vel = car.physicsImpostor.getLinearVelocity();
 
     setSpeedWtinesses(vel, accel)
-    if(pace++ > 20) {
+    if (pace++ > 20) {
         var tmpdir = dir
         pace = 0
         dir = getWayDir(car.position)
@@ -309,18 +342,17 @@ function loop(car, scene) {
     if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
          angle = Math.atan2(vel.z, vel.x)
     }
-    
+
     //Look
     if (mode.lk === 'tilt'){
-        scene.activeCamera.lockedTarget = new Vector3((camTilt-180) * -3, 1.2, 50);
+        scene.activeCamera.lockedTarget = new Vector3((camTilt-180) * -3, 0, 50);
     }
 
     // Direction
     if (mode.dir === 'slide'){
-        steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x * 1.2 : steer * 0.80;
+        steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x * 1.4 : steer * 0.80;
         steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;
-        steerWheel.value = leftJoystick.deltaPosition.x * 90;
-    } else if (mode.dir === 'tilt'){
+    } else if (mode.dir === 'tilt' && !isLookingAround(scene)){
         if (180 >= sideTilt && sideTilt >= 155) {
             steer = orientation * ((sideTilt - 180)/sideSensi);
             steerWheel.style.transform = `rotateZ(${orientation * ((sideTilt-180)*2)}deg)`;
@@ -339,13 +371,14 @@ function loop(car, scene) {
     } else if (mode.spd === 'slide'){
         if (rightJoystick.pressed) {
             accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 5 : rightJoystick.deltaPosition.y / 12)
-            scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
+            if (mode.global != 'mode2')
+                scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
         } else {
             accel = vel.x === 0 ? 0 : -0.001;
-            scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
+            if (mode.global != 'mode2')
+                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
         }
-        
-    } else if(mode.spd === 'tilt') {
+    } else if (mode.spd === 'tilt' && !isLookingAround(scene)) {
         var currentTilt = Math.abs(frontMidAngle)-Math.abs(frontTilt);
         if (currentTilt > 2 || currentTilt < -2) {
             if (currentTilt > 0){
@@ -358,19 +391,19 @@ function loop(car, scene) {
 
     //Gear
     if (mode.gear === 'front'){
-         mode.gear = 'reverse';
+        mode.gear = 'reverse';
     }
-
+    //}
     speed = Math.max(0, Math.min(20, speed + accel))    
     angle += -steer * 0.025
     const dirAngle = Math.atan2(dir.z, dir.x)
-     if (esp === true && ((mode.dir === 'slide' && !leftJoystick.pressed) || (mode.dir === 'tilt' && 0.15 >= steer && steer >= -0.15))  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
+    if (esp === true && ((mode.dir === 'slide' && !leftJoystick.pressed) || (mode.dir === 'tilt' && 0.15 >= steer && steer >= -0.15))  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
         angle = dirAngle * 0.1 + angle * 0.9
     }
     const adjustSpeed = Math.max(0, speed - 2 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
     var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
     car.physicsImpostor.setLinearVelocity(newVel)
-    //car.physicsImpostor.setLinearVelocity(new Vector3(-1,0,-1))
+    //car.physicsImpostor.setLinearVelocity(new Vector3(-1,0,-1))// marche arriere?
     car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
 }
 
