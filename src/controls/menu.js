@@ -158,7 +158,7 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 }
 
 function setControlMenu(scene){
-    var btnMenuControls = buttonCreator('top: 1.3rem; width: 4rem; left: 0; background-color:black; display: block',{text: 'Control Settings'});
+    var btnMenuControls = buttonCreator('top: 1.3rem; width: 6rem; white-space: nowrap; left: 0; background-color:black; display: block',{text: 'Control Settings'});
     var controlTab = [[],[]];
     var controlMenu = ['controlmode', 'lk', 'dir', 'spd'];
     var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam'];
