@@ -60,7 +60,8 @@ function cameraloop(camera){
         var alpha = evt.alpha - cameraOffset + 180;
         if (alpha<0){
             alpha += 360;
-        }//else > 360 -= 180
+        }else if (alpha> 360)
+            alpha -= 180;
         camTilt = evt.gamma > 0 ? alpha - 180 : alpha;
         sideTilt = evt.beta;
         frontTilt = evt.gamma > 0 ? -90 : evt.gamma;

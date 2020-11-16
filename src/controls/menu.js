@@ -33,7 +33,7 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 
     var accelWitness = accelerationWitness();
     var camFresh = divCreator('top: 0; right: 0; height: 1rem;font-size:0.7rem; display: none', {text: '', id:'position'});
-    var camOriFresh = divCreator('top: 0; left: 0; width: 30rem; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'camerapos'});
+    var camOriFresh = divCreator('top: 0; left: 0; width: 40rem; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'camerapos'});
     var speedFresh = divCreator('font-family: aldrich ; text-align:center; bottom: 1rem; right: 19.5rem; height: 3.3rem; display: block; color: #56CCF2;font-size: 2.3rem', {text: '00', id: 'speed'});
     var btnDivArrayMenu = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, btnGrids, btnEsp, btnCamOri, btnBar];
     var divArray = [speedFresh, camFresh, camOriFresh];
@@ -158,7 +158,7 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 }
 
 function setControlMenu(scene){
-    var btnMenuControls = buttonCreator('top: 1.3rem; left: 0; background-color:black; display: block',{text: 'Control Settings'});
+    var btnMenuControls = buttonCreator('top: 1.3rem; width: 4rem; left: 0; background-color:black; display: block',{text: 'Control Settings'});
     var controlTab = [[],[]];
     var controlMenu = ['controlmode', 'lk', 'dir', 'spd'];
     var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam'];
@@ -199,7 +199,7 @@ function setControlMenu(scene){
                     btn.style.display = 'none';
             })
             btnMenuControls.innerText = 'Hide';
-            btnMenuControls.style.top = '10rem';
+            btnMenuControls.style.top = '11rem';
         } else {
             controlTab[type.SENSI].forEach((btn) => {
                 btn.style.display = 'none';
