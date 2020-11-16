@@ -11,7 +11,7 @@ export default function createDetailedCar (scene, camera, internalCamera, contai
     var car = Mesh.MergeMeshes(newMesh['meshes'], true, true, null, false, true);
     car.name = 'detailedcar';
     car.position = new Vector3(-10, 4, -50);
-    car.scalingDeterminant = 0.6;
+    car.scalingDeterminant = 0.5;
     camera.parent = car;
     internalCamera.parent = car;
     setupPhysics(scene, car);

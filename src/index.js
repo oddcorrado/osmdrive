@@ -55,16 +55,16 @@ const boot = () => {
     var grids// = createBuildings(scene)
     //dressMap(scene)
     
-    const bots = botshandler.createBots(scene)
-    bots.forEach(bot => {//comment to disable bots by default
-        bot.isVisible = false;
-        bot.setEnabled(false);
-    })
+    // const bots = botshandler.createBots(scene)
+    // bots.forEach(bot => {//comment to disable bots by default
+    //     bot.isVisible = false;
+    //     bot.setEnabled(false);
+    // })
     
-    createMenu(scene, camera, internalCamera, freecamera, bots, grids);
+    createMenu(scene, camera, internalCamera, freecamera, /*bots,*/ grids);
     createButtons(scene);
     setupControls(scene);
-    setupPhysics(scene, ground, car, bots)
+    setupPhysics(scene, ground, car/*, bots*/)
     
     control.cameraloop(camera);
     control.setup(scene);
