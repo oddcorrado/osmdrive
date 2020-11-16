@@ -1,4 +1,4 @@
-import { zoneSet, zoneGetSegment, zonesClean, zones } from './geozone'
+import { zoneSet, zoneGet, zoneGetSegment, zonesClean, zones } from './geozone'
 
 const segments = []
 
@@ -7,17 +7,45 @@ let maxY = -1000000
 let minX = 1000000
 let minY = 1000000
 
-export const geoSegmentDistanceToSegment = (pos, start, end) => {
+import { Vector3 } from '@babylonjs/core/Maths/math'
 
+export const geoSegmentGetProjection = (pos, start, end) => {
+    const segment = end.subtract(start) // the segment vector
+    const start2pos = pos.subtract(start)  // the vector from start to pos
+    const dot = Vector3.Dot(segment, start2pos) / (segment.length() * segment.length())
+    const projection = (dot >= 0 && dot < 1) ? start.add(segment.scale(dot)) : 
+        (dot < 0 ? start : end) 
+    return projection
 }
+
+// KWIK TEST
+// console.log('PRJ', geoSegmentGetProjection(new Vector3(20, 0, 10), new Vector3(10, 0, 10), new Vector3(30 ,0, 30)))
+// console.log('PRJ', geoSegmentGetProjection(new Vector3(30, 0, 0), new Vector3(10, 0, 10), new Vector3(30 ,0, 30)))
+// console.log('PRJ', geoSegmentGetProjection(new Vector3(40, 0, 0), new Vector3(10, 0, 10), new Vector3(30 ,0, 30)))
 
 // gets all geoSegment in the zone
-export const geoSegmentsGet = (x, y) => {
-
-}
-
-export const getSegmentGetClosest = (x, y) => {
+export const getSegmentGetClosest = (pos) => {
+    const zone = zoneGet(pos.x, pos.z)
     
+    let d = Number.MAX_VALUE
+    let best = null
+    let bestSegment = null
+
+    zone.static.segments.forEach(segment => {
+        const prj = geoSegmentGetProjection (pos, segment.start, segment.end)
+        const prjd = pos.subtract(prj).length()
+        if(prjd < d) {
+            best = prj
+            d = prjd
+            bestSegment = segment
+        }
+    })
+
+    return ({
+        projection : best,
+        segment : bestSegment,
+        distance : d
+    })
 }
 
 
@@ -33,8 +61,8 @@ export const geoSegmentsInit = (roads) => {
                 minY = Math.min(minY, node.point.z)
                 if(ind > 0) {
                     const segment = {
-                        startPos: lane[ind - 1].point,
-                        endPos: lane[ind].point,
+                        start: lane[ind - 1].point,
+                        end: lane[ind].point,
                         roadIndex: ir,
                         laneIndex: il,
                         nodeIndex: ind,
@@ -51,7 +79,7 @@ export const geoSegmentsInit = (roads) => {
     zoneSet(minX, minY, maxX, maxY)
 
     segments.forEach(segment => {
-        const segmentZones = zoneGetSegment(segment.startPos.x, segment.startPos.z, segment.endPos.x, segment.endPos.z)
+        const segmentZones = zoneGetSegment(segment.start.x, segment.start.z, segment.end.x, segment.end.z)
         segmentZones.forEach(zone => {
             zone.static.segments.push(segment)
         })

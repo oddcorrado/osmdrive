@@ -14,7 +14,8 @@ import { scene as globalScene } from '../index'
 import buildRoads, { roads } from './logic/roads'
 
 import zoneGet from '../geofind/geozone'
-import {geoSegmentsInit} from '../geofind/geosegment'
+import { geoSegmentsInit, getSegmentGetClosest } from '../geofind/geosegment'
+import { checkerDebugSegment } from '../checkers/roadChecker'
 
 const paths = []
 
@@ -74,7 +75,16 @@ function distanceToCurve(position, path) {
 }
 
 export function getWayDir(position) {
-    let first = 1000000000
+
+    // console.log(position, getSegmentGetClosest(position))
+
+    checkerDebugSegment(position)
+    
+    const closest = getSegmentGetClosest(position)
+
+    return closest != null ? closest.segment.start.subtract(closest.segment.end) : null
+
+    /* let first = 1000000000
     let second = 1000000000
     let third = 1000000000
     let index = -1
@@ -94,7 +104,7 @@ export function getWayDir(position) {
     if(index !== -1) {
         const path = paths[index]
         return path.getTangentAt(path.getClosestPositionTo(position), true)
-    }
+    } */
 
     return null
 }
