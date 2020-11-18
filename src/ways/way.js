@@ -11,7 +11,11 @@ import { Path3D } from '@babylonjs/core/Maths/math.path'
 import textPanel from '../textPanel'
 import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
 import { scene as globalScene } from '../index'
-import buildRoads from './logic/roads'
+import buildRoads, { roads } from './logic/roads'
+
+import zoneGet from '../geofind/geozone'
+import { geoSegmentsInit, getSegmentGetClosest } from '../geofind/geosegment'
+import { checkerDebugSegment } from '../checkers/roadChecker'
 
 const paths = []
 
@@ -31,7 +35,7 @@ export default function createWays(scene, planes) {
 
     // find the junctions
     buildRoads()
-
+    geoSegmentsInit(roads)
 
     // remove old junctions from root lanes
 
@@ -71,7 +75,16 @@ function distanceToCurve(position, path) {
 }
 
 export function getWayDir(position) {
-    let first = 1000000000
+
+    // console.log(position, getSegmentGetClosest(position))
+
+    checkerDebugSegment(position)
+    
+    const closest = getSegmentGetClosest(position)
+
+    return closest != null ? closest.segment.start.subtract(closest.segment.end) : null
+
+    /* let first = 1000000000
     let second = 1000000000
     let third = 1000000000
     let index = -1
@@ -91,7 +104,7 @@ export function getWayDir(position) {
     if(index !== -1) {
         const path = paths[index]
         return path.getTangentAt(path.getClosestPositionTo(position), true)
-    }
+    } */
 
     return null
 }

@@ -394,7 +394,10 @@ function loop(car, scene) {
     //}
     speed = Math.max(0, Math.min(20, speed + accel))    
     angle += -steer * 0.025
-    const dirAngle = Math.atan2(dir.z, dir.x)
+
+    let dirAngle = Math.atan2(dir.z, dir.x)
+    if(Math.abs(dirAngle - angle) > Math.PI * 0.5) { dirAngle = Math.atan2(-dir.z, -dir.x) }
+
     if (esp === true && ((mode.dir === 'slide' && !leftJoystick.pressed) || (mode.dir === 'tilt' && 0.15 >= steer && steer >= -0.15))  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
         angle = dirAngle * 0.1 + angle * 0.9
     }
