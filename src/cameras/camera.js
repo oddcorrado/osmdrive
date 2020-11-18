@@ -13,8 +13,7 @@ export default function createCamera(scene, canvas, mode = 0) {
     scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
    } else { //internal
        var camera = new DeviceOrientationCamera("DevOr_internalcamera", new Vector3(-0.64, 3, -1.8), scene);
-       camera.setTarget(new Vector3(0, -7, 50))
-       scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
+       camera.lockedTarget = new Vector3(0, -7, 50);
 
     // var camera = new DeviceOrientationCamera("DevOr_internalcamera", new Vector3(0, 1.5, -0.4), scene);
     // camera.setTarget(new Vector3(0, 0, 50))
@@ -26,7 +25,7 @@ export default function createCamera(scene, canvas, mode = 0) {
 
     camera.attachControl(canvas, true);
     // camera.applyGravity = true;
-     camera.ellipsoid = new Vector3(1, 1, 1);
+     //camera.ellipsoid = new Vector3(1, 1, 1);
     return camera
 }
 
