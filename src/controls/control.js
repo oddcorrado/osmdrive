@@ -4,6 +4,7 @@ import { Vector3 } from '@babylonjs/core/Maths/math'
 import { getWayDir } from '../ways/way'
 import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientationCamera'
 import enumOri from '../enum/orientation'
+import {toggleCustomModes} from './menu'
 import { scene } from '..'
 // import  from './modes.js'
 
@@ -32,7 +33,7 @@ var cameraOffset = null;
 var currAlpha;
 let camTilt = 0;
 
-let mode = {lk: 'slide', dir: 'slide', spd: 'slide', gear: 'front', global: 'slide'};
+let mode = {lk: 'slide', dir: 'tilt', spd: 'slide', gear: 'front', global: 'mode2'};
 
 
 export function toggleEsp(){
@@ -43,8 +44,6 @@ function setup(scene) {
     leftJoystick = new VirtualJoystick(true)
     rightJoystick = new VirtualJoystick(false)
     VirtualJoystick.Canvas.style.opacity = '0.7';
-    // //VirtualJoystick.Canvas.style.width = '200px';
-    //VirtualJoystick.Canvas.style.display = 'none';//DEBUG
     leftJoystick.setJoystickSensibility(6)
     rightJoystick.setJoystickSensibility(6)
 }
@@ -62,7 +61,7 @@ function cameraloop(camera){
         if (alpha<0){
             alpha += 360;
         }else if (alpha> 360)
-            alpha -= 180;
+            alpha -= 360;
         camTilt = evt.gamma > 0 ? alpha - 180 : alpha;
         sideTilt = evt.beta;
         frontTilt = evt.gamma > 0 ? -90 : evt.gamma;
@@ -79,16 +78,8 @@ export function setupControls (scene){
     var acc = document.getElementById('accelerator');
     var brake = document.getElementById('brake');
     var touchZone = document.getElementById('touchzone')
-    var arrows = document.getElementById('arrows');
     var frontSensiDiv = document.getElementById('frontsensi');
     var sideSensiDiv = document.getElementById('sidesensi');
-    var sideInc =  document.getElementById('sideinc');
-    var sideDec =  document.getElementById('sidedec');
-    var frontInc =  document.getElementById('frontinc');
-    var frontDec =  document.getElementById('frontdec');
-    var ori = document.getElementById('ori');
-    var setori = document.getElementById('setori');
-    var setcam = document.getElementById('setcam');
     var defmodes = document.getElementById('controlmode');
     var currentLook;
     var inter;
@@ -96,15 +87,15 @@ export function setupControls (scene){
     touchZone.addEventListener('touchmove', function(e){
         clearInterval(inter);
         var pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
-        currentLook = e.targetTouches[0].clientX - pos
-       scene.activeCamera.lockedTarget = new Vector3(currentLook, 0, 50);
+        currentLook = e.targetTouches[0].clientX - pos > 300 ? 300 : (e.targetTouches[0].clientX - pos < -300 ? -300 : e.targetTouches[0].clientX - pos) ;
+        scene.activeCamera.lockedTarget = new Vector3(currentLook, -7, 50);
     })
 
     touchZone.addEventListener('touchend', function(e){
         inter = setInterval( () =>  {
-            scene.activeCamera.lockedTarget = new Vector3(currentLook, 0, 50);
+            scene.activeCamera.lockedTarget = new Vector3(currentLook, -7, 50);
             if (-3 < currentLook && currentLook < 3) {
-                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
+                scene.activeCamera.lockedTarget = new Vector3(0, -7, 50);
                 clearInterval(inter);
             } else if (currentLook > 0)
                 currentLook -= 3;
@@ -113,49 +104,50 @@ export function setupControls (scene){
         }, 3)
     })
     
-    ori.addEventListener('touchstart', function(){
+    document.getElementById('ori').addEventListener('touchstart', function(){
         orientation = (orientation == enumOri.LEFT ? enumOri.RIGHT : enumOri.LEFT);
         ori.style.transform = ori.style.transform === 'rotateZ(180deg)' ? 'rotateZ(0)' : 'rotateZ(180deg)';
     })
 
-    setori.addEventListener('touchstart', function(){
+    document.getElementById('setori').addEventListener('touchstart', function(){
         frontMidAngle = Math.abs(frontTilt);
     })
 
-    setcam.addEventListener('touchstart', function(){
+    document.getElementById('setcam').addEventListener('touchstart', function(){
          cameraOffset = currAlpha;
     })
 
     sideSensiDiv.innerHTML = sideSensi;
     frontSensiDiv.innerHTML = frontSensi;
 
-    frontInc.addEventListener('touchstart', function (){
+    document.getElementById('frontinc').addEventListener('touchstart', function (){
         if (frontSensi <= 20)
             frontSensi = ++frontSensi;
         frontSensiDiv.innerHTML = frontSensi;
     })
-    frontDec.addEventListener('touchstart', function (){
+    document.getElementById('frontdec').addEventListener('touchstart', function (){
         if (frontSensi >= 1)
             frontSensi = --frontSensi;
         frontSensiDiv.innerHTML = frontSensi;
     })
-    sideInc.addEventListener('touchstart', function (){
+    document.getElementById('sideinc').addEventListener('touchstart', function (){
         if (sideSensi <= 20)
             sideSensi = ++sideSensi;
         sideSensiDiv.innerHTML = sideSensi;
     })
-    sideDec.addEventListener('touchstart', function (){
+    document.getElementById('sidedec').addEventListener('touchstart', function (){
         if (sideSensi >= 1)
             sideSensi = --sideSensi;
         sideSensiDiv.innerHTML = sideSensi;
     })
   
 
-    defmodes.addEventListener('touchstart',function(){
+    /*defmodes.addEventListener('touchstart',function(){
         if (mode.global === 'slide'){
-            mode.global = 'mode1';
+            defmodes.children[1].src = '../../images/rotate.svg';
+            mode.global = 'tilt';
             Object.keys(mode).forEach(function(opt){
-                if (opt != 'gear')
+                if (opt != 'gear' && opt != 'global')
                     mode[opt] = "tilt" 
                 });
             VirtualJoystick.Canvas.style.opacity = '0'
@@ -163,6 +155,7 @@ export function setupControls (scene){
             touchZone.style.display = 'none';
         } else if (mode.global === 'tilt') {
             mode.global = 'mode1';
+            defmodes.children[1].src = '../../images/mode1.svg';
             mode.lk = 'slide';
             arrows.style.display = 'block';
             touchZone.style.display = 'block';
@@ -171,6 +164,7 @@ export function setupControls (scene){
             VirtualJoystick.Canvas.style.opacity = '0';
         } else if (mode.global === 'mode1'){
             mode.global = 'mode2';
+            defmodes.children[1].src = '../../images/mode2.svg';
             mode.lk = 'slide';
             [touchZone, arrows].forEach(elem => {
                 elem.style.display = 'block';
@@ -180,16 +174,20 @@ export function setupControls (scene){
             VirtualJoystick.Canvas.style.opacity = '0.7';
             mode.spd = 'slide';
         } else if (mode.global === 'mode2'){
+            mode.global = 'custom';
+            defmodes.children[1].src = '../../images/custom.svg';
             [touchZone, arrows].forEach(elem => {
                 elem.style.right = "1rem";
                 elem.style.display = "none";
             })
+            toggleCustomModes('block');
             VirtualJoystick.Canvas.style.opacity = '0.7';
-            mode.global = 'custom';
         } else if (mode.global === 'custom'){
-            mode.global = 'slide'
+            mode.global = 'slide';
+            toggleCustomModes('none');
+            defmodes.children[1].src = '../../images/tilt.svg';
             Object.keys(mode).forEach(function(opt){
-                if (opt != 'gear')
+                if (opt != 'gear' && opt != 'global')
                     mode[opt] = "slide" 
             });
             VirtualJoystick.Canvas.style.opacity = '0.7'
@@ -199,7 +197,7 @@ export function setupControls (scene){
         acc.style.display = 'none';
         brake.style.display = 'none'; 
         console.log(mode);
-    })
+    })*/
 
     dir.addEventListener('click', function (){
         if (mode.dir === 'slide'){
@@ -222,11 +220,9 @@ export function setupControls (scene){
         } else {
             mode.spd = 'slide';
             VirtualJoystick.Canvas.style.opacity = '0.7'
-            arrows.style.display = 'none';
             touchZone.style.display = 'none';
         }
         if (mode.lk === 'slide' && mode.spd != 'slide'){
-            arrows.style.display = 'block';
             touchZone.style.display = 'block';
         }
         if (mode.spd != 'button'){
@@ -239,7 +235,6 @@ export function setupControls (scene){
         if (mode.spd != 'slide') {
             if (mode.lk === 'tilt'){
                 mode.lk = 'slide';
-                arrows.style.display = 'block';
                 touchZone.style.display = 'block';
             } else if (mode.lk === 'slide') {
                 mode.lk = 'off';
@@ -249,16 +244,15 @@ export function setupControls (scene){
             }
         } else {
             mode.lk = 'slide';
-            arrows.style.display = 'none';
             touchZone.style.display = 'none';
         }
         if (mode.lk != 'slide') {
-            arrows.style.display = 'none';
             touchZone.style.display = 'none';
         }
     })
     
     acc.addEventListener('touchstart', function(){
+        acc.style.transform = 'rotate3d(1, 0, 0, 45deg)';
         clearInterval(interAccel);
         if (accel > 0.03)
             btnAccel = 0.5;
@@ -270,20 +264,22 @@ export function setupControls (scene){
     })
 
     acc.addEventListener('touchend', function(){
+        acc.style.transform = 'rotate3d(1, 0, 0, 0deg)';
         clearInterval(interAccel);
 
         btnAccel = -0.005;
     })
 
     brake.addEventListener('touchstart', function(){
+        brake.style.transform = 'rotate3d(1, 0, 0, 45deg)';
         btnAccel = btnAccel - 0.05;
-
         interBrake = setInterval(() => {
             btnAccel = (btnAccel <= -1 ? -1 : btnAccel - 0.05);
         }, 500)
     })
 
     brake.addEventListener('touchend', function(){
+        brake.style.transform = 'rotate3d(1, 0, 0, 0deg)';
         clearInterval(interBrake);
     })
 
@@ -304,9 +300,9 @@ function setSpeedWtinesses(vel, accel){
     }
     neutral.src = accel === 0 ? '../../images/greencircle.svg' : '../../images/circle.svg';
     
-    if (accel>0.03)
+    if (accel>0.05)
         document.getElementById('maxf').src = '../../images/Vstrong.svg';    
-    if (accel>0.02)
+    if (accel>0.03)
         document.getElementById('avgf').src = '../../images/Vstrong.svg';
     if (accel>0.015)
         document.getElementById('minf').src = '../../images/Vstrong.svg';
@@ -321,10 +317,12 @@ function setSpeedWtinesses(vel, accel){
 }
 
 function isLookingAround(scene){
-    if (-5 < scene.activeCamera.lockedTarget.x && scene.activeCamera.lockedTarget.x < 5)
+    if(scene.activeCamera.lockedTarget){
+        if (-5 < scene.activeCamera.lockedTarget.x && scene.activeCamera.lockedTarget.x < 5)
         return false;
     else
         return true;
+    }
 }
 
 function loop(car, scene) {
@@ -345,7 +343,7 @@ function loop(car, scene) {
 
     //Look
     if (mode.lk === 'tilt'){
-        scene.activeCamera.lockedTarget = new Vector3((camTilt-180) * -3, 0, 50);
+       scene.activeCamera.lockedTarget = new Vector3((camTilt-180) * -3, 0, 50);//        scene.activeCamera.lockedTarget = new Vector3((camTilt-180) * -3, 0, 50);
     }
 
     // Direction
@@ -376,7 +374,7 @@ function loop(car, scene) {
         } else {
             accel = vel.x === 0 ? 0 : -0.001;
             if (mode.global != 'mode2')
-                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
+                scene.activeCamera.lockedTarget = new Vector3(0, -11, 50);//                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
         }
     } else if (mode.spd === 'tilt' && !isLookingAround(scene)) {
         var currentTilt = Math.abs(frontMidAngle)-Math.abs(frontTilt);

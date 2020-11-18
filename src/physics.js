@@ -16,12 +16,12 @@ export default function setupPhysics(scene, ...args) {
     args.forEach(arg => {
         if (Array.isArray(arg)){
             arg.forEach( elem => {
-                elem.physicsImpostor = new PhysicsImpostor(elem, PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0, friction: 0 }, scene)
+                elem.physicsImpostor = new PhysicsImpostor(elem, PhysicsImpostor.BoxImpostor, { mass: 10, restitution: 0, friction: 0 }, scene)
             })
         } else if (arg.id === 'ground1') {
             arg.physicsImpostor = new PhysicsImpostor(arg, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0, friction: 0 }, scene)
         } else {
-            arg.physicsImpostor = new PhysicsImpostor(arg, PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0, friction: 0 }, scene)
+            arg.physicsImpostor = new PhysicsImpostor(arg, PhysicsImpostor.BoxImpostor, { mass: 1000, restitution: 1000, friction: 1000}, scene)
         }
             
     })

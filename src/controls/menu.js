@@ -7,6 +7,15 @@ import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accele
 import type from '../enum/buttontype';
 
 var camPosInterval;
+var controlTab = [[],[]];
+
+export function toggleCustomModes(display){
+    controlTab[type.MODE].forEach((btn) => {
+        if (btn!=controlmode)
+        btn.style.display = display;
+    })
+    return controlTab;
+}
 
 function changeColorAndText(divs, text = ['Enable', 'Disable'], colors = ['red', 'green']){
     divs.forEach (div => {
@@ -34,7 +43,7 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     var accelWitness = accelerationWitness();
     var camFresh = divCreator('top: 0; right: 0; height: 1rem;font-size:0.7rem; display: none', {text: '', id:'position'});
     var camOriFresh = divCreator('top: 0; left: 0; width: 40rem; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'camerapos'});
-    var speedFresh = divCreator('font-family: aldrich ; text-align:center; bottom: 1rem; right: 19.5rem; height: 3.3rem; display: block; color: #56CCF2;font-size: 2.3rem', {text: '00', id: 'speed'});
+    var speedFresh = divCreator('font-family: aldrich ; text-align:center; bottom: -7vh; right: 35vw; height: 25vh; width: 29vw; display: block; color: #56CCF2;font-size: 5vw', {text: '00', id: 'speed'});
     var btnDivArrayMenu = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, btnGrids, btnEsp, btnCamOri, btnBar];
     var divArray = [speedFresh, camFresh, camOriFresh];
 
@@ -158,26 +167,25 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 }
 
 function setControlMenu(scene){
-    var btnMenuControls = buttonCreator('top: 1.3rem; width: 6rem; white-space: nowrap; left: 0; background-color:black; display: block',{text: 'Control Settings'});
-    var controlTab = [[],[]];
+    var btnMenuControls = buttonCreator('top: 6vh; white-space: nowrap; left: 0; background-color:black; display: block;',{text: 'Control Settings'});
     var controlMenu = ['controlmode', 'lk', 'dir', 'spd'];
-    var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam'];
+    var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam', 'controlmode'];//controlmode out if different modes are reinstantiated
     var wasOpen = false;
 
     document.body.appendChild(btnMenuControls);
     
     //Default
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; line-height: 7vh; height: 2rem;border: solid #43c7f7 3px; background-color: #43c7f7; top: 2.5rem; left: 0; ;display:block;', id: 'controlmode'}, {src: '../../images/mode.svg', style: ';margin-left: 0.1rem; margin-bottom: 0.4rem; height: 2rem; width: 2rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.7rem; margin-left:0.7rem; height: 1.5rem;width: 1.5rem;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 10vw; line-height: 7vh; height: 7vh;border: solid #43c7f7 3px; background-color: #43c7f7; top: 7vh; left: 0; ;display:none;', id: 'controlmode'}, {src: '../../images/mode.svg', style: ';margin-left: 0.1rem; margin-bottom: 0.4vh; height: 6vh; width: 4vw;'}, {src: '../../images/mode2.svg', style:'margin-left: 10vw; opacity: 1; margin-top: 1vh; margin-left:1vw; height: 6vh; width: 4vw;'}));
     //Buttons Advanced Control Menu
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #43c7f7 3px; background-color: #43c7f7; top: 5rem; left: 0; ;display:none;', id: 'lk'}, {src: '../../images/eye.svg', style: 'margin-left: 0.1rem; height: 2rem; width: 2rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem;width: 1.8rem;'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem; border: solid #7aed6b 3px; background-color: #7aed6b; top: 7.2rem; left: 0 ;display:none;', id: 'dir'}, {src: '../../images/steer.svg', style: 'margin-left: 0.1rem; opacity: 1,;margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #f5f05f 3px; background-color: #f5f05f; top: 9.4rem; left: 0 ;display:none;', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-left: 0.1rem;  height: 1.9rem; width: 1.9rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-left:0.3rem; height: 1.8rem; width: 1.8rem;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #43c7f7 3px; background-color: #43c7f7; top: 30vh; left: 0; ;display:none;', id: 'lk'}, {src: '../../images/eye.svg', style: 'margin-left: 0.1rem; height: 2rem; width: 2rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem;width: 1.8rem;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem; border: solid #7aed6b 3px; background-color: #7aed6b; top: 32vh; left: 0 ;display:none;', id: 'dir'}, {src: '../../images/steer.svg', style: 'margin-left: 0.1rem; opacity: 1,;margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #f5f05f 3px; background-color: #f5f05f; top: 36vh; left: 0 ;display:none;', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-left: 0.1rem;  height: 1.9rem; width: 1.9rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-left:0.3rem; height: 1.8rem; width: 1.8rem;'}));
     //Buttons Sensitivity Menu
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 7rem; left: 0.2rem; height: 2rem; width: 6vw; display:none;', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 7.3rem; left: 3rem; height: 2rem; width: 5vw ;display:none;', id: 'setori'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 7.3rem; left: 5rem; height: 2rem; width: 5vw ;display:none;', id: 'setcam'}, {src: '',style: ''}, {src: '../../images/cam.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
-    document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 5rem; display:none;', mainid:'front', id: 'frontsensi', idminus:'frontdec', idplus:'frontinc'}, {style:'height: 1.2rem; margin-top: 1%', src:'../../images/frontsensi.svg'}));
-    document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 6.5rem; display:none;', mainid: 'side', id: 'sidesensi', idminus:'sidedec', idplus:'sideinc'}, {style:'height: 1.2rem; margin-top: 1%', src:'../../images/sidesensi.svg'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 28vh; left: 1vw; height: 9vh; width: 6vw; display:none;', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 29.5vh; left: 7vw; height: 6vh; width: 5vw ;display:none;', id: 'setori'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 29.25vh; left: 11.25vw; height: 6vh; width: 5vw ;display:none;', id: 'setcam'}, {src: '',style: ''}, {src: '../../images/cam.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
+    document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 17vh; display:none;', mainid:'front', id: 'frontsensi', idminus:'frontdec', idplus:'frontinc'}, {style:'height: 6vh; width: 6wv;margin-top: 1%;', src:'../../images/frontsensi.svg'}));
+    document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 24vh; display:none;', mainid: 'side', id: 'sidesensi', idminus:'sidedec', idplus:'sideinc'}, {style:'height: 6vh; width: 3vw; margin-top: 1%;', src:'../../images/sidesensi.svg'}));
     
 
     controlMenu.forEach(id => {
@@ -199,7 +207,8 @@ function setControlMenu(scene){
                     btn.style.display = 'none';
             })
             btnMenuControls.innerText = 'Hide';
-            btnMenuControls.style.top = '11rem';
+            btnMenuControls.style.top = '45vh';
+            btnMenuControls.style.zIndex = '15';
         } else {
             controlTab[type.SENSI].forEach((btn) => {
                 btn.style.display = 'none';
@@ -210,64 +219,43 @@ function setControlMenu(scene){
                 })
             }
             btnMenuControls.innerText = 'Control Settings';
-            btnMenuControls.style.top = '1.3rem';
+            btnMenuControls.style.top = '5vh';
         }
     }
+   
+    
+    // spd.addEventListener('click', function(){
+    //     if (spd.children[1].src.includes('tilt')){
+    //         spd.children[1].src = '../../images/rotate.svg';
+    //     } else if (spd.children[1].src.includes('rotate')) {
+    //         spd.children[1].src = '../../images/brake.svg';
+    //     } else {
+    //         spd.children[1].src = '../../images/tilt.svg';
+    //         lk.children[1].src = '../../images/tilt.svg';
+    //     }
+    // })
 
-    controlmode.addEventListener('click', function(){
-        if (controlmode.children[1].src.includes('tilt')){
-            controlmode.children[1].src = '../../images/rotate.svg';
-        } else if (controlmode.children[1].src.includes('rotate')) {
-            controlmode.children[1].src = '../../images/mode1.svg';
-        } else if (controlmode.children[1].src.includes('mode1')) {
-            controlmode.children[1].src = '../../images/mode2.svg';
-        } else if (controlmode.children[1].src.includes('mode2')) {
-            controlmode.children[1].src = '../../images/custom.svg';
-            controlTab[type.MODE].forEach((btn) => {
-                btn.style.display = 'block';
-            })
-        } else {
-            controlTab[type.MODE].forEach((btn) => {
-                if (btn!=controlmode)
-                btn.style.display = 'none';
-            })
-            controlmode.children[1].src = '../../images/tilt.svg';
-        }//here
-            
-    })
+    // lk.addEventListener('click', function(){
+    //     if (!spd.children[1].src.includes('tilt')){
+    //         if (lk.children[1].src.includes('nolook')){
+    //             lk.children[1].src = '../../images/rotate.svg';
+    //         } else if (lk.children[1].src.includes('rotate')) {
+    //             lk.children[1].src = '../../images/tilt.svg';
+    //         } else {
+    //             lk.children[1].src = '../../images/nolook.svg';
+    //         }
+    //     } else {
+    //         lk.children[1].src = '../../images/tilt.svg';
+    //     }
+    // })
 
-    spd.addEventListener('click', function(){
-        if (spd.children[1].src.includes('tilt')){
-            spd.children[1].src = '../../images/rotate.svg';
-        } else if (spd.children[1].src.includes('rotate')) {
-            spd.children[1].src = '../../images/brake.svg';
-        } else {
-            spd.children[1].src = '../../images/tilt.svg';
-            lk.children[1].src = '../../images/tilt.svg';
-        }
-    })
-
-    lk.addEventListener('click', function(){
-        if (!spd.children[1].src.includes('tilt')){
-            if (lk.children[1].src.includes('nolook')){
-                lk.children[1].src = '../../images/rotate.svg';
-            } else if (lk.children[1].src.includes('rotate')) {
-                lk.children[1].src = '../../images/tilt.svg';
-            } else {
-                lk.children[1].src = '../../images/nolook.svg';
-            }
-        } else {
-            lk.children[1].src = '../../images/tilt.svg';
-        }
-    })
-
-    dir.addEventListener('click', function(){
-        if (dir.children[1].src.includes('tilt')){
-            dir.children[1].src = '../../images/rotate.svg';
-        } else {
-            dir.children[1].src = '../../images/tilt.svg';
-        }
-    })
+    // dir.addEventListener('click', function(){
+    //     if (dir.children[1].src.includes('tilt')){
+    //         dir.children[1].src = '../../images/rotate.svg';
+    //     } else {
+    //         dir.children[1].src = '../../images/tilt.svg';
+    //     }
+    // })
 
     
 
