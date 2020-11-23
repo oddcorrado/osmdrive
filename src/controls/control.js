@@ -327,29 +327,32 @@ function isLookingAround(scene){
     }
 }
 
-let cnt = 0
+let recenter = false
+let projection = null
 
 function loop(car, scene) {
     var steerWheel = document.getElementById('wheel');
     let vel = car.physicsImpostor.getLinearVelocity();
 
-    const projection = roadCheckerExit(car.position)
-// console.log(cnt)
-    if((cnt++) % 100 === 0) {
-        console.log("BOUM", car.physicsImpostor);
-        car.physicsImpostor.setDeltaPosition(new Vector3 (0, 40, 0))
-
-        return }
-
-    /* if(projection != null) {
-        console.log(car.position, projection)
-        car.position = projection
+    if(recenter) {
+        if(projection.subtract(car.position).length() < 0.1) {
+            recenter = false
+            projection = null
+            return
+        }
+        const recenterScale = Math.min(projection.subtract(car.position).length(), 10)
+        const recenterVel = projection.subtract(car.position).normalize().scale(recenterScale)
+        car.physicsImpostor.setLinearVelocity(recenterVel)
         speed = 0
-
         return
-    } */
+    }
 
-    return
+    projection = roadCheckerExit(car.position)
+    if(projection != null) { 
+        recenter = true
+        return
+    }
+
     setSpeedWtinesses(vel, accel)
     if (pace++ > 20) {
         var tmpdir = dir

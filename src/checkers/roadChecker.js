@@ -36,7 +36,7 @@ export const checkerDebugSegment = (pos) => {
 export const roadCheckerExit = (pos) => {
     const closest = getSegmentGetClosest(pos)
 
-    if (closest == null) { return }
+    if (closest == null) { return null }
 
     if (closest.distance > 10) { return closest.projection }
 
