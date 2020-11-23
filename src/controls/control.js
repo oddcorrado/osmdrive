@@ -41,10 +41,10 @@ export function toggleEsp(){
 }
 
 function setup(scene) {
-    leftJoystick = new VirtualJoystick(true)
+    //leftJoystick = new VirtualJoystick(true)
     rightJoystick = new VirtualJoystick(false)
     VirtualJoystick.Canvas.style.opacity = '0.7';
-    leftJoystick.setJoystickSensibility(6)
+    //leftJoystick.setJoystickSensibility(6)
     rightJoystick.setJoystickSensibility(6)
 }
 
@@ -288,6 +288,7 @@ export function setupControls (scene){
 
 
 function setSpeedWtinesses(vel, accel){
+    console.log(accel);
     var speedDiv = document.getElementById('speed');
     
     speedDiv.innerText = `${((Math.abs(vel.x) + Math.abs(vel.z))*3.6).toFixed()}`;
@@ -300,19 +301,19 @@ function setSpeedWtinesses(vel, accel){
     }
     neutral.src = accel === 0 ? '../../images/greencircle.svg' : '../../images/circle.svg';
     
-    if (accel>0.05)
+    if (accel>0.021)
         document.getElementById('maxf').src = '../../images/Vstrong.svg';    
-    if (accel>0.03)
+    if (accel>0.014)
         document.getElementById('avgf').src = '../../images/Vstrong.svg';
-    if (accel>0.015)
+    if (accel>0.007)
         document.getElementById('minf').src = '../../images/Vstrong.svg';
-    if (-0.015 < accel && accel < 0.015)
+    if (-0.02 < accel && accel < 0.007)
         neutral.src = '../../images/greencircle.svg';
-    if (accel<-0.015)
+    if (accel<-0.02)
         document.getElementById('minb').src = '../../images/Vstrong.svg';
-    if (accel<-0.03)
+    if (accel<-0.04)
         document.getElementById('avgb').src = '../../images/Vstrong.svg';
-    if (accel<-0.05)
+    if (accel<-0.06)
         document.getElementById('maxb').src = '../../images/Vstrong.svg';
 }
 
@@ -364,11 +365,11 @@ function loop(car, scene) {
     }
 
     //Speed
-    if(mode.spd === 'button') {
+    if (mode.spd === 'button') {
         accel = btnAccel;//0
     } else if (mode.spd === 'slide'){
         if (rightJoystick.pressed) {
-            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 5 : rightJoystick.deltaPosition.y / 12)
+            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 15 : rightJoystick.deltaPosition.y / 40)
             if (mode.global != 'mode2')
                 scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
         } else {
