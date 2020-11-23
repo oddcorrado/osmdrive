@@ -6,6 +6,8 @@ import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientati
 import enumOri from '../enum/orientation'
 import {toggleCustomModes} from './menu'
 import { scene } from '..'
+import { roadCheckerExit } from '../checkers/roadChecker'
+
 // import  from './modes.js'
 
 let speed = 0;
@@ -325,10 +327,29 @@ function isLookingAround(scene){
     }
 }
 
+let cnt = 0
+
 function loop(car, scene) {
     var steerWheel = document.getElementById('wheel');
     let vel = car.physicsImpostor.getLinearVelocity();
 
+    const projection = roadCheckerExit(car.position)
+// console.log(cnt)
+    if((cnt++) % 100 === 0) {
+        console.log("BOUM", car.physicsImpostor);
+        car.physicsImpostor.setDeltaPosition(new Vector3 (0, 40, 0))
+
+        return }
+
+    /* if(projection != null) {
+        console.log(car.position, projection)
+        car.position = projection
+        speed = 0
+
+        return
+    } */
+
+    return
     setSpeedWtinesses(vel, accel)
     if (pace++ > 20) {
         var tmpdir = dir
@@ -404,9 +425,13 @@ function loop(car, scene) {
     }
     const adjustSpeed = Math.max(0, speed - 2 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
     var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
+
+    
     car.physicsImpostor.setLinearVelocity(newVel)
+    
     //car.physicsImpostor.setLinearVelocity(new Vector3(-1,0,-1))// marche arriere?
     car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
+    return
 }
 
 export default {

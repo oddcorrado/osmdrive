@@ -6,9 +6,14 @@ import { Color3 } from '@babylonjs/core/Maths/math.color'
 
 let currentSegment = null
 let debugLine = null
+let closestSegment = null
+
+
 
 export const checkerDebugSegment = (pos) => {
     const closest = getSegmentGetClosest(pos)
+
+    if(closest == null) { return }
 
     if(currentSegment != null && closest.segment.id === currentSegment.id) { return }
 
@@ -26,4 +31,14 @@ export const checkerDebugSegment = (pos) => {
     debugLine.position.y = debugLine.position.y + 0.1
     debugLine.position.y = debugLine.position.y + 0.1
     debugLine.color = Color3.White()
+}
+
+export const roadCheckerExit = (pos) => {
+    const closest = getSegmentGetClosest(pos)
+
+    if (closest == null) { return }
+
+    if (closest.distance > 10) { return closest.projection }
+
+    return null
 }
