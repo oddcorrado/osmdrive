@@ -288,7 +288,6 @@ export function setupControls (scene){
 
 
 function setSpeedWtinesses(vel, accel){
-    console.log(accel);
     var speedDiv = document.getElementById('speed');
     
     speedDiv.innerText = `${((Math.abs(vel.x) + Math.abs(vel.z))*3.6).toFixed()}`;
@@ -301,19 +300,19 @@ function setSpeedWtinesses(vel, accel){
     }
     neutral.src = accel === 0 ? '../../images/greencircle.svg' : '../../images/circle.svg';
     
-    if (accel>0.021)
+    if (accel>0.05)
         document.getElementById('maxf').src = '../../images/Vstrong.svg';    
-    if (accel>0.014)
+    if (accel>0.03)
         document.getElementById('avgf').src = '../../images/Vstrong.svg';
-    if (accel>0.007)
+    if (accel>0.015)
         document.getElementById('minf').src = '../../images/Vstrong.svg';
-    if (-0.02 < accel && accel < 0.007)
+    if (-0.015 < accel && accel < 0.015)
         neutral.src = '../../images/greencircle.svg';
-    if (accel<-0.02)
+    if (accel<-0.015)
         document.getElementById('minb').src = '../../images/Vstrong.svg';
-    if (accel<-0.04)
+    if (accel<-0.03)
         document.getElementById('avgb').src = '../../images/Vstrong.svg';
-    if (accel<-0.06)
+    if (accel<-0.05)
         document.getElementById('maxb').src = '../../images/Vstrong.svg';
 }
 
@@ -365,11 +364,11 @@ function loop(car, scene) {
     }
 
     //Speed
-    if (mode.spd === 'button') {
+    if(mode.spd === 'button') {
         accel = btnAccel;//0
     } else if (mode.spd === 'slide'){
         if (rightJoystick.pressed) {
-            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 15 : rightJoystick.deltaPosition.y / 40)
+            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 5 : rightJoystick.deltaPosition.y / 12)
             if (mode.global != 'mode2')
                 scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
         } else {
