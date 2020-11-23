@@ -43,10 +43,10 @@ export function toggleEsp(){
 }
 
 function setup(scene) {
-    leftJoystick = new VirtualJoystick(true)
+    //leftJoystick = new VirtualJoystick(true)
     rightJoystick = new VirtualJoystick(false)
     VirtualJoystick.Canvas.style.opacity = '0.7';
-    leftJoystick.setJoystickSensibility(6)
+    //leftJoystick.setJoystickSensibility(6)
     rightJoystick.setJoystickSensibility(6)
 }
 

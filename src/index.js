@@ -20,6 +20,8 @@ import dressMap from './dressmap'
 import createDetailedCar from './detailedcar'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
 import startup from './startup'
+import { spawnSign } from './props/stop'
+//stop test
 
 const boot = () => {
     const planes = []
@@ -49,7 +51,7 @@ const boot = () => {
     //Creates cars meshes
     createDetailedCar(scene, camera, internalCamera, container);
     var car = createCar(scene);
-    
+    spawnSign(scene, -4, -44);
     //Create map meshes 
     createWays(scene, planes)
     var grids// = createBuildings(scene)
