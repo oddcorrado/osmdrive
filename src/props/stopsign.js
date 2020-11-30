@@ -38,8 +38,6 @@ async function createAction(scene, mesh, container){
                            trigger: ActionManager.OnEveryFrameTrigger,
                         }, 
                         function(){
-                           if(stopped === true)
-                            return;
                            var speed = car.physicsImpostor.getLinearVelocity()
                            if (speed.x === 0 && speed.z === 0){
                               stopped = true;
