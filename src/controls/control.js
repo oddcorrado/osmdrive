@@ -375,7 +375,7 @@ function loop(car, scene) {
     if (mode.dir === 'slide'){
         steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x * 1.4 : steer * 0.80;
         steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;
-    } else if (mode.dir === 'tilt' && !isLookingAround(scene) && vel.x > 0){
+    } else if (mode.dir === 'tilt' && !isLookingAround(scene)){
         if (180 >= sideTilt && sideTilt >= 155) {
             steer = orientation * ((sideTilt - 180)/sideSensi);
             steerWheel.style.transform = `rotateZ(${orientation * ((sideTilt-180)*2)}deg)`;
@@ -386,8 +386,6 @@ function loop(car, scene) {
             steer = orientation * (sideTilt/sideSensi);
             steerWheel.style.transform = `rotateZ(${orientation * (sideTilt * 2)}deg)`;//define a max tilt
         }
-    } else if (vel.x === 0){
-        steer = 0;
     }
 
     //Speed
