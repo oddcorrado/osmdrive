@@ -7,6 +7,8 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { ActionManager, ExecuteCodeAction, DoNothingAction } from '@babylonjs/core/Actions';
 import { feedbackDivCreator } from '../creators/buttoncreator';
 
+
+
 async function createAction(scene, mesh, container){
    var stopped = false;
    mesh.actionManager = new ActionManager(scene);
@@ -36,9 +38,12 @@ async function createAction(scene, mesh, container){
                            trigger: ActionManager.OnEveryFrameTrigger,
                         }, 
                         function(){
+                           if(stopped === true)
+                            return;
                            var speed = car.physicsImpostor.getLinearVelocity()
                            if (speed.x === 0 && speed.z === 0){
                               stopped = true;
+                              return;
                            }
                         }
                      )
@@ -58,12 +63,11 @@ async function createAction(scene, mesh, container){
                }
             },
            function(){
-              console.log(mesh.actionManager);
               if (stopped === true)
-               feedbackDivCreator({text: 'Successful stop', img: '../../images/smile.svg'})
+               feedbackDivCreator({text: 'Successful Stop', img: '../../images/smile.svg'})
               else
-               feedbackDivCreator({text: 'Unsuccessful stop', img: '../../images/sad.svg'})
-              console.log('PLUS TOUCHEY')
+               feedbackDivCreator({text: 'Unsuccessful Stop', img: '../../images/sad.svg'})
+               stopped = false 
            }
          )
       )
@@ -76,18 +80,24 @@ export function spawnSign(container, scene, x, y) {
    const linePos = new Vector3(0, 0, -3.5);
    const lineRot = new Vector3(Math.PI/2, 0, 0);
    const trigPos = new Vector3(8, 0,-3.5);
+
    return new SceneLoader.ImportMeshAsync('', "../mesh/Stop/", "StopSign.obj", scene).then(function(newMesh) {
       var line = MeshBuilder.CreateBox('box', {width:1.5, height:4.6, depth: 0.3}, scene);
       var trig = line.clone();
       var mat = new StandardMaterial("matstop", scene);
+      var bmat = mat.clone()
       line.position = linePos;
       line.rotation = lineRot;
       trig.rotation = lineRot;
       trig.position = trigPos; 
+      trig.isVisible = false;
       mat.diffuseColor = new Color3(1, 1, 1);
       mat.emissiveColor = new Color3(1, 1, 1);
+      bmat.diffuseColor = new Color3(0, 0, 0);
+      bmat.emissiveColor = new Color3(0, 0, 0);
       line.material = mat;
-      trig.material = mat;
+      trig.material = bmat;
+      trig.isVisible = false;
       newMesh['meshes'].push(line, trig);
       const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
       sign.name = 'stop';
