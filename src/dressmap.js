@@ -6,8 +6,15 @@ import { ways } from './map'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
+import { spawnSign } from './props/stopsign'
 
 var propsContainer;
+
+
+function srivingFeedback(){
+    
+}
+
 
 var duplicate = function(container, x, y) {
     let entries = container.instantiateModelsToScene();
@@ -17,25 +24,6 @@ var duplicate = function(container, x, y) {
         node.position.z += y;
     }
 }
-
-function createTree(scene, propsContainer) {
-    new SceneLoader.LoadAssetContainer("../mesh/Tree/", "Tree.obj", scene, function(container){
-    container.addAllToScene();
-    
-    ways.forEach(way => {
-
-        for (var i = 1; i < way.points.length-1; i++){
-            var posTab = getInterPos(way.points[i], way.points[i+1]);
-
-            duplicate(container, posTab['xL'], posTab['yL'])
-            duplicate(container, posTab['xR'], posTab['yR'])
-        }
-     })
-     propsContainer = container;
-     console.log(propsContainer);
-   })
-}
-
 
 function getInterPos(curr, next){
     var xD = next.x - curr.x;
@@ -59,48 +47,32 @@ function getInterPos(curr, next){
     //}
 }
 
-export function disableTrees(){
-console.log(
-    propsContainer
-)}
+function createTrees(scene, propsContainer) {
+    new SceneLoader.LoadAssetContainer("../mesh/Tree/", "Tree.obj", scene, function(container){
+    container.addAllToScene();
+    
+    ways.forEach(way => {
 
-export default function dressMap(scene){
-    createTree(scene, propsContainer);
+        for (var i = 1; i < way.points.length-1; i++){
+            var posTab = getInterPos(way.points[i], way.points[i+1]);
+
+            duplicate(container, posTab['xL'], posTab['yL'])
+            duplicate(container, posTab['xR'], posTab['yR'])
+        }
+     })
+     propsContainer = container;
+     console.log(propsContainer);
+   })
 }
 
 
-/*
-function treesDebug(){
-    //debug 
-    // var options = {
-    //     diameterTop:2, 
-    //     diameterBottom: 2, 
-    //     height: 80, 
-    //     tessellation: 10, 
-    //     subdivisions: 1
-    // }
 
-    ways.forEach(way => {
-        for (var i = 1; i < way.points.length-1; i++){
-                var posTab = getInterPos(way.points[i], way.points[i+1]);
-                
-                for (var node of entries.rootNodes) {
-                    console.log('done')
-                    node.position = new Vector3(posTab['xL'], 1, posTab['yL']);
-                    node.position = new Vector3(posTab['xR'], 1, posTab['yR']);
-                }    
-            entries.mesh[0].position = new Vector3(posTab['xL'], 1, posTab['yL']);
-            entries.mesh[0].position = new Vector3(posTab['xR'], 1, posTab['yR']);            
-            var Lcol = new MeshBuilder.CreateCylinder('test', options);
-            var Rcol = new MeshBuilder.CreateCylinder('test', options);
-            var color = new StandardMaterial("myMaterial", scene);
-            color.diffuseColor = posTab.color;
-            color.emissiveColor = posTab.color;
-            Lcol.position = new Vector3(posTab['xL'], 1, posTab['yL']);
-            Rcol.position = new Vector3(posTab['xR'], 1, posTab['yR']);
-            Lcol.material = color;
-            Rcol.material = color;
-            //end debug
-        }
-    })
-}*/
+export function disableTrees(){
+    console.log(propsContainer);
+}
+
+export default function dressMap(scene, container){
+    //createTrees(scene, propsContainer);
+    spawnSign(container, scene, -4, -44);
+}
+

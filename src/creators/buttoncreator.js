@@ -11,6 +11,17 @@ export function buttonDriveCreator(style, content){
     return tmpBtn;
 }
 
+export function feedbackDivCreator(content){
+    var tmpdiv = `<div id='feedback-drive' style='position: absolute; top: 20vh; left: 40vw; text-align:center; font-size: 5vh; color: white; height: 10vh; width: 30vw'>
+        ${content.text} <div style="margin-top: 4vh; display: inline-block"><img style='height: 5vh; width:5vh; display: inline-block; margin-left: 1vw;' src=${content.img}></img></div>
+    </div>`
+
+    document.body.insertAdjacentHTML('afterbegin', tmpdiv)
+    setTimeout(() => {
+        document.getElementById('feedback-drive').remove();
+    }, 4000);
+}
+
 export function divCreator(style, content){
     var tmpDiv = document.createElement('div');
 

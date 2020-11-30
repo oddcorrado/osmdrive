@@ -7,21 +7,18 @@ import createSkybox from './skybox'
 import createLights from './light'
 import createGround from './ground'
 import control from './controls/control'
-import {setupControls} from './controls/control'
 import createMenu from './controls/menu.js'
 import createButtons from './controls/drivebuttons'
-import createCar from './car'
+import createCar from './debug/car'
 import botshandler from './bots'
 import setupPhysics from './physics'
 import createFreeCamera from './cameras/freecamera'
 import toggleCamera from './cameras/togglecamera'
 import createCamera from './cameras/camera'
 import dressMap from './dressmap'
-import createDetailedCar from './detailedcar'
+import maincar from './detailedcar'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
 import startup from './startup'
-import { spawnSign } from './props/stop'
-//stop test
 
 const boot = () => {
     const planes = []
@@ -37,8 +34,7 @@ const boot = () => {
     const freecamera = createFreeCamera(scene, canvas);
     scene.activeCamera = internalCamera; 
     var switchcar = 'old';
-    var oldcar;
-    var tmpcar;
+   
     
     //Creates environements and camera
     createSkybox(scene)
@@ -49,13 +45,14 @@ const boot = () => {
     var container = new AssetContainer(scene);
     
     //Creates cars meshes
-    createDetailedCar(scene, camera, internalCamera, container);
+    maincar.createMainCar(scene, camera, internalCamera, container);
+    var oldcar;
+    var tmpcar;
     var car = createCar(scene);
-    spawnSign(scene, -4, -44);
     //Create map meshes 
     createWays(scene, planes)
     var grids// = createBuildings(scene)
-    //dressMap(scene)
+    dressMap(scene, container);
     
     // const bots = botshandler.createBots(scene)
     // bots.forEach(bot => {//comment to disable bots by default
@@ -65,7 +62,7 @@ const boot = () => {
     
     createMenu(scene, camera, internalCamera, freecamera, /*bots,*/ grids);
     createButtons(scene);
-    setupControls(scene);
+    control.setupControls(scene);
     setupPhysics(scene, ground, car/*, bots*/)
     
     control.cameraloop(camera);
@@ -83,8 +80,10 @@ const boot = () => {
              car = tmpcar;
              oldcar.dispose();
         }
-        if (switchcar === 'new')
+        if (switchcar === 'new') {
              control.loop(car, scene)  
+            maincar.getPos(car)
+        }
        // botshandler.loop(bots)
     })
 }

@@ -71,7 +71,7 @@ function cameraloop(camera){
     });   
 }
 
-export function setupControls (scene){
+function setupControls (scene){
     var interAccel;
     var interBrake;
     var dir = document.getElementById('dir');
@@ -87,7 +87,8 @@ export function setupControls (scene){
     var inter;
 
     touchZone.addEventListener('touchmove', function(e){
-        clearInterval(inter);
+        if (inter)
+            clearInterval(inter);
         var pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
         currentLook = e.targetTouches[0].clientX - pos > 300 ? 300 : (e.targetTouches[0].clientX - pos < -300 ? -300 : e.targetTouches[0].clientX - pos) ;
         scene.activeCamera.lockedTarget = new Vector3(currentLook, -7, 50);
@@ -440,5 +441,6 @@ function loop(car, scene) {
 export default {
     loop: (car, scene) => loop(car, scene),
     cameraloop: camera => cameraloop(camera),
-    setup: scene => setup(scene)
+    setup: scene => setup(scene),
+    setupControls: scene => setupControls(scene)
 }
