@@ -386,6 +386,8 @@ function loop(car, scene) {
             steer = orientation * (sideTilt/sideSensi);
             steerWheel.style.transform = `rotateZ(${orientation * (sideTilt * 2)}deg)`;//define a max tilt
         }
+    } else if (vel.x === 0){
+        steer = 0;
     }
 
     //Speed
