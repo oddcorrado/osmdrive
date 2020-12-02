@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "cannon": "^0.6.2",
-    "screenfull": "^5.0.2"
+    "screenfull": "^5.0.2",
+    "ua-parser-js": "^0.7.22"
   }
 }
