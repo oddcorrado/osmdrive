@@ -13,7 +13,6 @@ import createCar from './debug/car'
 import botshandler from './bots'
 import setupPhysics from './physics'
 import createFreeCamera from './cameras/freecamera'
-import toggleCamera from './cameras/togglecamera'
 import createCamera from './cameras/camera'
 import dressMap from './dressmap'
 import maincar from './detailedcar'
@@ -39,7 +38,6 @@ const boot = () => {
     //Creates environements and camera
     createSkybox(scene)
     createLights(scene)
-    toggleCamera(scene, camera, freecamera, false);
     
     //Container to handle multiple meshes, useful to duplicate without reloading
     var container = new AssetContainer(scene);

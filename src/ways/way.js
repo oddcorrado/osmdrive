@@ -40,7 +40,7 @@ export default function createWays(scene, planes) {
     // remove old junctions from root lanes
 
     ways.forEach(way => {
-        const points = way.points.map( point => new Vector3(point.x, 0.1, point.y))
+        const points = way.points.map( point => new Vector3(point.x, Math.random() * 0.01, point.y))//Math.random to avoid road sparkling
         const path3D = new Path3D(points);
         const normals = path3D.getNormals();
         const curve = path3D.getCurve();

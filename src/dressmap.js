@@ -7,14 +7,9 @@ import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { spawnSign } from './props/stopsign'
+import { ActionManager } from '@babylonjs/core/Actions';
 
 var propsContainer;
-
-
-function srivingFeedback(){
-    
-}
-
 
 var duplicate = function(container, x, y) {
     let entries = container.instantiateModelsToScene();
@@ -72,6 +67,8 @@ export function disableTrees(){
 }
 
 export default function dressMap(scene, container){
+    scene.actionManager = new ActionManager(scene)
+
     //createTrees(scene, propsContainer);
     spawnSign(container, scene, -4, -44);
 }

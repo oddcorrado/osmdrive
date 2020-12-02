@@ -1,4 +1,4 @@
-import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
+import { VirtualJoystick, JoystickAxis } from '@babylonjs/core/Misc/virtualJoystick'
 import { Vector3 } from '@babylonjs/core/Maths/math'
 //import {getCurrent} from './menu'
 import { getWayDir } from '../ways/way'
@@ -24,7 +24,7 @@ let dir = new Vector3(1, 0, 0);
 let orientation = enumOri.LEFT;
 
 let sideTilt = 0;
-let sideSensi = 15;
+let sideSensi = 20;
 let sideMaxTilt = 30;//todo
 
 let frontMidAngle = 45;
@@ -290,7 +290,7 @@ function setupControls (scene){
 }
 
 
-function setSpeedWtinesses(vel, accel){
+function setSpeedWtinesses(vel, stickY){
     var speedDiv = document.getElementById('speed');
     
     speedDiv.innerText = `${((Math.abs(vel.x) + Math.abs(vel.z))*3.6).toFixed()}`;
@@ -301,23 +301,26 @@ function setSpeedWtinesses(vel, accel){
     for (let div of divTab){
         div.src = '../../images/Vclear.svg';
     }
-    neutral.src = accel === 0 ? '../../images/greencircle.svg' : '../../images/circle.svg';
     
-    if (accel>0.05)
-        document.getElementById('maxf').src = '../../images/Vstrong.svg';    
-    if (accel>0.03)
-        document.getElementById('avgf').src = '../../images/Vstrong.svg';
-    if (accel>0.015)
-        document.getElementById('minf').src = '../../images/Vstrong.svg';
-    if (-0.015 < accel && accel < 0.015)
-        neutral.src = '../../images/greencircle.svg';
-    if (accel<-0.015)
-        document.getElementById('minb').src = '../../images/Vstrong.svg';
-    if (accel<-0.03)
-        document.getElementById('avgb').src = '../../images/Vstrong.svg';
-    if (accel<-0.05)
-        document.getElementById('maxb').src = '../../images/Vstrong.svg';
-}
+    if (rightJoystick.pressed){
+        neutral.src = '../../images/circle.svg';
+        if (stickY>0.80)
+            document.getElementById('maxf').src = '../../images/Vstrong.svg';    
+        if (stickY>0.40)
+            document.getElementById('avgf').src = '../../images/Vstrong.svg';
+        if (stickY>0)
+            document.getElementById('minf').src = '../../images/Vstrong.svg';
+        if (stickY<0)
+            document.getElementById('minb').src = '../../images/Vstrong.svg';
+        if (stickY<-0.4)
+            document.getElementById('avgb').src = '../../images/Vstrong.svg';
+        if (stickY<-0.8)
+            document.getElementById('maxb').src = '../../images/Vstrong.svg';
+    } else {
+     neutral.src = '../../images/greencircle.svg';
+    }
+
+    }
 
 function isLookingAround(scene){
     if(scene.activeCamera.lockedTarget){
@@ -334,6 +337,7 @@ let projection = null
 function loop(car, scene) {
     var steerWheel = document.getElementById('wheel');
     let vel = car.physicsImpostor.getLinearVelocity();
+    setSpeedWtinesses(vel, rightJoystick.deltaPosition.y);
 
     if(recenter) {
         if(projection.subtract(car.position).length() < 0.1) {
@@ -354,7 +358,6 @@ function loop(car, scene) {
         return
     }
 
-    setSpeedWtinesses(vel, accel)
     if (pace++ > 20) {
         var tmpdir = dir
         pace = 0
@@ -375,7 +378,7 @@ function loop(car, scene) {
     if (mode.dir === 'slide'){
         steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x * 1.4 : steer * 0.80;
         steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;
-    } else if (mode.dir === 'tilt' && !isLookingAround(scene)){
+    } else if (mode.dir === 'tilt' && !isLookingAround(scene) && vel.x != 0){
         if (180 >= sideTilt && sideTilt >= 155) {
             steer = orientation * ((sideTilt - 180)/sideSensi);
             steerWheel.style.transform = `rotateZ(${orientation * ((sideTilt-180)*2)}deg)`;
@@ -386,6 +389,8 @@ function loop(car, scene) {
             steer = orientation * (sideTilt/sideSensi);
             steerWheel.style.transform = `rotateZ(${orientation * (sideTilt * 2)}deg)`;//define a max tilt
         }
+    } else {
+        steer = 0;
     }
 
     //Speed
@@ -393,7 +398,8 @@ function loop(car, scene) {
         accel = btnAccel;//0
     } else if (mode.spd === 'slide'){
         if (rightJoystick.pressed) {
-            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 2 : rightJoystick.deltaPosition.y / 12)
+            console.log(rightJoystick.deltaPosition.y)
+            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 10 : rightJoystick.deltaPosition.y / 30)
             if (mode.global != 'mode2')
                 scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
         } else {
