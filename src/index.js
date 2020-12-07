@@ -51,8 +51,6 @@ const boot = () => {
     createWays(scene, planes)
     var grids// = createBuildings(scene)
     dressMap(scene, container);
-    
-    // const bots = botshandler.createBots(scene)
     // bots.forEach(bot => {//comment to disable bots by default
     //     bot.isVisible = false;
     //     bot.setEnabled(false);

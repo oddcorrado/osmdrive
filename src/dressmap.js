@@ -8,6 +8,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { spawnSign } from './props/stopsign'
 import { ActionManager } from '@babylonjs/core/Actions';
+import botshandler from './bots'
 
 var propsContainer;
 
@@ -70,6 +71,8 @@ export default function dressMap(scene, container){
     scene.actionManager = new ActionManager(scene)
 
     //createTrees(scene, propsContainer);
+    botshandler.createBots(scene, container);
+    console.log(container)
     spawnSign(container, scene, -4, -44);
 }
 

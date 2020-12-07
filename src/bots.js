@@ -2,6 +2,23 @@ import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { Vector3} from '@babylonjs/core/Maths/math'
 import { getWayDir } from './ways/way'
 import { TupleDictionary } from 'cannon';
+import { SceneLoader } from '@babylonjs/core/Loading/sceneLoader';
+import { Mesh } from '@babylonjs/core/Meshes/mesh';
+
+function createCarBot(scene, container) {
+    new SceneLoader.ImportMeshAsync('', "../mesh/Bot/", "policesedan.obj", scene).then(function(newMesh) {
+        console.log(newMesh)
+        var arr = newMesh['meshes']
+        var bot = Mesh.MergeMeshes(arr, true, false, null, false, false);
+        bot.name = 'botcar';
+        bot.position = new Vector3(10, 0, -60);
+        bot.scalingDeterminant = 0.8;
+       // setupPhysics(scene, car);
+        container.meshes.push(bot);
+        return bot;
+      })
+    
+}
 
 function getRandomPosition(min, max) {
     min = Math.ceil(min);
@@ -22,16 +39,16 @@ function turn(bot, angle){
     */
 }
 
-function createBots(scene){
+function createBots(scene, container){
     var botsTab = [];
-
-    for (var i = 0; i <= 10; i++){
-        botsTab.push(MeshBuilder.CreateBox('box', {height: 4, width: 2, depth: 4 }, scene));
-        botsTab[i].position.y = 2;
-        botsTab[i].position.z = getRandomPosition(-150, 150);
-        botsTab[i].position.x = getRandomPosition(-150, 150);
-        console.log('made x: ', botsTab[i].position.x, '  z: ', botsTab[i].position.z);
-    }
+    createCarBot(scene, container);
+    // for (var i = 0; i <= 10; i++){
+    //     botsTab.push(MeshBuilder.CreateBox('box', {height: 4, width: 2, depth: 4 }, scene));
+    //     botsTab[i].position.y = 2;
+    //     botsTab[i].position.z = getRandomPosition(-150, 150);
+    //     botsTab[i].position.x = getRandomPosition(-150, 150);
+    //     console.log('made x: ', botsTab[i].position.x, '  z: ', botsTab[i].position.z);
+    // }
 
     return botsTab;
 }
@@ -56,6 +73,6 @@ function loop(bots) {
 
 
 export default {
-    createBots: scene => createBots(scene),
+    createBots: (scene, container) => createBots(scene, container),
     loop: bots => loop(bots)
 }
