@@ -409,7 +409,7 @@ function loop(car, scene) {
     } else if (mode.spd === 'slide'){
         if (rightJoystick.pressed) {
             toggleStick('block', 'none');
-            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 10 : rightJoystick.deltaPosition.y / 30)
+            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 8 : rightJoystick.deltaPosition.y / 25)
             if (mode.global != 'mode2')
                 scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
         } else {

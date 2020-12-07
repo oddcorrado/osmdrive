@@ -53,7 +53,7 @@ const startup = boot => {
     }
 
     start.onclick = () => {
-        if(window.innerWidth > window.innerHeight) {
+        if (window.innerWidth > window.innerHeight) {
             start.innerText = 'UBIQUITY\nLOADING...\nPLEASE WAIT'
             if (screenfull.isEnabled  && (os === 'Android' || os === 'iOS')) {
                  screenfull.request()
