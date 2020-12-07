@@ -8,6 +8,7 @@ import {toggleCustomModes} from './menu'
 import { scene } from '..'
 import { roadCheckerExit } from '../checkers/roadChecker'
 import gamepad from './gamepad'
+import { recenterDisplay } from './recenterDisplay'
 
 // import  from './modes.js'
 
@@ -342,6 +343,7 @@ function isLookingAround(scene){
 }
 
 let recenter = false
+let recenterStep = 'lift'
 let projection = null
 
 function loop(car, scene) {
@@ -351,12 +353,21 @@ function loop(car, scene) {
 
     if(recenter) {
         if(projection.subtract(car.position).length() < 0.1) {
+            recenterDisplay(false)
             recenter = false
             projection = null
             return
         }
-        const recenterScale = Math.min(projection.subtract(car.position).length(), 10)
-        const recenterVel = projection.subtract(car.position).normalize().scale(recenterScale)
+        
+        const target = recenterStep === 'lift' ? new Vector3(car.position.x, 5, car.position.z)
+            : (recenterStep === 'lower' ? 
+                projection : new Vector3(projection.x, 5, projection.z))
+        if(recenterStep === 'lift' && target.subtract(car.position).length() < 0.1) { recenterStep = 'move' }
+        else if(recenterStep === 'move' && target.subtract(car.position).length() < 0.1) { recenterStep = 'lower' }
+
+        const recenterScale = Math.max(target.subtract(car.position).length(), 1)
+        const recenterVel = target.subtract(car.position).normalize().scale(recenterScale)
+
         car.physicsImpostor.setLinearVelocity(recenterVel)
         speed = 0
         return
@@ -364,6 +375,8 @@ function loop(car, scene) {
 
     projection = roadCheckerExit(car.position)
     if(projection != null) { 
+        recenterStep = 'lift'
+        recenterDisplay(true)
         recenter = true
         return
     }
