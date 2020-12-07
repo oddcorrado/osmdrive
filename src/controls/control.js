@@ -7,6 +7,7 @@ import enumOri from '../enum/orientation'
 import {toggleCustomModes} from './menu'
 import { scene } from '..'
 import { roadCheckerExit } from '../checkers/roadChecker'
+import gamepad from './gamepad'
 
 // import  from './modes.js'
 
@@ -427,6 +428,26 @@ function loop(car, scene) {
             }
         }
     } 
+
+    // gamepad overwrite
+    const gp = gamepad()
+    if(gp != null) {
+        steer = Math.abs(gp.steer) > 0.1 ? gp.steer * 0.50 : 0
+        steer = steer * Math.min(1, speed)
+        steer = steer * Math.min(1, Math.max(0.25, Math.abs(2 - (speed / 8))))
+        if(speed < 0.001) { steer = 0 }
+        steerWheel.style.transform = `rotateZ(${steer * 90}deg)`
+        accel = (gp.speed < 0 ? gp.speed / 10 : gp.speed / 30)
+        if(Math.abs(gp.steer) > 0.1) {
+            scene.activeCamera.lockedTarget = new Vector3(gp.steer * 20, 0, 50)
+        } else {
+            if(Math.abs(gp.speed) < 0.1) {
+                scene.activeCamera.lockedTarget = new Vector3(gp.look * 100, 0, 50);
+            } else {
+                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50)
+            }
+        }
+    }
 
     //Gear
     if (mode.gear === 'front'){

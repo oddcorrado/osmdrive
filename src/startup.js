@@ -1,5 +1,6 @@
 import screenfull from 'screenfull'
 import { divCreator } from './creators/buttoncreator'
+import UAParser from 'ua-parser-js'
 
 
 const displayText = (w, h) => {
@@ -37,6 +38,9 @@ const startup = boot => {
         text-align: center;
     `
 
+    const ua = new UAParser()
+    const os = ua.getOS()
+
     const start = divCreator(startStyle, {id: 'startDiv', text: displayText(window.innerWidth, window.innerHeight)})
 
     start.style.color = displayColor(window.innerWidth, window.innerHeight)
@@ -51,8 +55,8 @@ const startup = boot => {
     start.onclick = () => {
         if(window.innerWidth > window.innerHeight) {
             start.innerText = 'UBIQUITY\nLOADING...\nPLEASE WAIT'
-            if (screenfull.isEnabled) {
-                screenfull.request()
+            if (screenfull.isEnabled  && (os === 'Android' || os === 'iOS')) {
+                 screenfull.request()
             }
             document.body.removeChild(start)
             boot()
