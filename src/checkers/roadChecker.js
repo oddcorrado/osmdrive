@@ -13,7 +13,7 @@ let closestSegment = null
 export const checkerDebugSegment = (pos) => {
     const closest = getSegmentGetClosest(pos)
 
-    if(closest == null) { return }
+    if(closest == null || closest.segment == null) { return }
 
     if(currentSegment != null && closest.segment.id === currentSegment.id) { return }
 

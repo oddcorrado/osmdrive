@@ -1,5 +1,6 @@
 import screenfull from 'screenfull'
 import { divCreator } from './creators/buttoncreator'
+import { recenterDisplaySetup } from './controls/recenterDisplay'
 import UAParser from 'ua-parser-js'
 
 
@@ -60,6 +61,8 @@ const startup = boot => {
             }
             document.body.removeChild(start)
             boot()
+
+            recenterDisplaySetup()
         }
     }
 }
