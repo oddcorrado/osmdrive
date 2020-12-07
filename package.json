@@ -9,9 +9,9 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babylonjs/core": "^4.1.0",
-    "@babylonjs/loaders": "^4.1.0",
-    "webpack": "^4.43.0",
+    "@babylonjs/core": "^4.2.0",
+    "@babylonjs/loaders": "^4.2.0",
+    "webpack": "^4.44.2",
     "webpack-cli": "^3.3.12",
     "webpack-dev-server": "^3.11.0"
   },

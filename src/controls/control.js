@@ -20,7 +20,7 @@ let rightJoystick = null;
 let pace = 0;
 let esp = true;
 let dir = new Vector3(1, 0, 0);
-
+let hide = false;
 let orientation = enumOri.LEFT;
 
 let sideTilt = 0;
@@ -42,10 +42,19 @@ export function toggleEsp(){
     esp = !esp;
 }
 
+function toggleStick(curr, next){
+    var stick = document.getElementById('falsestick');
+    if (stick && stick.style.display == curr) {
+        stick.style.display = next;
+    }
+}
+
 function setup(scene) {
     //leftJoystick = new VirtualJoystick(true)
-    rightJoystick = new VirtualJoystick(false)
+    rightJoystick = new VirtualJoystick(false, {color:'#56CCF2'})
     VirtualJoystick.Canvas.style.opacity = '0.7';
+    rightJoystick.alwaysVisible = true;
+
     //leftJoystick.setJoystickSensibility(6)
     rightJoystick.setJoystickSensibility(6)
 }
@@ -398,12 +407,13 @@ function loop(car, scene) {
         accel = btnAccel;//0
     } else if (mode.spd === 'slide'){
         if (rightJoystick.pressed) {
-            console.log(rightJoystick.deltaPosition.y)
+            toggleStick('block', 'none');
             accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 10 : rightJoystick.deltaPosition.y / 30)
             if (mode.global != 'mode2')
                 scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
         } else {
             accel = vel.x === 0 ? 0 : -0.001;
+            toggleStick('none', 'block');
             if (mode.global != 'mode2')
                 scene.activeCamera.lockedTarget = new Vector3(0, -11, 50);//                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
         }

@@ -11,6 +11,14 @@ export function buttonDriveCreator(style, content){
     return tmpBtn;
 }
 
+export function falseStickCreator(){
+    var tmpdiv =  `<div id='falsestick' style="position: absolute; width: 18vw; text-align: center;height: 32vh;border-radius: 50%; border: 0.3vw solid #56CCF2; display: block; top: 40vh; right: 10vw;">     
+        <div style="margin-top: 15%; margin-left: 14%;border: 1vw solid #56CCF2; width: 11vw; height: 19vh; border-radius: 50%">
+        </div>
+    </div>`
+    return tmpdiv;
+}
+
 export function feedbackDivCreator(content){
     var tmpdiv = `<div id='feedback-drive' style='position: absolute; top: 20vh; left: 40vw; text-align:center; font-size: 5vh; color: white; height: 10vh; width: 30vw'>
         ${content.text} <div style="margin-top: 4vh; display: inline-block"><img style='height: 5vh; width:5vh; display: inline-block; margin-left: 1vw;' src=${content.img}></img></div>

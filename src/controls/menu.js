@@ -3,7 +3,7 @@ import { toggleDebugWays } from './../ways/logic/roads'
 import {disableTrees} from './../dressmap'
 import {toggleEsp} from './control'
 import { Vector3 } from '@babylonjs/core/Maths/math';
-import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness} from '../creators/buttoncreator.js';
+import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness, falseStickCreator} from '../creators/buttoncreator.js';
 import type from '../enum/buttontype';
 
 var camPosInterval;
@@ -44,11 +44,12 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     var camFresh = divCreator('top: 0; right: 0; height: 1rem;font-size:0.7rem; display: none', {text: '', id:'position'});
     var camOriFresh = divCreator('top: 0; left: 0; width: 40rem; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'camerapos'});
     var speedFresh = divCreator('font-family: aldrich ; text-align:center; bottom: -7vh; right: 35vw; height: 25vh; width: 29vw; display: block; color: #56CCF2;font-size: 5vw', {text: '00', id: 'speed'});
+    var falseStick = falseStickCreator();
     var btnDivArrayMenu = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, btnGrids, btnEsp, btnCamOri, btnBar];
     var divArray = [speedFresh, camFresh, camOriFresh];
 
     document.body.insertAdjacentHTML('afterbegin', accelWitness);
-
+    document.body.insertAdjacentHTML('afterbegin', falseStick);
 
     btnDivArrayMenu.forEach(btn => {
         document.body.appendChild(btn);
