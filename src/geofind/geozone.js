@@ -1,4 +1,4 @@
-const zoneSize = 50
+const zoneSize = 100
 
 let minX = 0
 let maxX = 2000
@@ -81,7 +81,6 @@ export const zoneGetSegment = (x0, y0, x1, y1) => {
         const ye = zoneFloor(Math.max(y0, y1)) // y end
 
         for(let y = ys; y <= ye; y += zoneSize) {
-            console.log(x, y)
             const zone = zoneGet (x0, y)
             if(zone != null) output.push(zone)
         }
