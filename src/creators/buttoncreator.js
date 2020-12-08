@@ -12,8 +12,8 @@ export function buttonDriveCreator(style, content){
 }
 
 export function falseStickCreator(){
-    var tmpdiv =  `<div id='falsestick' style="position: absolute; width: 18vw; text-align: center;height: 32vh;border-radius: 50%; border: 0.3vw solid #56CCF2; display: block; top: 40vh; right: 10vw;">     
-        <div style="margin-top: 15%; margin-left: 14%;border: 1vw solid #56CCF2; width: 11vw; height: 19vh; border-radius: 50%">
+    var tmpdiv =  `<div id='falsestick' style="position: absolute; width: 14%; height: 30%;text-align: center;border-radius: 50%; border: 0.3vw solid #56CCF2; display: block; top: 40vh; right: 10vw;">     
+        <div style="margin-top: 14%; margin-left: 14%;border: 0.9vw solid #56CCF2; width: 60%; height: 60%; border-radius: 50%">
         </div>
     </div>`
     return tmpdiv;
