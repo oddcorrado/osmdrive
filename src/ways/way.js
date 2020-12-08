@@ -74,7 +74,7 @@ function distanceToCurve(position, path) {
     return (position.subtract(pointOnCurve).length())
 }
 
-export function getWayDir(position) {
+export function getWayDir(position, dir) {
 
     // console.log(position, getSegmentGetClosest(position))
 
@@ -82,29 +82,13 @@ export function getWayDir(position) {
     
     const closest = getSegmentGetClosest(position)
 
-    return closest != null ? closest.segment.start.subtract(closest.segment.end) : null
+    // return closest != null ? closest.segment.start.subtract(closest.segment.end) : null
+    if(closest == null || closest.projection.subtract(position).length() < 0.01) { return null }
+    
+    if(dir == null || dir.length() < 0.1) { return closest.segment.start.subtract(closest.segment.end)}
 
-    /* let first = 1000000000
-    let second = 1000000000
-    let third = 1000000000
-    let index = -1
+    const projectionAlongDirVel = closest.projection.add(dir.scale(0.3))
+    const targetDir = projectionAlongDirVel.subtract(position)
 
-    paths.forEach((path, i) => {
-        const d = distanceToCurve(position, path)
-        if (d < first) {
-            index = i
-            third = second
-            second = first
-            first = d
-        }
-    })
-
-    // if(third - first < 30) { index = - 1 }
-    // console.log(third - first, first, second, third)
-    if(index !== -1) {
-        const path = paths[index]
-        return path.getTangentAt(path.getClosestPositionTo(position), true)
-    } */
-
-    return null
+    return targetDir
 }

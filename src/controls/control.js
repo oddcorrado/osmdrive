@@ -345,6 +345,7 @@ function isLookingAround(scene){
 let recenter = false
 let recenterStep = 'lift'
 let projection = null
+let hardcoreRail = false
 
 function loop(car, scene) {
     var steerWheel = document.getElementById('wheel');
@@ -381,13 +382,12 @@ function loop(car, scene) {
         return
     }
 
-    if (pace++ > 20) {
-        var tmpdir = dir
-        pace = 0
-        dir = getWayDir(car.position)
-        if (!dir)
-            dir = tmpdir;
-    }
+    var tmpdir = dir
+    dir = getWayDir(car.position, hardcoreRail ? vel : null)
+    console.log(dir)
+    if (!dir)
+        dir = tmpdir;
+
     if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
          angle = Math.atan2(vel.z, vel.x)
     }
@@ -475,7 +475,7 @@ function loop(car, scene) {
     if(Math.abs(dirAngle - angle) > Math.PI * 0.5) { dirAngle = Math.atan2(-dir.z, -dir.x) }
 
     if (esp === true && ((mode.dir === 'slide' && !leftJoystick.pressed) || (mode.dir === 'tilt' && 0.15 >= steer && steer >= -0.15))  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
-        angle = dirAngle * 0.1 + angle * 0.9
+        angle = hardcoreRail ? dirAngle : dirAngle * 0.1 + angle * 0.9
     }
     const adjustSpeed = Math.max(0, speed - 2 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
     var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
