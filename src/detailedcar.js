@@ -21,7 +21,7 @@ function createMainCar (scene, camera, internalCamera, container) {
     return new SceneLoader.ImportMeshAsync('', "../mesh/Mustang/", "mustang.obj", scene).then(function(newMesh) {
       var car = Mesh.MergeMeshes(newMesh['meshes'], true, true, null, false, true);
       car.name = 'detailedcar';
-      car.position = new Vector3(-16, 0, -45);
+      car.position = new Vector3(15, 2, -1);
       car.scalingDeterminant = 0.8;
       camera.parent = car;
       internalCamera.parent = car;

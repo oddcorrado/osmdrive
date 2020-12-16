@@ -9,7 +9,7 @@ import { scene } from '..'
 import { roadCheckerExit } from '../checkers/roadChecker'
 import gamepad from './gamepad'
 import { recenterDisplay } from './recenterDisplay'
-
+import { driverPathBuild } from '../ways/logic/driver'
 // import  from './modes.js'
 
 let speed = 0;
@@ -346,11 +346,23 @@ let recenter = false
 let recenterStep = 'lift'
 let projection = null
 let hardcoreRail = false
+let currentSegment = null
+let selection = 'L' // 'R' or 'L' or null
 
 function loop(car, scene) {
     var steerWheel = document.getElementById('wheel');
     let vel = car.physicsImpostor.getLinearVelocity();
     setSpeedWtinesses(vel, rightJoystick.deltaPosition.y);
+
+
+    // *********************
+    // CALCUL DU PATH
+    // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
+    currentSegment = driverPathBuild(car.position, currentSegment, selection)
+    if(currentSegment!=null && currentSegment[1] == null) {
+        console.log('currentSegment', currentSegment)
+    }
+    // ********************
 
     if(recenter) {
         if(projection.subtract(car.position).length() < 0.1) {
@@ -384,7 +396,7 @@ function loop(car, scene) {
 
     var tmpdir = dir
     dir = getWayDir(car.position, hardcoreRail ? vel : null)
-    console.log(dir)
+
     if (!dir)
         dir = tmpdir;
 
