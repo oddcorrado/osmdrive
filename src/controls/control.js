@@ -358,10 +358,8 @@ function loop(car, scene) {
     // *********************
     // CALCUL DU PATH
     // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
+    // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     currentSegment = driverPathBuild(car.position, currentSegment, selection)
-    if(currentSegment!=null && currentSegment[1] == null) {
-        console.log('currentSegment', currentSegment)
-    }
     // ********************
 
     if(recenter) {
