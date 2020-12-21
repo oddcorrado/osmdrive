@@ -6,47 +6,56 @@ import createWays from './ways/way'
 import createSkybox from './skybox'
 import createLights from './light'
 import createGround from './ground'
-import control from './controls/control'
+//import control from './controls/control'
 import createMenu from './controls/menu.js'
 import createButtons from './controls/drivebuttons'
 import createCar from './debug/car'
 import botshandler from './bots'
-import setupPhysics from './physics'
+import physics from './physics'
 import createFreeCamera from './cameras/freecamera'
 import createCamera from './cameras/camera'
 import dressMap from './dressmap'
-import maincar from './detailedcar'
+import {createMainCar} from './carwithphysics'
+import createDefaultCar from './detailedcar'
+import loop from './controls/loops'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
 import startup from './startup'
+import { SineEase } from '@babylonjs/core/Animations/easing'
 
 const boot = () => {
+    var oldcar;
+    var motor;
+    var steer;
+    var clio;
+    var mustang;
+    var switchcar = 'old';
     const planes = []
+
     // Get the canvas element from the DOM.
     const canvas = document.getElementById('renderCanvas')
     const engine = new Engine(canvas);
     scene = new Scene(engine);
     const ground = createGround(scene);
-    
+
     // Creates and sets camera 
     const camera = createCamera(scene, canvas);//NORMAL CAMERA
     const internalCamera = createCamera(scene, canvas, 1);
     const freecamera = createFreeCamera(scene, canvas);
     scene.activeCamera = internalCamera; 
-    var switchcar = 'old';
-   
-    
+    //scene.activeCamera = freecamera;
     //Creates environements and camera
     createSkybox(scene)
     createLights(scene)
-    
+    physics.enablePhysics(scene);
     //Container to handle multiple meshes, useful to duplicate without reloading
     var container = new AssetContainer(scene);
     
-    //Creates cars meshes
-    maincar.createMainCar(scene, camera, internalCamera, container);
-    var oldcar;
-    var tmpcar;
-    var car = createCar(scene);
+    //Creates cars
+    var boxcar = createCar(scene);
+    createDefaultCar(scene, camera, internalCamera, container);
+    createMainCar(scene, camera, internalCamera, container);
+
+
     //Create map meshes 
     createWays(scene, planes)
     var grids// = createBuildings(scene)
@@ -55,32 +64,35 @@ const boot = () => {
     //     bot.isVisible = false;
     //     bot.setEnabled(false);
     // })
-    
+
     createMenu(scene, camera, internalCamera, freecamera, /*bots,*/ grids);
     createButtons(scene);
-    control.setupControls(scene);
-    setupPhysics(scene, ground, car/*, bots*/)
+    loop.setupControls(scene);
+    physics.setupPhysics(scene, ground, boxcar/*, bots*/)
+
+    //loop.cameraOriSetup(camera);
+    loop.setupJoystick();
+    loop.cameraOrientationSetup(camera);
     
-    control.cameraloop(camera);
-    control.setup(scene);
-    camera.parent = car;
-    internalCamera.parent = car;
+    camera.parent = boxcar;
+    internalCamera.parent = boxcar;
     // Render every frame
-    
+
     engine.runRenderLoop(() => {
         planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
+        //switchcar = getSwitchcar()
         scene.render()
-        if (switchcar === 'old' && (tmpcar = container['meshes'].find(mesh => mesh.name == 'detailedcar'))){
+         if (switchcar === 'old' && (clio = container['meshes'].find(mesh => mesh.name == 'clio'))  
+            && (steer = container['meshes'].find(mesh => mesh.name == 'sjoints'))
+            && (motor = container['meshes'].find(mesh => mesh.name == 'joints')) 
+            && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar') )){ 
             switchcar = 'new';
-             oldcar = car;
-             car = tmpcar;
-             oldcar.dispose();
+            oldcar = boxcar;
+            oldcar.dispose();
         }
-        if (switchcar === 'new') {
-             control.loop(car, scene)  
-            maincar.getPos(car)
-        }
-       // botshandler.loop(bots)
+        if (switchcar === 'new'){
+            loop.loopSelector(scene, motor, steer, clio, mustang);
+        }   
     })
 }
 

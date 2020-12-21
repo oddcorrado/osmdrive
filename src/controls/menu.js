@@ -1,7 +1,7 @@
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
 import { toggleDebugWays } from './../ways/logic/roads'
 import {disableTrees} from './../dressmap'
-import {toggleEsp} from './control'
+import {toggleEsp} from './loops'
 import { Vector3 } from '@babylonjs/core/Maths/math';
 import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness, falseStickCreator} from '../creators/buttoncreator.js';
 import type from '../enum/buttontype';
@@ -11,7 +11,7 @@ var controlTab = [[],[]];
 
 export function toggleCustomModes(display){
     controlTab[type.MODE].forEach((btn) => {
-        if (btn!=controlmode)
+        if (btn!=controlmode )
         btn.style.display = display;
     })
     return controlTab;
@@ -170,14 +170,17 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 function setControlMenu(scene){
     var btnMenuControls = buttonCreator('top: 6vh; white-space: nowrap; left: 0; background-color:black; display: block;',{text: 'Control Settings'});
     var controlMenu = ['controlmode', 'lk', 'dir', 'spd'];
-    var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam', 'controlmode'];//controlmode out if different modes are reinstantiated
+    var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam', 'controlmode', 'carselector'];//controlmode out if different modes are reinstantiated
     var wasOpen = false;
 
     document.body.appendChild(btnMenuControls);
     
     //Default
     document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 10vw; line-height: 7vh; height: 7vh;border: solid #43c7f7 3px; background-color: #43c7f7; top: 7vh; left: 0; ;display:none;', id: 'controlmode'}, {src: '../../images/mode.svg', style: ';margin-left: 0.1rem; margin-bottom: 0.4vh; height: 6vh; width: 4vw;'}, {src: '../../images/mode2.svg', style:'margin-left: 10vw; opacity: 1; margin-top: 1vh; margin-left:1vw; height: 6vh; width: 4vw;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 10vw; line-height: 7vh; height: 7vh;border: solid #fc6d62 3px; background-color: #fc6d62; top: 7vh; left: 11vw; ;display:none;', id: 'carselector'}, {src: '../../images/carselector.svg', style: ';margin-left: 0.1rem; margin-bottom: 0.4vh; height: 6vh; width: 4vw;'}, {src: '../../images/ford.svg', style:'margin-left: 10vw; opacity: 1; margin-top: 1vh; margin-left:1vw; height: 6vh; width: 4vw;'}));
+
     //Buttons Advanced Control Menu
+
     document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #43c7f7 3px; background-color: #43c7f7; top: 30vh; left: 0; ;display:none;', id: 'lk'}, {src: '../../images/eye.svg', style: 'margin-left: 0.1rem; height: 2rem; width: 2rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem;width: 1.8rem;'}));
     document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem; border: solid #7aed6b 3px; background-color: #7aed6b; top: 32vh; left: 0 ;display:none;', id: 'dir'}, {src: '../../images/steer.svg', style: 'margin-left: 0.1rem; opacity: 1,;margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}));
     document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #f5f05f 3px; background-color: #f5f05f; top: 36vh; left: 0 ;display:none;', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-left: 0.1rem;  height: 1.9rem; width: 1.9rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-left:0.3rem; height: 1.8rem; width: 1.8rem;'}));

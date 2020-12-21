@@ -9,7 +9,7 @@ import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { spawnSign } from './props/stopsign'
 import { ActionManager } from '@babylonjs/core/Actions';
 import botshandler from './bots'
-
+import {setSounds} from './sounds/carsound'
 var propsContainer;
 
 var duplicate = function(container, x, y) {
@@ -69,9 +69,9 @@ export function disableTrees(){
 
 export default function dressMap(scene, container){
     scene.actionManager = new ActionManager(scene)
-
+    setSounds(scene);
     //createTrees(scene, propsContainer);
-    botshandler.createBots(scene, container);
+   // botshandler.createBots(scene, container);
     console.log(container)
     spawnSign(container, scene, -4, -44);
 }

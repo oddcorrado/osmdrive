@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo\"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
@@ -16,7 +16,10 @@
     "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {
+    "ammo.js": "github:kripken/ammo.js",
     "cannon": "^0.6.2",
+    "fsevents": "^2.2.1",
+    "oimo": "^1.0.9",
     "screenfull": "^5.0.2",
     "ua-parser-js": "^0.7.22"
   }
