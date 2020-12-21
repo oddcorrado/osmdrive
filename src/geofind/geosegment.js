@@ -26,6 +26,8 @@ export const geoSegmentGetProjection = (pos, start, end) => {
 // gets all geoSegment in the zone
 export const getSegmentGetClosest = (pos) => {
     const zone = zoneGet(pos.x, pos.z)
+
+    if(zone == null || zone.static == null) { return }
     
     let d = Number.MAX_VALUE
     let best = null
@@ -66,7 +68,9 @@ export const geoSegmentsInit = (roads) => {
                         roadIndex: ir,
                         laneIndex: il,
                         nodeIndex: ind,
-                        id
+                        id,
+                        nodes: [lane[ind - 1], lane[ind]],
+                        upwise: lane[ind - 1].upwise
                     }
                     id++
                     segments.push(segment)

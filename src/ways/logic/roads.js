@@ -214,7 +214,7 @@ function createRoadsAndUnqualifiedIntersections(paths) {
                 point,
                 nodeId,
                 nodeIndex,
-                upwise: true,
+                upwise: false,
                 junctionIndex: node.junctionIndex,
                 type: node.junctionIndex > 0 ? 'junction:temp' : 'normal'
             }
@@ -235,7 +235,7 @@ function createRoadsAndUnqualifiedIntersections(paths) {
                 point,
                 nodeId,
                 nodeIndex,
-                upwise: false,
+                upwise: true,
                 junctionIndex: node.junctionIndex,
                 type: node.junctionIndex > 0 ? 'junction:temp' : 'normal'
             }
@@ -457,25 +457,27 @@ function connectIntersectionNodes() {
     roads.forEach(road => {
         road.lanes.forEach(lane => {
             lane.forEach(node => {
+                const nexts = []
                 if(node.connections != null) {
-                    const nexts = []
+                    
                     node.connections.forEach(cx => {
                         if(node.laneIndex === cx.laneIndex && node.roadIndex === cx.roadIndex) { return }
-                        if(cx.upwise && cx.nodeIndex > 0) {
-                            nexts.push(roads[cx.roadIndex].lanes[cx.laneIndex][cx.nodeIndex - 1])
-                        }
-                        if(!cx.upwise && cx.nodeIndex < roads[cx.roadIndex].lanes[cx.laneIndex].length - 1) {
+                        if(cx.upwise && cx.nodeIndex < roads[cx.roadIndex].lanes[cx.laneIndex].length - 1) {
                             nexts.push(roads[cx.roadIndex].lanes[cx.laneIndex][cx.nodeIndex + 1])
                         }
+                        if(!cx.upwise && cx.nodeIndex > 0) {
+                            nexts.push(roads[cx.roadIndex].lanes[cx.laneIndex][cx.nodeIndex - 1])
+                        }
                     })
-                    if(node.upwise && node.nodeIndex > 0) {
-                        nexts.push(roads[node.roadIndex].lanes[node.laneIndex][node.nodeIndex - 1])
-                    }
-                    if(!node.upwise && node.nodeIndex < roads[node.roadIndex].lanes[node.laneIndex].length - 1) {
-                        nexts.push(roads[node.roadIndex].lanes[node.laneIndex][node.nodeIndex + 1])
-                    }
-                    node.nexts = nexts
+
                 }
+                if(node.upwise && node.nodeIndex < roads[node.roadIndex].lanes[node.laneIndex].length - 1) {
+                    nexts.push(roads[node.roadIndex].lanes[node.laneIndex][node.nodeIndex + 1])
+                }
+                if(!node.upwise && node.nodeIndex > 0) {
+                    nexts.push(roads[node.roadIndex].lanes[node.laneIndex][node.nodeIndex - 1])
+                }
+                node.nexts = nexts
             })
         })
     })
@@ -515,7 +517,7 @@ export function toggleDebugWays() {
                     let m = MeshBuilder.CreateBox("box", {size: 0.2}, globalScene)
                     m.position = node.point
                 } */
-                if(node.type === "junction") {
+                /* if(node.type === "junction")*/ {
                     const m = MeshBuilder.CreateBox("box", {size: 0.4}, globalScene)
                     m.position = node.point
 
@@ -528,12 +530,12 @@ export function toggleDebugWays() {
                     } */
                     
                     node.nexts.forEach((n) => {
-                        
+                        console.log(node, n)
                         const mm = MeshBuilder.CreateBox("box", {size: 0.1}, globalScene)
                         const v = n.point.subtract(node.point).normalize()
                         mm.position = node.point.add(v)
                         mm.position.y = 0.2
-                    })
+                    }) 
                 }
                 /* if(node.type === "junction:temp") {
                     let m = MeshBuilder.CreateBox("box", {size: 2}, globalScene)

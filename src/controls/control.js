@@ -9,7 +9,7 @@ import { scene } from '..'
 import { roadCheckerExit } from '../checkers/roadChecker'
 import gamepad from './gamepad'
 import { recenterDisplay } from './recenterDisplay'
-
+import { driverPathBuild } from '../ways/logic/driver'
 // import  from './modes.js'
 
 var accel = 0;
@@ -249,3 +249,169 @@ function setupControls (scene){
     })//func called in loop
 
 }
+<<<<<<< HEAD
+=======
+
+let recenter = false
+let recenterStep = 'lift'
+let projection = null
+let hardcoreRail = false
+let currentSegment = null
+let selection = 'L' // 'R' or 'L' or null
+
+function loop(car, scene) {
+    var steerWheel = document.getElementById('wheel');
+    let vel = car.physicsImpostor.getLinearVelocity();
+    setSpeedWtinesses(vel, rightJoystick.deltaPosition.y);
+
+
+    // *********************
+    // CALCUL DU PATH
+    // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
+    // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
+    currentSegment = driverPathBuild(car.position, currentSegment, selection)
+    // ********************
+
+    if(recenter) {
+        if(projection.subtract(car.position).length() < 0.1) {
+            recenterDisplay(false)
+            recenter = false
+            projection = null
+            return
+        }
+        
+        const target = recenterStep === 'lift' ? new Vector3(car.position.x, 5, car.position.z)
+            : (recenterStep === 'lower' ? 
+                projection : new Vector3(projection.x, 5, projection.z))
+        if(recenterStep === 'lift' && target.subtract(car.position).length() < 0.1) { recenterStep = 'move' }
+        else if(recenterStep === 'move' && target.subtract(car.position).length() < 0.1) { recenterStep = 'lower' }
+
+        const recenterScale = Math.max(target.subtract(car.position).length(), 1)
+        const recenterVel = target.subtract(car.position).normalize().scale(recenterScale)
+
+        car.physicsImpostor.setLinearVelocity(recenterVel)
+        speed = 0
+        return
+    }
+
+    projection = roadCheckerExit(car.position)
+    if(projection != null) { 
+        recenterStep = 'lift'
+        recenterDisplay(true)
+        recenter = true
+        return
+    }
+
+    var tmpdir = dir
+    dir = getWayDir(car.position, hardcoreRail ? vel : null)
+
+    if (!dir)
+        dir = tmpdir;
+
+    if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
+         angle = Math.atan2(vel.z, vel.x)
+    }
+
+    //Look
+    if (mode.lk === 'tilt'){
+       scene.activeCamera.lockedTarget = new Vector3((camTilt-180) * -3, 0, 50);//        scene.activeCamera.lockedTarget = new Vector3((camTilt-180) * -3, 0, 50);
+    }
+
+    // Direction
+    if (mode.dir === 'slide'){
+        steer = leftJoystick.pressed ? leftJoystick.deltaPosition.x * 1.4 : steer * 0.80;
+        steerWheel.style.transform = `rotateZ(${(leftJoystick.pressed ? leftJoystick.deltaPosition.x * 90 : 0)}deg)`;
+    } else if (mode.dir === 'tilt' && !isLookingAround(scene) && vel.x != 0){
+        if (180 >= sideTilt && sideTilt >= 155) {
+            steer = orientation * ((sideTilt - 180)/sideSensi);
+            steerWheel.style.transform = `rotateZ(${orientation * ((sideTilt-180)*2)}deg)`;
+        } else if (-155 >= sideTilt && sideTilt >= -180) {
+            steer = orientation * ((sideTilt+180)/sideSensi);
+            steerWheel.style.transform = `rotateZ(${(sideTilt+180)*2}deg)`;
+        } else if (-35 < sideTilt && sideTilt < 35 ) {
+            steer = orientation * (sideTilt/sideSensi);
+            steerWheel.style.transform = `rotateZ(${orientation * (sideTilt * 2)}deg)`;//define a max tilt
+        }
+    } else {
+        steer = 0;
+    }
+
+    //Speed
+    if(mode.spd === 'button') {
+        accel = btnAccel;//0
+    } else if (mode.spd === 'slide'){
+        if (rightJoystick.pressed) {
+            toggleStick('block', 'none');
+            accel = (rightJoystick.deltaPosition.y < 0 ? rightJoystick.deltaPosition.y / 8 : rightJoystick.deltaPosition.y / 25)
+            if (mode.global != 'mode2')
+                scene.activeCamera.lockedTarget = new Vector3(rightJoystick.deltaPosition.x * 90, 1.2, 50);
+        } else {
+            accel = vel.x === 0 ? 0 : -0.001;
+            toggleStick('none', 'block');
+            if (mode.global != 'mode2')
+                scene.activeCamera.lockedTarget = new Vector3(0, -11, 50);//                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
+        }
+    } else if (mode.spd === 'tilt' && !isLookingAround(scene)) {
+        var currentTilt = Math.abs(frontMidAngle)-Math.abs(frontTilt);
+        if (currentTilt > 2 || currentTilt < -2) {
+            if (currentTilt > 0){
+                accel = (currentTilt)/((frontSensi*frontMidAngle));
+            } else {
+                accel = (currentTilt)/(((frontSensi/1.5)*frontMidAngle))
+            }
+        }
+    } 
+
+    // gamepad overwrite
+    const gp = gamepad()
+    if(gp != null) {
+        steer = Math.abs(gp.steer) > 0.1 ? gp.steer * 0.50 : 0
+        steer = steer * Math.min(1, speed)
+        steer = steer * Math.min(1, Math.max(0.25, Math.abs(2 - (speed / 8))))
+        if(speed < 0.001) { steer = 0 }
+        steerWheel.style.transform = `rotateZ(${steer * 90}deg)`
+        accel = (gp.speed < 0 ? gp.speed / 10 : gp.speed / 30)
+        if(Math.abs(gp.steer) > 0.1) {
+            scene.activeCamera.lockedTarget = new Vector3(gp.steer * 20, 0, 50)
+        } else {
+            if(Math.abs(gp.speed) < 0.1) {
+                scene.activeCamera.lockedTarget = new Vector3(gp.look * 100, 0, 50);
+            } else {
+                scene.activeCamera.lockedTarget = new Vector3(0, 0, 50)
+            }
+        }
+    }
+
+    //Gear
+    if (mode.gear === 'front'){
+        mode.gear = 'reverse';
+    }
+    //}
+    speed = Math.max(0, Math.min(20, speed + accel))    
+    angle += -steer * 0.025
+
+    let dirAngle = Math.atan2(dir.z, dir.x)
+
+    if(Math.abs(dirAngle - angle) > Math.PI * 0.5) { dirAngle = Math.atan2(-dir.z, -dir.x) }
+
+    if (esp === true && ((mode.dir === 'slide' && !leftJoystick.pressed) || (mode.dir === 'tilt' && 0.15 >= steer && steer >= -0.15))  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
+        angle = hardcoreRail ? dirAngle : dirAngle * 0.1 + angle * 0.9
+    }
+    const adjustSpeed = Math.max(0, speed - 2 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
+    var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
+
+    
+    car.physicsImpostor.setLinearVelocity(newVel)
+    
+    //car.physicsImpostor.setLinearVelocity(new Vector3(-1,0,-1))// marche arriere?
+    car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
+    return
+}
+
+export default {
+    loop: (car, scene) => loop(car, scene),
+    cameraloop: camera => cameraloop(camera),
+    setup: scene => setup(scene),
+    setupControls: scene => setupControls(scene)
+}
+>>>>>>> 765f0e1bb5b9113c1972ce8158268e75d60cba2a
