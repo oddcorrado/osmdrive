@@ -34,8 +34,8 @@ function createBody(scene, camera, internalCamera, container){
       createHolders(scene, container, exactPos, exactSiz, car)
       container.meshes.push(car);
       //car.scalingDeterminant = 0.8;
-      camera.parent = car;
-      internalCamera.parent = car;
+      // camera.parent = car;
+      // internalCamera.parent = car;
       container.meshes.push(car);
     })
 }

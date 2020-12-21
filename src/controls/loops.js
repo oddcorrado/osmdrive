@@ -43,6 +43,7 @@ let camTilt = 0;
 
 let mode = {lk: 'slide', dir: 'tilt', spd: 'slide', gear: 'front', global: 'mode2'};
 var currentCar = 'ford';
+var currentCam = 'ford';
 
 export function toggleEsp(){
     esp = !esp;
@@ -135,9 +136,20 @@ function setSpeedWitness(vel, stickY){
 
 function loopSelector(scene, joints, sjoints, clio, mustang){
    //console.log('joints', joints, 'sjoints',sjoints,'clio', clio, 'mustang',mustang);
+  
     if (currentCar === 'clio'){
+        if (currentCam != 'mustang') {
+            scene.activeCamera.parent = clio;
+            scene.activeCamera.position = new Vector3(0, 1.8, 0);
+            scene.activeCamera.lockedTarget = new Vector3(0, -0.4, -7);
+        }
         clioloop(joints, sjoints, clio);
     } else if (currentCar === 'ford'){
+        if (currentCam != 'ford') {
+            scene.activeCamera.parent = mustang;
+            scene.activeCamera.position = new Vector3(-0.64, 3, -1.8);
+            scene.activeCamera.lockedTarget = new Vector3(0, -7, 50);
+        }
         mustangloop(mustang, scene);
     }
 }
@@ -346,13 +358,18 @@ function isLookingAround(scene){
     var currentLook;
     var inter;
 
+
+    //switcher
     carselector.addEventListener('touchstart', function (){
-        console.log('clicked');
+        console.log('clicked', currentCar);
         if (currentCar === 'clio'){
             currentCar = 'ford';
+            currentCam = 'ford';
             carselector.children[1].src = '../../images/ford.svg';
+
         } else if (currentCar === 'ford'){
-            currentCar = 'clio';
+            currentCar  = 'clio';
+            currentCam  = 'clio';
             carselector.children[1].src = '../../images/renault.svg';
         }
     })
