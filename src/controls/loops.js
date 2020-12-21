@@ -96,7 +96,7 @@ function setSpeedWitness(vel, stickY){
         div.src = '../../images/Vclear.svg';
     }
     
-    //setSound(speed);
+    setSound(speed);
     if (rightJoystick.pressed){
         neutral.src = '../../images/circle.svg';
         if (stickY>0.80)
@@ -118,7 +118,7 @@ function setSpeedWitness(vel, stickY){
 
   function setSound(speed){
     if (speed <= 1) {
-      playSound(e_sound.NONE, 0);
+      playSound(e_sound.HIGH, 0.1);
     } else if (speed > 75){
       playSound(e_sound.HIGH, 1);
     } else if (speed > 60){
@@ -128,9 +128,9 @@ function setSpeedWitness(vel, stickY){
     } else if (speed > 30){
       playSound(e_sound.HIGH, 0.4);
     } else if (speed > 15) {
-      playSound(e_sound.LOW, 0.6);
+      playSound(e_sound.HIGH, 0.3);
     } else if (speed > 1){
-      playSound(e_sound.LOW, 0.4);
+      playSound(e_sound.HIGH, 0.2);
     }
 }
 
@@ -138,7 +138,7 @@ function loopSelector(scene, joints, sjoints, clio, mustang){
    //console.log('joints', joints, 'sjoints',sjoints,'clio', clio, 'mustang',mustang);
   
     if (currentCar === 'clio'){
-        if (switchCam == 'clio') {
+        if (switchCam === 'clio') {
             switchCam = 'none';
             scene.activeCamera.parent = clio;
             scene.activeCamera.position = new Vector3(0, 1.8, 0);

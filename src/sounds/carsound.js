@@ -24,9 +24,15 @@ export function setSounds(scene){
     speedSound.push(high);
     console.log('m', speedSound)
 }
-
+var play = 'none';
 export function playSound(name, volume){
   //  console.log(name, old)
+   
+    if (play === 'none')
+        speedSound[2].play();
+    speedSound[2].setVolume(volume);
+    play = 'yes'
+return;
     if (playType == name)
         return;
     else {
