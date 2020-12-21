@@ -13,8 +13,8 @@ export default function createMainCar (scene, camera, internalCamera, container)
       car.name = 'detailedcar';
       car.position = new Vector3(15, 2, -1);
       car.scalingDeterminant = 0.8;
-      camera.parent = car;
-      internalCamera.parent = car;
+      // camera.parent = car;
+      // internalCamera.parent = car;
       physics.setupPhysics(scene, car);
       container.meshes.push(car);
     })

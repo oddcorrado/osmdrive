@@ -15,31 +15,8 @@ export default function createCamera(scene, canvas, mode = 0) {
    } else { //internal
       //mustang
       var camera = new DeviceOrientationCamera("DevOr_internalcamera", new Vector3(-0.64, 3, -1.8), scene);
-      camera.lockedTarget =  new Vector3(0, -7, 50);
-      //clio
-      // var camera = new DeviceOrientationCamera("DevOr_internalcamera", new Vector3(0, 1.8, 0), scene);
-      //  camera.lockedTarget = new Vector3(0, -0.4, -7);
+      camera.lockedTarget =  new Vector3(0, -7, 50); 
    }
-    camera.angularSensibility = 10;
-    camera.moveSensibility = 10;
-    camera.attachControl(canvas, true);
   
     return camera
 }
-
-function createCameraSet(scene, name, position, target){
-  var camera = new DeviceOrientationCamera(name, position, scene);
-
-  camera.lockedTarget = target
-  return;
-}
-
-export function createCameraGroup(scene){
-  var cameras = {clio: [], mustang: []};
-
-  cameras.mustang.push(createCameraSet(scene, 'mustangInternal', new Vector3(-0.64, 3, -1.8), new Vector3(0, -7, 50)))
-  cameras.mustang.push(createCameraSet(scene, 'mustangExternal',new Vector3(0, 1.8, 0), new Vector3(0, 0, 50)))
-  cameras.clio.push(createCameraSet(scene, 'mustangInternal', new Vector3(0, 1.8, 0), new Vector3(0, -0.4, -7)))
-  cameras.clio.push(createCameraSet(scene, 'mustangExternal',new Vector3(0, 1.8, 0), new Vector3(0, 0, 50)))
-}
-

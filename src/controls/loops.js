@@ -43,7 +43,7 @@ let camTilt = 0;
 
 let mode = {lk: 'slide', dir: 'tilt', spd: 'slide', gear: 'front', global: 'mode2'};
 var currentCar = 'ford';
-var currentCam = 'ford';
+var switchCam = 'ford';
 
 export function toggleEsp(){
     esp = !esp;
@@ -138,14 +138,16 @@ function loopSelector(scene, joints, sjoints, clio, mustang){
    //console.log('joints', joints, 'sjoints',sjoints,'clio', clio, 'mustang',mustang);
   
     if (currentCar === 'clio'){
-        if (currentCam != 'mustang') {
+        if (switchCam == 'clio') {
+            switchCam = 'none';
             scene.activeCamera.parent = clio;
             scene.activeCamera.position = new Vector3(0, 1.8, 0);
             scene.activeCamera.lockedTarget = new Vector3(0, -0.4, -7);
         }
         clioloop(joints, sjoints, clio);
     } else if (currentCar === 'ford'){
-        if (currentCam != 'ford') {
+        if (switchCam == 'ford') {
+            switchCam = 'none';
             scene.activeCamera.parent = mustang;
             scene.activeCamera.position = new Vector3(-0.64, 3, -1.8);
             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50);
@@ -168,7 +170,7 @@ function clioloop(joints, sjoints, car){
           steer = sideTilt/sideSensi * orientation; 
           //steer = orientation * (sideTilt/sideSensi);
           if(steerWheel)
-          steerWheel.style.transform = `rotateZ(${orientation * (sideTilt * 2)}deg)`;//define a max tilt
+          steerWheel.style.transform = `rotateZ(${orientation * (sideTilt * sideSensi)}deg)`;//define a max tilt
       }
       sjoints[0].setLimit(steer, steer);
       sjoints[1].setLimit(steer, steer);
@@ -364,12 +366,12 @@ function isLookingAround(scene){
         console.log('clicked', currentCar);
         if (currentCar === 'clio'){
             currentCar = 'ford';
-            currentCam = 'ford';
+            switchCam = 'ford';
             carselector.children[1].src = '../../images/ford.svg';
 
         } else if (currentCar === 'ford'){
             currentCar  = 'clio';
-            currentCam  = 'clio';
+            switchCam  = 'clio';
             carselector.children[1].src = '../../images/renault.svg';
         }
     })

@@ -94,8 +94,7 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     }
 
     btnCam.onclick = () => {
-        scene.activeCamera = (scene.activeCamera === freecamera ? camera : freecamera)
-        scene.activeCamera.position = new Vector3(0, 10, 0)
+        scene.activeCamera = (scene.activeCamera === freecamera ? internalCamera : freecamera)
         if (scene.activeCamera === camera) {
             clearInterval(camPosInterval);
             camFresh.style.display = 'none';
@@ -107,7 +106,6 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
             disableJoysticks();
         }
     }
-
 
     btnSwCam.onclick = () => {
         if (scene.activeCamera != internalCamera) {

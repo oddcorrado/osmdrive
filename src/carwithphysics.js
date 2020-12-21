@@ -16,7 +16,6 @@ function createBody(scene, camera, internalCamera, container){
     return new SceneLoader.ImportMeshAsync('', "../mesh/Clio/body/", "body.obj", scene).then(function(newMesh) { 
       var car = Mesh.MergeMeshes(newMesh['meshes'], true, true, null, false, true);
       car.name = 'clio';
-      car.position = new Vector3(0, 1, 0);
       car.physicsImpostor = new PhysicsImpostor(car, PhysicsImpostor.BoxImpostor, {
         mass: 2,
         friction:0.5,
@@ -26,14 +25,13 @@ function createBody(scene, camera, internalCamera, container){
           move: true
         }
       })
-      // car.collisionGroup = 0;
-      // car.physicsImpostor.object.collisionMask = 0;
+   
      //car.isVisible = false;
       var exactPos = {x: car.getBoundingInfo().boundingBox.centerWorld._x,z: car.getBoundingInfo().boundingBox.centerWorld._z};
       var exactSiz = {x: car.getBoundingInfo().boundingBox.extendSize._x,z: car.getBoundingInfo().boundingBox.extendSize._z};
       createHolders(scene, container, exactPos, exactSiz, car)
       container.meshes.push(car);
-      //car.scalingDeterminant = 0.8;
+   //   car.scalingDeterminant = 0.8;
       // camera.parent = car;
       // internalCamera.parent = car;
       container.meshes.push(car);
@@ -246,7 +244,7 @@ sJoint1.setLimit(0, 0);
 sJoint2.setLimit(0, 0);
 sJoint3.setLimit(0, 0);
 sJoint4.setLimit(0, 0);
-car.position = new Vector3(0, 2, 0);
+car.position = new Vector3(0, 1.2, 0);
 
   container.meshes.push({name:'sjoints', sjoints: [sJoint1, sJoint2, sJoint3, sJoint4]}, {name:'joints', joints: [joint1, joint2, joint3, joint4]})
 }
