@@ -91,7 +91,7 @@ const boot = () => {
             oldcar.dispose();
         }
         if (switchcar === 'new'){
-            loop.loopSelector(scene, motor, steer, clio, mustang);
+            loop.loopSelector(scene, motor.joints, steer.sjoints, clio, mustang);
         }   
     })
 }

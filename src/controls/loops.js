@@ -134,11 +134,10 @@ function setSpeedWitness(vel, stickY){
 }
 
 function loopSelector(scene, joints, sjoints, clio, mustang){
-   console.log('joints', joints, 'sjoints',sjoints,'clio', clio, 'mustang',mustang);
+   //console.log('joints', joints, 'sjoints',sjoints,'clio', clio, 'mustang',mustang);
     if (currentCar === 'clio'){
         clioloop(joints, sjoints, clio);
     } else if (currentCar === 'ford'){
-        console.log('mustang',mustang);
         mustangloop(mustang, scene);
     }
 }
@@ -159,8 +158,6 @@ function clioloop(joints, sjoints, car){
           if(steerWheel)
           steerWheel.style.transform = `rotateZ(${orientation * (sideTilt * 2)}deg)`;//define a max tilt
       }
-      //steer = steer = steer > steeringLimit ? steeringLimit : steer < -steeringLimit ? -steeringLimit : steer;
-      console.log(steer);
       sjoints[0].setLimit(steer, steer);
       sjoints[1].setLimit(steer, steer);
       sjoints[2].setLimit(0, 0);
@@ -177,10 +174,6 @@ function clioloop(joints, sjoints, car){
       }
       joints[2].setMotor(accel);
       joints[3].setMotor(accel);
-    
-      // sjoints[0].setMotor(0)
-      // sjoints[1].setMotor(0)
-    
 }
   
 
