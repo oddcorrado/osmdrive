@@ -249,8 +249,6 @@ function setupControls (scene){
     })//func called in loop
 
 }
-<<<<<<< HEAD
-=======
 
 let recenter = false
 let recenterStep = 'lift'
@@ -414,4 +412,3 @@ export default {
     setup: scene => setup(scene),
     setupControls: scene => setupControls(scene)
 }
->>>>>>> 765f0e1bb5b9113c1972ce8158268e75d60cba2a

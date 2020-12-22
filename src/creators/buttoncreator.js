@@ -12,9 +12,9 @@ export function buttonDriveCreator(style, content){
 }
 
 export function falseStickCreator(){
-    var tmpdiv =  `<div id='falsestick' style="position: absolute; width: 14%; height: 30%;text-align: center;border-radius: 50%; border: 0.3vw solid #56CCF2; display: block; top: 40vh; right: 10vw;">     
-        <div style="margin-top: 14%; margin-left: 14%;border: 0.9vw solid #56CCF2; width: 60%; height: 60%; border-radius: 50%">
-        </div>
+    var tmpdiv =  `<div id='falsestick' style="position: absolute; width: 18%; height: 0; padding-bottom: 18%;text-align: center;border-radius: 50%; border: 0.3vw solid #56CCF2; display: none; top: 40vh; right: 10vw;">     
+    <div style="margin-top: 14%; margin-left: 14%;border: 0.9vw solid #56CCF2; width: 60%; height: 0; padding-bottom: 60%; border-radius: 50%">
+    </div>
     </div>`
     return tmpdiv;
 }
@@ -33,7 +33,7 @@ export function feedbackDivCreator(content){
 export function divCreator(style, content){
     var tmpDiv = document.createElement('div');
 
-    tmpDiv.setAttribute('style', style + `;z-index: 10; position: absolute; font-weight: 800`);
+    tmpDiv.setAttribute('style', style + `; position: absolute; font-weight: 800`);
 
     tmpDiv.id = content.id;
     tmpDiv.innerText = content.text;
@@ -109,3 +109,20 @@ export function accelerationWitness(){
     </div>`
     return div;
 }
+
+export function tapButtonCreator(){
+    var div = `<div id='tapbutton' style="position: absolute;top: 32vh; right: 3vw; z-index: 10;width: 30vw; height: 40vh; text-align:center">
+        <div>
+            <img id='up' style="height: 14vh; width: 14vw; opacity:0.7" src='../../images/upbutton.svg'></img>
+        </div>
+        <div>
+            <img id='left' style="height: 14vh; width: 14vw; opacity:0.7; display:inline" src='../../images/leftbutton.svg'></img>
+            <img id='right' style="height: 14vh; width: 14vw; opacity:0.7;display: inline" src='../../images/rightbutton.svg'></img>
+        </div>
+        <div style='display: block'>
+            <img id='down' style="height: 14vh; width: 14vw; opacity:0.7" src='../../images/downbutton.svg'></img> 
+        </div>
+    </div>`
+
+    return div;
+}; 

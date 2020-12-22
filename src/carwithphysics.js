@@ -7,10 +7,6 @@ import { PhysicsImpostor} from '@babylonjs/core/Physics/physicsImpostor'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { MotorEnabledJoint, HingeJoint, PhysicsJoint } from '@babylonjs/core/Physics/physicsJoint';
-import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick';
-import e_sound from './enum/soundenum';
-import e_ori from './enum/orientation';
-import {playSound} from './sounds/carsound';
 
 function createBody(scene, camera, internalCamera, container){
     return new SceneLoader.ImportMeshAsync('', "../mesh/Clio/body/", "body.obj", scene).then(function(newMesh) { 
@@ -244,7 +240,7 @@ sJoint1.setLimit(0, 0);
 sJoint2.setLimit(0, 0);
 sJoint3.setLimit(0, 0);
 sJoint4.setLimit(0, 0);
-car.position = new Vector3(0, 1.2, 0);
+car.position = new Vector3(0, 3, 0);
 
   container.meshes.push({name:'sjoints', sjoints: [sJoint1, sJoint2, sJoint3, sJoint4]}, {name:'joints', joints: [joint1, joint2, joint3, joint4]})
 }

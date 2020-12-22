@@ -1,13 +1,14 @@
 import e_sound from '../enum/soundenum';
 import e_ori from '../enum/orientation';
-import {playSound} from '../sounds/carsound';
+import {playSound, toggleSound} from '../sounds/carsound';
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick';
-import { Vector3 } from '@babylonjs/core/Maths/math'
+import { Vector3, Quaternion } from '@babylonjs/core/Maths/math'
 import {toggleCustomModes} from './menu'
 import { roadCheckerExit } from '../checkers/roadChecker'
 import gamepad from './gamepad'
 import { recenterDisplay } from './recenterDisplay'
 import { getWayDir } from '../ways/way'
+import { driverPathBuild } from '../ways/logic/driver'
 
 let rightJoystick = null;
 let sideTilt = 0;
@@ -19,9 +20,9 @@ var accel = 0;
 var orientation = e_ori.RIGHT;
 
 //mustang
-let recenter = false
-let recenterStep = 'lift'
-let projection = null
+//let recenter = false
+//let recenterStep = 'lift'
+//let projection = null
 let speed = 0;
 var btnAccel = 0;
 let leftJoystick = null;
@@ -42,6 +43,7 @@ var currAlpha;
 let camTilt = 0;
 
 let mode = {lk: 'slide', dir: 'tilt', spd: 'slide', gear: 'front', global: 'mode2'};
+let nextdir = {up: false, down: false, right: false, left: false};
 var currentCar = 'ford';
 var switchCam = 'ford';
 
@@ -95,7 +97,7 @@ function setSpeedWitness(vel, stickY){
     for (let div of divTab){
         div.src = '../../images/Vclear.svg';
     }
-    
+  
     setSound(speed);
     if (rightJoystick.pressed){
         neutral.src = '../../images/circle.svg';
@@ -152,7 +154,8 @@ function loopSelector(scene, joints, sjoints, clio, mustang){
             scene.activeCamera.position = new Vector3(-0.64, 3, -1.8);
             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50);
         }
-        mustangloop(mustang, scene);
+        // mustangloop(mustang, scene);
+        mustangLoopTap(mustang, scene);
     }
 }
 
@@ -199,6 +202,126 @@ function isLookingAround(scene){
     else
         return true;
     }
+}
+
+
+function getCurrentTurn(){
+    var turn = turn = nextdir.right ? 'R' : nextdir.left ? 'L' : null;
+
+    return turn
+}
+
+let recenter = false
+let recenterStep = 'lift'
+let projection = null
+let hardcoreRail = false
+let currentSegment = null
+let selection = null // 'R' or 'L' or null
+//debug
+var nextJuction = null;
+var oldjunct;
+var approach;
+setInterval(() => {
+    console.log('default logging',currentSegment)
+}, 5000);
+//HERE
+function mustangLoopTap (car, scene){
+  //  var steerWheel = document.getElementById('wheel');
+    document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
+    let vel = car.physicsImpostor.getLinearVelocity();
+    //setSpeedWtinesses(vel, 1);
+
+
+    // *********************
+    // CALCUL DU PATH
+    // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
+    // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
+    selection = getCurrentTurn();
+    currentSegment = driverPathBuild(car.position, currentSegment, selection)
+    // ********************
+    
+     if (currentSegment[1].type === 'junction' && oldjunct != currentSegment[1].junctionIndex){
+        console.log('Next junction', currentSegment);
+         nextJuction = currentSegment[1];
+        oldjunct = currentSegment[1].junctionIndex;
+    }
+    if (nextJuction)
+        approach = Math.sqrt(Math.pow(car.position.x - nextJuction.point.x, 2) + Math.pow(car.position.y - nextJuction.point.y, 2));
+    if (approach && approach <= 3){
+       // car.rotation.y = Math.PI;
+    } else {
+        if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
+            angle = Math.atan2(vel.z, vel.x)
+       }
+        //car.rotation = new Vector3(0, -angle + Math.PI/2, 0)
+    }
+
+    if(recenter) {
+        if(projection.subtract(car.position).length() < 0.1) {
+            recenterDisplay(false)
+            recenter = false
+            projection = null
+            return
+        }
+        
+        const target = recenterStep === 'lift' ? new Vector3(car.position.x, 5, car.position.z)
+            : (recenterStep === 'lower' ? 
+                projection : new Vector3(projection.x, 5, projection.z))
+        if(recenterStep === 'lift' && target.subtract(car.position).length() < 0.1) { recenterStep = 'move' }
+        else if(recenterStep === 'move' && target.subtract(car.position).length() < 0.1) { recenterStep = 'lower' }
+
+        const recenterScale = Math.max(target.subtract(car.position).length(), 1)
+        const recenterVel = target.subtract(car.position).normalize().scale(recenterScale)
+
+        car.physicsImpostor.setLinearVelocity(recenterVel)
+        speed = 0
+        return
+    }
+
+    projection = roadCheckerExit(car.position)
+    if(projection != null) { 
+        recenterStep = 'lift'
+        recenterDisplay(true)
+        recenter = true
+        return
+    }
+
+    var tmpdir = dir
+    dir = getWayDir(car.position, hardcoreRail ? vel : null)
+    if (!dir)
+        dir = tmpdir;
+
+   
+    if(nextdir.right){
+        //if (car.rotationQuaternion != Math.PI/2)
+        car.physicsImpostor.setAngularVelocity(new Quaternion(0,1,0,0));
+     
+    } else {
+        car.physicsImpostor.setAngularVelocity(new Quaternion(0,0,0,0));
+    }
+
+    if (nextdir.up === true){
+       car.physicsImpostor.setLinearVelocity(new Vector3(10, 0, 0));
+    } else 
+        car.physicsImpostor.setLinearVelocity(new Vector3(0, 0, 0));
+
+    // if (nextdir.down === true){
+    //     car.physicsImpostor.setLinearVelocity(new Vector3(-10, 0, 0));
+    // } else 
+    //     car.physicsImpostor.setLinearVelocity(new Vector3(0, 0, 0));
+     
+
+    // if (esp === true && ((mode.dir === 'slide' && !leftJoystick.pressed) || (mode.dir === 'tilt' && 0.15 >= steer && steer >= -0.15))  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
+    //     angle = hardcoreRail ? dirAngle : dirAngle * 0.1 + angle * 0.9
+    // }
+    // const adjustSpeed = Math.max(0, speed - 2 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
+    // var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
+
+    
+    
+    //car.physicsImpostor.setLinearVelocity(new Vector3(-1,0,-1))// marche arriere?
+   
+    return
 }
 
   function mustangloop(car, scene) {
@@ -357,22 +480,67 @@ function isLookingAround(scene){
     var sideSensiDiv = document.getElementById('sidesensi');
     var defmodes = document.getElementById('controlmode');
     var carselector = document.getElementById('carselector');
+    var soundtoggle = document.getElementById('sound');
+    var tapbt = document.getElementById('tapbutton');
+    var falseStick = document.getElementById('falsestick');
+    var up = document.getElementById('up');
+    var down = document.getElementById('down');
+    var left = document.getElementById('left');
+    var right = document.getElementById('right');
     var currentLook;
     var inter;
 
+    //switcher volumeee
+    up.addEventListener('click', function(){
+        nextdir.down = false;
+        down.style.opacity = 0.7;
+        nextdir.up = !nextdir.up;
+        console.log(nextdir.up)
+        up.style.opacity = (up.style.opacity == 1 ? 0.7 : 1);
+    })    
 
-    //switcher
+    down.addEventListener('click', function(){
+        nextdir.up = false;
+        up.style.opacity = 0.7;
+        nextdir.down = !nextdir.down;
+        down.style.opacity = (down.style.opacity == 1 ? 0.7 : 1);
+    })    
+
+    left.addEventListener('click', function(){
+        nextdir.right = false;
+        right.style.opacity = 0.7;
+        nextdir.left = !nextdir.left;
+        left.style.opacity = left.style.opacity == 1 ? 0.7 : 1;
+    })    
+
+    right.addEventListener('click', function(){
+        nextdir.left = false;
+        left.style.opacity = 0.7;
+        nextdir.right = !nextdir.right;
+        right.style.opacity = right.style.opacity == 1 ? 0.7 : 1;  
+    })    
+
+    soundtoggle.addEventListener('touchstart', function (){
+        if (soundtoggle.children[1].src.includes('no'))
+            soundtoggle.children[1].src = '../../images/sound.svg';
+        else
+            soundtoggle.children[1].src = '../../images/nosound.svg';
+        toggleSound();
+    })
+
     carselector.addEventListener('touchstart', function (){
-        console.log('clicked', currentCar);
         if (currentCar === 'clio'){
             currentCar = 'ford';
             switchCam = 'ford';
             carselector.children[1].src = '../../images/ford.svg';
-
+            tapbt.style.display = 'block';
+            falseStick.style.display = 'none';
         } else if (currentCar === 'ford'){
-            currentCar  = 'clio';
+            currentCar = 'clio';
             switchCam  = 'clio';
             carselector.children[1].src = '../../images/renault.svg';
+            tapbt.style.display = 'none';
+            falseStick.style.display = 'block';
         }
     })
 
@@ -576,7 +744,6 @@ function isLookingAround(scene){
         brake.style.transform = 'rotate3d(1, 0, 0, 0deg)';
         clearInterval(interBrake);
     })
-
 }
 
   export default {
@@ -587,4 +754,3 @@ function isLookingAround(scene){
     setupControls: scene => setupControls(scene),
     loopSelector: (scene, joints, sjoints, clio, mustang) =>  loopSelector(scene, joints, sjoints, clio, mustang)
   }
-
