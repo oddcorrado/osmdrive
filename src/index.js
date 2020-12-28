@@ -84,7 +84,7 @@ const boot = () => {
         scene.render()
          if (switchcar === 'old' && (clio = container['meshes'].find(mesh => mesh.name == 'clio'))  
             && (steer = container['meshes'].find(mesh => mesh.name == 'sjoints'))
-            && (motor = container['meshes'].find(mesh => mesh.name == 'joints')) 
+            && (motor = container['meshes'].find(mesh => mesh.name == 'joints'))
             && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar') )){ 
             switchcar = 'new';
             oldcar = boxcar;
@@ -93,6 +93,7 @@ const boot = () => {
         if (switchcar === 'new'){
             loop.loopSelector(scene, motor.joints, steer.sjoints, clio, mustang);
         }   
+
     })
 }
 

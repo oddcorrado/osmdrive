@@ -216,7 +216,7 @@ let recenterStep = 'lift'
 let projection = null
 let currentSegment = null
 let selection = null // 'R' or 'L' or null
-//debug
+
 var nextJuction = null;
 var oldjunct;
 var approach;
@@ -226,38 +226,36 @@ var isTurning = false;
 var speeding = false;
 var breaking = false;
 var hardcoreRail = true;
+
 // setInterval(() => {
 //     console.log('default logging',currentSegment)
 // }, 5000);
-// HERE
 
 function mustangLoopTap (car, scene){
   //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
     let vel = car.physicsImpostor.getLinearVelocity();
-    //setSpeedWtinesses(vel, 1);
+    setSpeedWitness(vel, nextdir.up ? 1 : nextdir.down ? -1 : 0 );
 
 
     // *********************
     // CALCUL DU PATH
     // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
     // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
-    //console.log('approach' ,approach);
-    selection = /*isTurning ? null :*/ getCurrentTurn();
-    //console.log(selection);
+    selection = isTurning ? null : getCurrentTurn();
     currentSegment = driverPathBuild(car.position, currentSegment, selection)    
     // ********************
-    //console.log(currentSegment[0])
-     if (currentSegment[1].type === 'junction' && oldjunct != currentSegment[1].junctionIndex){
-        console.log('Next junction', currentSegment);
-        nextJuction = currentSegment[1];
-        oldjunct = currentSegment[1].junctionIndex;
-
+    oldjunct = oldjunct ? oldjunct : currentSegment[0];
+     if (currentSegment[1].type === 'junction' && oldjunct && oldjunct.junctionIndex != currentSegment[1].junctionIndex){
+            console.log('changed junction', nextJuction)
+            nextJuction = currentSegment[1];
+            oldjunct = currentSegment[1];
     }
-   // console.log(selection);
-    if (nextJuction)
-        approach = Math.sqrt(Math.pow(car.position.x - nextJuction.point.x, 2) + Math.pow(car.position.y - nextJuction.point.y, 2));
 
+    if (nextJuction) {
+        approach = Math.sqrt(Math.pow(car.position.x - nextJuction.point.x, 2) + Math.pow(car.position.z - nextJuction.point.z, 2));
+    }
+    
     if(recenter) {
         if(projection.subtract(car.position).length() < 0.1) {
             recenterDisplay(false)
@@ -305,32 +303,39 @@ function mustangLoopTap (car, scene){
         angle =  hardcoreRail ? dirAngle : dirAngle * 0.1 + angle * 0.9;
     }
 
-    if(isTurning || nextdir.right && approach <= 4){
+    if(nextdir.right && (approach <= 3 || isTurning === true)){
         isTurning = true;
+        currentSegment = null;
+
         if (currentRot < Math.PI/2) {
             currentRot += 0.02;
             angle -= 0.02;
             angle = angle >= 2*Math.PI ? 0 : angle;
         } else {
-            toggleButtons([nextdir.up, false, false, false])
-            isTurning = false;
+            toggleTurn()
+            toggleButtons([nextdir.up, false, false, false]);
+            approach = 42;
             currentRot = 0;
+            nextJuction = null;
         }
     } 
-    //console.log(approach)
-    // if (nextdir.left && (approach <= 1.5 || isTurning === true)){
-    //     isTurning = true;
-    //     if (currentRot < Math.PI/2) {//Change Math.PI/2 by the value of the angle of the next turn arcos() something
-    //         currentRot += 0.01;
-    //         angle += 0.01;
-    //         angle = angle <= -2*Math.PI ? 0 : angle;
-    //     } else {
-    //        // currentSegment = nextJuction;
-    //         isTurning = false;
-    //         currentRot = 0;
-    //         toggleButtons([nextdir.up, false, false, false])
-    //     }
-    // }
+
+    if (nextdir.left && (approach <= 1.5 || isTurning === true)){
+        isTurning = true;
+        currentSegment = null;
+
+        if (currentRot < Math.PI/2) {//Change Math.PI/2 by the value of the angle of the next turn arcos() something
+            currentRot += 0.01;
+            angle += 0.01;
+            angle = angle <= -2*Math.PI ? 0 : angle;
+        } else {
+            toggleTurn();
+            toggleButtons([nextdir.up, false, false, false]);
+            approach = 42;
+            currentRot = 0;
+            nextJuction = null;
+        }
+    }
 
 
     if (nextdir.up === true){
@@ -506,6 +511,12 @@ var up;
 var down;
 var left;
 var right;
+
+function toggleTurn(){
+    setTimeout(() => {
+        isTurning = false;
+    }, 1000)
+}
 
 function toggleButtons(tab){
     if (tab[0] === true){
