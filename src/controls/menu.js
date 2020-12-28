@@ -97,6 +97,7 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     btnCam.onclick = () => {
         scene.activeCamera = (scene.activeCamera === freecamera ? internalCamera : freecamera)
         if (scene.activeCamera === camera) {
+            scene.activeCamera.lockedTarget = null;
             clearInterval(camPosInterval);
             camFresh.style.display = 'none';
             console.log('joysticks were deactivated to use freecamera')
