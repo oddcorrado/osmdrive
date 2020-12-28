@@ -14,7 +14,6 @@ export default function createMainCar (scene, camera, internalCamera, container)
       car.position = new Vector3(15, 1.5, -2.5);
       car.scalingDeterminant = 0.8;
       //car.rotationQuaternion = new Quaternion(0, Math.PI/4, 0, 0);
-      
       car.rotation = new Vector3(0,Math.PI/2,0);
       // camera.parent = car;
       // internalCamera.parent = car;

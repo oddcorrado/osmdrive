@@ -41,8 +41,8 @@ const boot = () => {
     const camera = createCamera(scene, canvas);//NORMAL CAMERA
     const internalCamera = createCamera(scene, canvas, 1);
     const freecamera = createFreeCamera(scene, canvas);
-    scene.activeCamera = internalCamera; 
-    //scene.activeCamera = freecamera;
+    //scene.activeCamera = internalCamera; 
+    scene.activeCamera = freecamera;
     //Creates environements and camera
     createSkybox(scene)
     createLights(scene)

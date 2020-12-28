@@ -2,7 +2,7 @@ import e_sound from '../enum/soundenum';
 import e_ori from '../enum/orientation';
 import {playSound, toggleSound} from '../sounds/carsound';
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick';
-import { Vector3, Quaternion } from '@babylonjs/core/Maths/math'
+import { Vector3 } from '@babylonjs/core/Maths/math'
 import {toggleCustomModes} from './menu'
 import { roadCheckerExit } from '../checkers/roadChecker'
 import gamepad from './gamepad'
@@ -61,7 +61,7 @@ function toggleStick(curr, next){
 function setupJoystick(){
     rightJoystick = new VirtualJoystick(false, {color:'#56CCF2'})
     VirtualJoystick.Canvas.style.opacity = '0.7';
-    rightJoystick.alwaysVisible = true;
+    VirtualJoystick.Canvas.style.zIndex = '0';
 
     rightJoystick.setJoystickSensibility(6)
 }
@@ -214,17 +214,23 @@ function getCurrentTurn(){
 let recenter = false
 let recenterStep = 'lift'
 let projection = null
-let hardcoreRail = false
 let currentSegment = null
 let selection = null // 'R' or 'L' or null
 //debug
 var nextJuction = null;
 var oldjunct;
 var approach;
-setInterval(() => {
-    console.log('default logging',currentSegment)
-}, 5000);
-//HERE
+var currentRot = 0;
+var angle = 0;
+var isTurning = false;
+var speeding = false;
+var breaking = false;
+var hardcoreRail = true;
+// setInterval(() => {
+//     console.log('default logging',currentSegment)
+// }, 5000);
+// HERE
+
 function mustangLoopTap (car, scene){
   //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
@@ -236,25 +242,21 @@ function mustangLoopTap (car, scene){
     // CALCUL DU PATH
     // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
     // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
-    selection = getCurrentTurn();
-    currentSegment = driverPathBuild(car.position, currentSegment, selection)
+    //console.log('approach' ,approach);
+    selection = /*isTurning ? null :*/ getCurrentTurn();
+    //console.log(selection);
+    currentSegment = driverPathBuild(car.position, currentSegment, selection)    
     // ********************
-    
+    //console.log(currentSegment[0])
      if (currentSegment[1].type === 'junction' && oldjunct != currentSegment[1].junctionIndex){
         console.log('Next junction', currentSegment);
-         nextJuction = currentSegment[1];
+        nextJuction = currentSegment[1];
         oldjunct = currentSegment[1].junctionIndex;
+
     }
+   // console.log(selection);
     if (nextJuction)
         approach = Math.sqrt(Math.pow(car.position.x - nextJuction.point.x, 2) + Math.pow(car.position.y - nextJuction.point.y, 2));
-    if (approach && approach <= 3){
-       // car.rotation.y = Math.PI;
-    } else {
-        if(new Vector3(vel.x, 0, vel.z).length() > 0.1) {
-            angle = Math.atan2(vel.z, vel.x)
-       }
-        //car.rotation = new Vector3(0, -angle + Math.PI/2, 0)
-    }
 
     if(recenter) {
         if(projection.subtract(car.position).length() < 0.1) {
@@ -288,43 +290,77 @@ function mustangLoopTap (car, scene){
 
     var tmpdir = dir
     dir = getWayDir(car.position, hardcoreRail ? vel : null)
+
     if (!dir)
         dir = tmpdir;
 
-   
-    if(nextdir.right){
-        //if (car.rotationQuaternion != Math.PI/2)
-        car.physicsImpostor.setAngularVelocity(new Quaternion(0,1,0,0));
-     
-    } else {
-        car.physicsImpostor.setAngularVelocity(new Quaternion(0,0,0,0));
+    let dirAngle = Math.atan2(dir.z, dir.x)
+
+    if(Math.abs(dirAngle - angle) > Math.PI * 0.5) {
+        dirAngle = Math.atan2(-dir.z, -dir.x) 
     }
 
-    if (nextdir.up === true){
-       car.physicsImpostor.setLinearVelocity(new Vector3(10, 0, 0));
-    } else 
-        car.physicsImpostor.setLinearVelocity(new Vector3(0, 0, 0));
 
-    // if (nextdir.down === true){
-    //     car.physicsImpostor.setLinearVelocity(new Vector3(-10, 0, 0));
-    // } else 
-    //     car.physicsImpostor.setLinearVelocity(new Vector3(0, 0, 0));
-     
+    if (isTurning === false && approach > 5){
+        angle =  hardcoreRail ? dirAngle : dirAngle * 0.1 + angle * 0.9;
+    }
 
-    // if (esp === true && ((mode.dir === 'slide' && !leftJoystick.pressed) || (mode.dir === 'tilt' && 0.15 >= steer && steer >= -0.15))  && Math.abs(dirAngle - angle) < 1) {//or accelerometer
-    //     angle = hardcoreRail ? dirAngle : dirAngle * 0.1 + angle * 0.9
+    if(isTurning || nextdir.right && approach <= 4){
+        isTurning = true;
+        if (currentRot < Math.PI/2) {
+            currentRot += 0.02;
+            angle -= 0.02;
+            angle = angle >= 2*Math.PI ? 0 : angle;
+        } else {
+            toggleButtons([nextdir.up, false, false, false])
+            isTurning = false;
+            currentRot = 0;
+        }
+    } 
+    //console.log(approach)
+    // if (nextdir.left && (approach <= 1.5 || isTurning === true)){
+    //     isTurning = true;
+    //     if (currentRot < Math.PI/2) {//Change Math.PI/2 by the value of the angle of the next turn arcos() something
+    //         currentRot += 0.01;
+    //         angle += 0.01;
+    //         angle = angle <= -2*Math.PI ? 0 : angle;
+    //     } else {
+    //        // currentSegment = nextJuction;
+    //         isTurning = false;
+    //         currentRot = 0;
+    //         toggleButtons([nextdir.up, false, false, false])
+    //     }
     // }
-    // const adjustSpeed = Math.max(0, speed - 2 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
-    // var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
 
+
+    if (nextdir.up === true){
+        // if (speeding === true){//fake physics
+        //     speeding = car.rotation.x <= -0.15 ? false : true
+        //     car.rotation = new Vector3(car.rotation.x -= 0.005, angle, 0);
+        // } else {
+        //     car.rotation = new Vector3(car.rotation.x >= 0 ? 0 : car.rotation.x+=0.001, angle, 0);
+        // }
+
+        speed = speed > 10 ? 10 : speed+=0.03;
+        car.physicsImpostor.setLinearVelocity(new Vector3(speed*Math.cos(angle), 0, speed*Math.sin(angle)));
+    } else {
     
-    
-    //car.physicsImpostor.setLinearVelocity(new Vector3(-1,0,-1))// marche arriere?
+        car.physicsImpostor.setLinearVelocity(new Vector3(speed*Math.cos(angle), 0, speed*Math.sin(angle)));
+        speed = speed <= 0 ? 0 : speed -= 0.01;
+    }
+    car.rotation = new Vector3(0, -angle + Math.PI/2, 0)
+
+    if (nextdir.down === true){
+        speed = speed <= 0 ? 0 : speed -= 0.1;
+    }
+
+
+    // var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
    
     return
 }
 
-  function mustangloop(car, scene) {
+function mustangloop(car, scene) {
     var steerWheel = document.getElementById('wheel');
     let vel = car.physicsImpostor.getLinearVelocity();
     setSpeedWitness(vel, rightJoystick.deltaPosition.y);
@@ -466,6 +502,45 @@ function mustangLoopTap (car, scene){
     return
 }
 
+var up;
+var down;
+var left;
+var right;
+
+function toggleButtons(tab){
+    if (tab[0] === true){
+        nextdir.up = true;
+        up.style.opacity = 1;
+    } else {
+        nextdir.up = false;
+        up.style.opacity = 0.7;
+    }
+
+    if (tab[1] === true){
+        nextdir.down = true;
+        down.style.opacity = 1;
+    } else {
+        nextdir.down = false;
+        down.style.opacity = 0.7;
+    }
+
+    if (tab[2] === true){
+        nextdir.left = true;
+        left.style.opacity = 1;
+    } else {
+        nextdir.left = false;
+        left.style.opacity = 0.7;
+    }
+
+    if (tab[3] === true){
+        nextdir.right = true;
+        right.style.opacity = 1;
+    } else {
+        nextdir.right = false;
+        right.style.opacity = 0.7;
+    }
+
+}
 
  function setupControls (scene){
     var interAccel;
@@ -483,41 +558,50 @@ function mustangLoopTap (car, scene){
     var soundtoggle = document.getElementById('sound');
     var tapbt = document.getElementById('tapbutton');
     var falseStick = document.getElementById('falsestick');
-    var up = document.getElementById('up');
-    var down = document.getElementById('down');
-    var left = document.getElementById('left');
-    var right = document.getElementById('right');
+    up = document.getElementById('up');
+    down = document.getElementById('down');
+    left = document.getElementById('left');
+    right = document.getElementById('right');
     var currentLook;
     var inter;
 
-    //switcher volumeee
     up.addEventListener('click', function(){
-        nextdir.down = false;
-        down.style.opacity = 0.7;
-        nextdir.up = !nextdir.up;
-        console.log(nextdir.up)
-        up.style.opacity = (up.style.opacity == 1 ? 0.7 : 1);
+        if (!isTurning) {
+            speeding = true;
+            nextdir.down = false;
+            down.style.opacity = 0.7;
+            nextdir.up = !nextdir.up;
+            console.log(nextdir.up)
+            up.style.opacity = (up.style.opacity == 1 ? 0.7 : 1);
+        }
     })    
 
     down.addEventListener('click', function(){
-        nextdir.up = false;
-        up.style.opacity = 0.7;
-        nextdir.down = !nextdir.down;
-        down.style.opacity = (down.style.opacity == 1 ? 0.7 : 1);
+        if (!isTurning) {
+            breaking = true;
+            nextdir.up = false;
+            up.style.opacity = 0.7;
+            nextdir.down = !nextdir.down;
+            down.style.opacity = (down.style.opacity == 1 ? 0.7 : 1);
+        }
     })    
 
     left.addEventListener('click', function(){
-        nextdir.right = false;
-        right.style.opacity = 0.7;
-        nextdir.left = !nextdir.left;
-        left.style.opacity = left.style.opacity == 1 ? 0.7 : 1;
+        if (!isTurning) {
+            nextdir.right = false;
+            right.style.opacity = 0.7;
+            nextdir.left = !nextdir.left;
+            left.style.opacity = left.style.opacity == 1 ? 0.7 : 1;
+        }
     })    
 
     right.addEventListener('click', function(){
-        nextdir.left = false;
-        left.style.opacity = 0.7;
-        nextdir.right = !nextdir.right;
-        right.style.opacity = right.style.opacity == 1 ? 0.7 : 1;  
+        if (!isTurning){
+            nextdir.left = false;
+            left.style.opacity = 0.7;
+            nextdir.right = !nextdir.right;
+            right.style.opacity = right.style.opacity == 1 ? 0.7 : 1;  
+        }
     })    
 
     soundtoggle.addEventListener('touchstart', function (){

@@ -21,7 +21,7 @@ function setupPhysics(scene, ...args) {
         } else if (arg.id === 'ground1') {
             arg.physicsImpostor = new PhysicsImpostor(arg, PhysicsImpostor.BoxImpostor, { mass: 0 }, scene)
         } else {
-            arg.physicsImpostor = new PhysicsImpostor(arg, PhysicsImpostor.BoxImpostor, { mass: 1, restitution: 0.9, friction: 0}, scene)
+            arg.physicsImpostor = new PhysicsImpostor(arg, PhysicsImpostor.BoxImpostor, { mass: 30, restitution: 0.9, friction: 0}, scene)
         }
             
     })
