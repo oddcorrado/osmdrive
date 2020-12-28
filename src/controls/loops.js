@@ -151,7 +151,7 @@ function loopSelector(scene, joints, sjoints, clio, mustang){
         if (switchCam == 'ford') {
             switchCam = 'none';
             scene.activeCamera.parent = mustang;
-            scene.activeCamera.position = new Vector3(-0.64, 3, -1.8);
+            scene.activeCamera.position = new Vector3(0, 2.2, -1.7);
             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50);
         }
         // mustangloop(mustang, scene);
@@ -233,7 +233,7 @@ var hardcoreRail = true;
 
 function mustangLoopTap (car, scene){
   //  var steerWheel = document.getElementById('wheel');
-    document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
+    document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.z.toFixed(2)}`;
     let vel = car.physicsImpostor.getLinearVelocity();
     setSpeedWitness(vel, nextdir.up ? 1 : nextdir.down ? -1 : 0 );
 

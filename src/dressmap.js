@@ -73,6 +73,7 @@ export default function dressMap(scene, container){
     //createTrees(scene, propsContainer);
    // botshandler.createBots(scene, container);
     console.log(container)
-    spawnSign(container, scene, -4, -44);
+    spawnSign(container, scene, 95, -5);
+    spawnSign(container, scene, 195, -5);
 }
 

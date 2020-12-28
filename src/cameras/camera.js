@@ -14,7 +14,7 @@ export default function createCamera(scene, canvas, mode = 0) {
         scene.activeCamera.lockedTarget = new Vector3(0, 0, 50);
    } else { //internal
       //mustang
-      var camera = new DeviceOrientationCamera("DevOr_internalcamera", new Vector3(-0.64, 3, -1.8), scene);
+      var camera = new DeviceOrientationCamera("DevOr_internalcamera", new Vector3(0, 2.2, -1.7), scene);
       camera.lockedTarget =  new Vector3(0, -7, 50); 
    }
   
