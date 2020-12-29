@@ -42,8 +42,10 @@ async function createAction(scene, line, trig, container){
                         trigger: ActionManager.OnEveryFrameTrigger,
                      }, 
                      function(){
-                        var speed = car.physicsImpostor.getLinearVelocity()
-                        if (speed.x === 0 && speed.z === 0){
+                        const speed = car.physicsImpostor != null
+                           ? car.physicsImpostor.getLinearVelocity().length()
+                           : getSpeed()
+                        if (speed === 0){
                            stopped = true;
                            return;
                         }
