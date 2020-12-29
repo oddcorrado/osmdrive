@@ -95,15 +95,17 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     }
 
     btnCam.onclick = () => {
-        scene.activeCamera = (scene.activeCamera === freecamera ? internalCamera : freecamera)
+        scene.activeCamera = scene.activeCamera == freecamera ? internalCamera : freecamera
+        //scene.activeCamera = freecamera;
+        console.log(scene.activeCamera)
         if (scene.activeCamera === camera) {
-            scene.activeCamera.lockedTarget = null;
             clearInterval(camPosInterval);
             camFresh.style.display = 'none';
             console.log('joysticks were deactivated to use freecamera')
             disableJoysticks();
         } else {
             showPosCam();
+            scene.activeCamera.lockedTarget = null;
             camFresh.style.display = 'block';
             disableJoysticks();
         }

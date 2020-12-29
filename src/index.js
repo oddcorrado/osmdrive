@@ -41,8 +41,6 @@ const boot = () => {
     const camera = createCamera(scene, canvas);//NORMAL CAMERA
     const internalCamera = createCamera(scene, canvas, 1);
     const freecamera = createFreeCamera(scene, canvas);
-    //scene.activeCamera = internalCamera; 
-    scene.activeCamera = freecamera;
     //Creates environements and camera
     createSkybox(scene)
     createLights(scene)
@@ -53,7 +51,7 @@ const boot = () => {
     //Creates cars
     var boxcar = createCar(scene);
     createDefaultCar(scene, camera, internalCamera, container);
-    createMainCar(scene, camera, internalCamera, container);
+    //createMainCar(scene, camera, internalCamera, container);
 
 
     //Create map meshes 
@@ -76,22 +74,23 @@ const boot = () => {
     
     camera.parent = boxcar;
     internalCamera.parent = boxcar;
+    scene.activeCamera = internalCamera;
     // Render every frame
-
     engine.runRenderLoop(() => {
-        planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
-        //switchcar = getSwitchcar()
+        //planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
         scene.render()
-         if (switchcar === 'old' && (clio = container['meshes'].find(mesh => mesh.name == 'clio'))  
+         if (switchcar === 'old' /*&& (clio = container['meshes'].find(mesh => mesh.name == 'clio'))  
             && (steer = container['meshes'].find(mesh => mesh.name == 'sjoints'))
-            && (motor = container['meshes'].find(mesh => mesh.name == 'joints'))
+            && (motor = container['meshes'].find(mesh => mesh.name == 'joints'))*/
             && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar') )){ 
+                console.log('active alpha',scene.activeCamera)
             switchcar = 'new';
             oldcar = boxcar;
             oldcar.dispose();
         }
         if (switchcar === 'new'){
-            loop.loopSelector(scene, motor.joints, steer.sjoints, clio, mustang);
+            //loop.loopSelector(scene, motor.joints, steer.sjoints, clio, mustang);
+            loop.loopSelector(scene, null, null, null, mustang);
         }   
 
     })

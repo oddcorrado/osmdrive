@@ -137,18 +137,17 @@ function setSpeedWitness(vel, stickY){
 }
 
 function loopSelector(scene, joints, sjoints, clio, mustang){
-   //console.log('joints', joints, 'sjoints',sjoints,'clio', clio, 'mustang',mustang);
-  
     if (currentCar === 'clio'){
         if (switchCam === 'clio') {
-            switchCam = 'none';
-            scene.activeCamera.parent = clio;
-            scene.activeCamera.position = new Vector3(0, 1.8, 0);
-            scene.activeCamera.lockedTarget = new Vector3(0, -0.4, -7);
+             switchCam = 'none';
+        //     scene.activeCamera.parent = clio;
+        //     scene.activeCamera.position = new Vector3(0, 1.8, 0);
+        //     scene.activeCamera.lockedTarget = new Vector3(0, -0.4, -7);
         }
-        clioloop(joints, sjoints, clio);
+        // clioloop(joints, sjoints, clio);
     } else if (currentCar === 'ford'){
         if (switchCam == 'ford') {
+            console.log('test', scene.activeCamera)
             switchCam = 'none';
             scene.activeCamera.parent = mustang;
             scene.activeCamera.position = new Vector3(0, 2.2, -1.7);
@@ -349,7 +348,6 @@ function mustangLoopTap (car, scene){
         speed = speed > 10 ? 10 : speed+=0.03;
         car.physicsImpostor.setLinearVelocity(new Vector3(speed*Math.cos(angle), 0, speed*Math.sin(angle)));
     } else {
-    
         car.physicsImpostor.setLinearVelocity(new Vector3(speed*Math.cos(angle), 0, speed*Math.sin(angle)));
         speed = speed <= 0 ? 0 : speed -= 0.01;
     }
@@ -498,10 +496,7 @@ function mustangloop(car, scene) {
     }
     const adjustSpeed = Math.max(0, speed - 2 * Math.abs(steer))//brakes when turning in strong turns. change (speed - [?]) value to make it more or less effective
     var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
-
-    
     car.physicsImpostor.setLinearVelocity(newVel)
-    
     //car.physicsImpostor.setLinearVelocity(new Vector3(-1,0,-1))// marche arriere?
     car.rotation = new Vector3(0, -angle + Math.PI * 0.5, 0)
     return
