@@ -9,6 +9,7 @@ import gamepad from './gamepad'
 import { recenterDisplay } from './recenterDisplay'
 import { getWayDir } from '../ways/way'
 import { driverPathBuild } from '../ways/logic/driver'
+import { Quaternion } from '@babylonjs/core/Maths/math.vector'
 
 let rightJoystick = null;
 let sideTilt = 0;
@@ -23,7 +24,6 @@ var orientation = e_ori.RIGHT;
 //let recenter = false
 //let recenterStep = 'lift'
 //let projection = null
-let speed = 0;
 var btnAccel = 0;
 let leftJoystick = null;
 let pace = 0;
@@ -230,8 +230,158 @@ var hardcoreRail = true;
 // setInterval(() => {
 //     console.log('default logging',currentSegment)
 // }, 5000);
+let acceleration = 0
+let speed = 0
+let startupDone = false
+let prevAngle = 0
 
-function mustangLoopTap (car, scene){
+function mustangLoopTap (car, scene) {
+    //  var steerWheel = document.getElementById('wheel');
+    document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
+    // setSpeedWitness(vel, nextdir.up ? 1 : nextdir.down ? -1 : 0 );
+
+
+    // *********************
+    // CALCUL DU PATH
+    // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
+    // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
+    selection = getCurrentTurn()
+    currentSegment = driverPathBuild(car.position, currentSegment, selection) 
+    if(startupDone == false && currentSegment != null) {
+        car.position = currentSegment[0].point
+        startupDone = true
+    }  
+    // ********************
+    /* oldjunct = oldjunct ? oldjunct : currentSegment[0];
+    if (currentSegment[1].type === 'junction' && oldjunct && oldjunct.junctionIndex != currentSegment[1].junctionIndex){
+            console.log('changed junction', nextJuction)
+            nextJuction = currentSegment[1];
+            oldjunct = currentSegment[1];
+    }
+
+    if (nextJuction) {
+        approach = Math.sqrt(Math.pow(car.position.x - nextJuction.point.x, 2) + Math.pow(car.position.z - nextJuction.point.z, 2));
+    }
+    
+    if(recenter) {
+        if(projection.subtract(car.position).length() < 0.1) {
+            recenterDisplay(false)
+            recenter = false
+            projection = null
+            return
+        }
+        
+        const target = recenterStep === 'lift' ? new Vector3(car.position.x, 5, car.position.z)
+            : (recenterStep === 'lower' ? 
+                projection : new Vector3(projection.x, 5, projection.z))
+        if(recenterStep === 'lift' && target.subtract(car.position).length() < 0.1) { recenterStep = 'move' }
+        else if(recenterStep === 'move' && target.subtract(car.position).length() < 0.1) { recenterStep = 'lower' }
+
+        const recenterScale = Math.max(target.subtract(car.position).length(), 1)
+        const recenterVel = target.subtract(car.position).normalize().scale(recenterScale)
+
+        car.physicsImpostor.setLinearVelocity(recenterVel)
+        speed = 0
+        return
+    }
+
+    projection = roadCheckerExit(car.position)
+    if(projection != null) { 
+        recenterStep = 'lift'
+        recenterDisplay(true)
+        recenter = true
+        return
+    }
+
+    var tmpdir = dir
+    dir = currentSegment[1].point.subtract(currentSegment[0].point)
+
+    if (!dir)
+        dir = tmpdir;
+
+    let dirAngle = Math.atan2(dir.z, dir.x)
+
+    if(Math.abs(dirAngle - angle) > Math.PI * 0.5) {
+        dirAngle = Math.atan2(-dir.z, -dir.x) 
+    } */
+
+    // angle =  true ? dirAngle : dirAngle * 0.1 + angle * 0.9;
+
+    /* if(nextdir.right && (approach <= 3 || isTurning === true)){
+        isTurning = true;
+        currentSegment = null;
+
+        if (currentRot < Math.PI/2) {
+            currentRot += 0.02;
+            angle -= 0.02;
+            angle = angle >= 2*Math.PI ? 0 : angle;
+        } else {
+            toggleTurn()
+            toggleButtons([nextdir.up, false, false, false]);
+            approach = 42;
+            currentRot = 0;
+            nextJuction = null;
+        }
+    } */
+
+    /* if (nextdir.left && (approach <= 1.5 || isTurning === true)){
+        isTurning = true;
+        currentSegment = null;
+
+        if (currentRot < Math.PI/2) {//Change Math.PI/2 by the value of the angle of the next turn arcos() something
+            currentRot += 0.01;
+            angle += 0.01;
+            angle = angle <= -2*Math.PI ? 0 : angle;
+        } else {
+            toggleTurn();
+            toggleButtons([nextdir.up, false, false, false]);
+            approach = 42;
+            currentRot = 0;
+            nextJuction = null;
+        }
+    } */
+
+
+    if (nextdir.up === true){
+        // if (speeding === true){//fake physics
+        //     speeding = car.rotation.x <= -0.15 ? false : true
+        //     car.rotation = new Vector3(car.rotation.x -= 0.005, angle, 0);
+        // } else {
+        //     car.rotation = new Vector3(car.rotation.x >= 0 ? 0 : car.rotation.x+=0.001, angle, 0);
+        // }
+
+        // speed = speed > 10 ? 10 : speed+=0.03;
+        // car.physicsImpostor.setLinearVelocity(new Vector3(speed*Math.cos(angle), 0, speed*Math.sin(angle)));
+        speed = 0.2
+    } else {
+        speed = 0
+        // car.physicsImpostor.setLinearVelocity(new Vector3(speed*Math.cos(angle), 0, speed*Math.sin(angle)));
+        // speed = speed <= 0 ? 0 : speed -= 0.01;
+    }
+    // car.rotation = new Vector3(0, -angle + Math.PI/2, 0)
+
+    if (nextdir.down === true) {
+        speed = speed <= 0 ? 0 : speed -= 0.1;
+    }
+
+    if(speed > 0) {
+        const d = currentSegment[1].point.subtract(currentSegment[0].point).normalize().scale(speed)
+        car.position = car.position.add(d) // FIXME
+
+        const angle = prevAngle * 0.9 + (-Math.atan2(d.z, d.x) + Math.PI/2) * 0.1 // FIXME
+        if(Math.abs(angle - prevAngle) > 0.1) {
+            toggleButtons([nextdir.up, false, false, false]);
+        } // FIXME
+        prevAngle = angle
+        car.rotationQuaternion = Quaternion.FromEulerAngles(0, angle, 0)
+    }
+
+    // var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
+    
+    return
+}
+  
+function mustangLoopTapSmooth (car, scene){
   //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
     let vel = car.physicsImpostor.getLinearVelocity();
