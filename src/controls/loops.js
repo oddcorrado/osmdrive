@@ -147,7 +147,6 @@ function loopSelector(scene, joints, sjoints, clio, mustang){
         // clioloop(joints, sjoints, clio);
     } else if (currentCar === 'ford'){
         if (switchCam == 'ford') {
-            console.log('test', scene.activeCamera)
             switchCam = 'none';
             scene.activeCamera.parent = mustang;
             scene.activeCamera.position = new Vector3(0, 2.2, -1.7);

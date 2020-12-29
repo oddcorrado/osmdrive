@@ -86,8 +86,35 @@ async function createAction(scene, line, trig, container){
    })
 }
 
+var status = 'red'
+
+function setColors(colors, newcolor){
+   colors[0].emissiveColor = newcolor[0];
+   colors[1].emissiveColor = newcolor[1];
+   colors[2].emissiveColor = newcolor[2];
+}
+
+function createLightRotation(colors){
+   var none = new Color3(0, 0, 0);
+   var green = new Color3(0, 1, 0);
+   var orange = new Color3(1, 0.4, 0);
+   var red = new Color3(1, 0, 0);
+   setInterval(() => {
+      if (status === 'green'){
+         setColors(colors, [none, orange, none]);
+         status = 'orange';
+         setTimeout(() => {
+            setColors(colors, [none, none, red]);
+            status = 'red';
+         }, 2000)
+      } else if (status === 'red'){
+         setColors(colors, [green,none,none])
+         status = 'green';
+      }
+   }, 20000)
+}
+
 export function spawnTrafficLight(container, scene, x, y) {
-   var mat = new StandardMaterial("matstop", scene);
    var line = MeshBuilder.CreateBox('box', {width:1.5, height:3.8, depth: 0.3}, scene);      
    var trig = line.clone();
    var showLine = line.clone();
@@ -98,10 +125,6 @@ export function spawnTrafficLight(container, scene, x, y) {
    const showLinePos = new Vector3(x, -0.01, y + 3);
    const trigPos = new Vector3(x-5, 1, y+3);
 
-   mat.diffuseColor = new Color3(1, 1, 1);
-   mat.emissiveColor = new Color3(1, 1, 1);
-   showLine.material = mat;
-
    line.position = linePos;
    line.rotation = lineRot;
    trig.position = trigPos;
@@ -110,12 +133,26 @@ export function spawnTrafficLight(container, scene, x, y) {
    line.isVisible = false;
    showLine.position = showLinePos;
    showLine.rotation = lineRot;
+
    return new SceneLoader.ImportMeshAsync('', "../mesh/TrafficLight/", "Traffic Light Low.obj", scene).then(function(newMesh) {
+      console.log(newMesh)
+      var lights = [];
+      var colors = [new StandardMaterial('green', scene), new StandardMaterial('orange', scene), new StandardMaterial('red', scene)]
+      colors[2].emissiveColor = new Color3(1,0,0);
+      var meshColor = ['green', 'orange', 'red']
+      meshColor.forEach((color, i = 0) => {
+         lights.push(newMesh.meshes.find(msh => msh.name.includes(color)));
+         lights[i].material = colors[i];
+      })
+      console.log(lights);
+      // test.material = mat
       const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
-      sign.name = 'stop';
+      // console.log(sign);
+      sign.name = 'light';
       sign.scalingDeterminant = 0.8;
       sign.position = posSign;
       sign.rotation = rotSign;
+      createLightRotation(colors);
       createAction(scene, line, trig, container);
       return sign;
    })

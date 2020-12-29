@@ -83,10 +83,9 @@ const boot = () => {
             && (steer = container['meshes'].find(mesh => mesh.name == 'sjoints'))
             && (motor = container['meshes'].find(mesh => mesh.name == 'joints'))*/
             && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar') )){ 
-                console.log('active alpha',scene.activeCamera)
-            switchcar = 'new';
-            oldcar = boxcar;
-            oldcar.dispose();
+                switchcar = 'new';
+                oldcar = boxcar;
+                oldcar.dispose();
         }
         if (switchcar === 'new'){
             //loop.loopSelector(scene, motor.joints, steer.sjoints, clio, mustang);
