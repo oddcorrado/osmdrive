@@ -15,7 +15,7 @@ export default function createMainCar (scene, camera, internalCamera, container)
       car.rotation = new Vector3(0,Math.PI/2,0);
       camera.parent = car;
       internalCamera.parent = car;
-      physics.setupPhysics(scene, car);
+      //physics.setupPhysics(scene, car);
       container.meshes.push(car);
     })
 }

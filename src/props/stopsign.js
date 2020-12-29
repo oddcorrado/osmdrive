@@ -1,11 +1,12 @@
 import  '@babylonjs/loaders/OBJ'
 import {SceneLoader} from '@babylonjs/core/Loading/sceneLoader'
-import { Vector3, Axis, Space, Color3, ToLinearSpace } from '@babylonjs/core/Maths/math';
-import { Mesh } from '@babylonjs/core/Meshes/mesh';
-import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
-import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-import { ActionManager, ExecuteCodeAction, DoNothingAction } from '@babylonjs/core/Actions';
-import { feedbackDivCreator } from '../creators/buttoncreator';
+import { Vector3, Axis, Space, Color3, ToLinearSpace } from '@babylonjs/core/Maths/math'
+import { Mesh } from '@babylonjs/core/Meshes/mesh'
+import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
+import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
+import { ActionManager, ExecuteCodeAction, DoNothingAction } from '@babylonjs/core/Actions'
+import { feedbackDivCreator } from '../creators/buttoncreator'
+import { getSpeed } from '../controls/loops'
 
 
 function clearSceneActionManager(scene){
@@ -42,8 +43,10 @@ async function createAction(scene, line, trig, container){
                         trigger: ActionManager.OnEveryFrameTrigger,
                      }, 
                      function(){
-                        var speed = car.physicsImpostor.getLinearVelocity()
-                        if (speed.x === 0 && speed.z === 0){
+                        const speed = car.physicsImpostor != null
+                           ? car.physicsImpostor.getLinearVelocity().length()
+                           : getSpeed()
+                        if (speed === 0){
                            stopped = true;
                            return;
                         }
