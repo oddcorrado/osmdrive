@@ -18,8 +18,10 @@ import dressMap from './dressmap'
 import {createMainCar} from './carwithphysics'
 import createDefaultCar from './detailedcar'
 import loop from './controls/loops'
+import score from './scoring/scoring'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
 import startup from './startup'
+import {setupScore} from './scoring/scoring'
 import { SineEase } from '@babylonjs/core/Animations/easing'
 
 const boot = () => {
@@ -68,7 +70,6 @@ const boot = () => {
     loop.setupControls(scene);
     physics.setupPhysics(scene, ground, boxcar/*, bots*/)
 
-    //loop.cameraOriSetup(camera);
     loop.setupJoystick();
     loop.cameraOrientationSetup(camera);
     
@@ -84,6 +85,7 @@ const boot = () => {
             && (motor = container['meshes'].find(mesh => mesh.name == 'joints'))*/
             && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar') )){ 
                 switchcar = 'new';
+                setupScore(mustang);
                 oldcar = boxcar;
                 oldcar.dispose();
         }

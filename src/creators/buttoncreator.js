@@ -20,7 +20,7 @@ export function falseStickCreator(){
 }
 
 export function feedbackDivCreator(content){
-    var tmpdiv = `<div id='feedback-drive' style='position: absolute; top: 20vh; left: 40vw; text-align:center; font-size: 5vh; color: white; height: 10vh; width: 30vw'>
+    var tmpdiv = `<div id='feedback-drive' style='position: absolute; top: 20vh; left: 40vw; text-align:center; font-size: 5vh; color: ${content.color}; height: 10vh; width: 30vw'>
         ${content.text} <div style="margin-top: 4vh; display: inline-block"><img style='height: 5vh; width:5vh; display: inline-block; margin-left: 1vw;' src=${content.img}></img></div>
     </div>`
 
@@ -105,6 +105,18 @@ export function accelerationWitness(){
             <div style='transform: rotateZ(180deg); height: 2vh; width: 4vw'>
                 <img class='accelwit' id='maxb' style='height: 6vh; width: 4vw' src='../../images/Vclear.svg'></img>
             </div>
+        </div>
+    </div>`
+    return div;
+}
+
+export function scoreDivCreator(){
+   var div = ` <div style='display: block; height: 10vh; position: absolute; top: 1vh; left: 1vw; width: 20vw; color: #56CCF2; font-size: 7vh;'>
+        <div style='float: left'>
+            <img style='height: 7vh' src='../../images/car.svg'></img>
+        </div>
+        <div id='score' style='float: left; margin-left: 1vw; height: 100%; padding-bottom: 3vh'>
+            0
         </div>
     </div>`
     return div;
