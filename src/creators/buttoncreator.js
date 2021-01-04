@@ -27,7 +27,7 @@ export function feedbackDivCreator(content){
     document.body.insertAdjacentHTML('afterbegin', tmpdiv)
     setTimeout(() => {
         document.getElementById('feedback-drive').remove();
-    }, 4000);
+    }, 3000);
 }
 
 export function divCreator(style, content){

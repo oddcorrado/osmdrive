@@ -228,6 +228,7 @@ var hardcoreRail = true;
 // setInterval(() => {
 //     console.log('default logging',currentSegment)
 // }, 5000);
+var approach;
 let acceleration = 0
 let speed = 0
 let startupDone = false
@@ -245,6 +246,8 @@ function mustangLoopTap (car, scene) {
     // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     selection = getCurrentTurn()
     currentSegment = driverPathBuild(car.position, currentSegment, selection) 
+    if (currentSegment[1].type === 'junction')
+        approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))
     if(startupDone == false && currentSegment != null) {
         car.position = currentSegment[0].point
         startupDone = true
@@ -995,3 +998,4 @@ function toggleButtons(tab){
   }
 
   export const getSpeed = () => speed
+  export const getApproach = () => approach

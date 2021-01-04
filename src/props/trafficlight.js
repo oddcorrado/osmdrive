@@ -6,7 +6,7 @@ import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { ActionManager, ExecuteCodeAction} from '@babylonjs/core/Actions';
 import { feedbackDivCreator } from '../creators/buttoncreator';
-import {newScore} from '../scoring/scoring'
+import score from '../scoring/scoring'
 
 async function createAction(scene, line, container){
    line.actionManager = new ActionManager(scene);
@@ -30,11 +30,9 @@ async function createAction(scene, line, container){
             },
              function(){
                if (status === 'red') 
-                  newScore('SIGNALING_RED_LIGHT', -100);
-               //   feedbackDivCreator({text: 'Feu Brulé', img: '../../images/sad.svg', color: 'red'})
+                  score.newScore('SIGNALING_RED_LIGHT', -100);
                if (status === 'green' || status === 'orange')
-                  newScore('SIGNALING_RED_LIGHT', 50);
-                 // feedbackDivCreator({text: 'Feu Respecté', img: '../../images/smile.svg', color: 'green'})
+                  score.newScore('SIGNALING_RED_LIGHT', 50);
             })
       )
    })

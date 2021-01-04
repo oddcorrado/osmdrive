@@ -5,7 +5,7 @@ import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { ActionManager, ExecuteCodeAction, DoNothingAction } from '@babylonjs/core/Actions'
-import { newScore } from '../scoring/scoring'
+import score from '../scoring/scoring'
 import { getSpeed } from '../controls/loops'
 
 
@@ -78,9 +78,9 @@ async function createAction(scene, line, trig, container){
             },
            function(){
               if (stopped === true)
-                 newScore('SIGNALING_STOP', 50);
+                  score.newScore('SIGNALING_STOP', 50);
               else
-                  newScore('SIGNALING_STOP', -100);
+                  score.newScore('SIGNALING_STOP', -100);
             clearSceneActionManager(scene)
             stopped = false;
            }
