@@ -1,12 +1,16 @@
 import { Vector2 } from "@babylonjs/core/Maths/math";
 import { feedbackDivCreator } from '../creators/buttoncreator';
 import speedScoring from './speedScoring'
+import lookScoring from './lookScoring'
+import { getSpeed, getApproach } from '../controls/loops'
 
-var globalscore = 0;
-var scoreDiv;
-var score = [{}];
-var car;
-var date = new Date();
+let globalscore = 0;
+let scoreDiv;
+let score = [{}];
+let car;
+let speed;
+let approach;
+let date = new Date();
 
 //var scorediv = document.getElementById('') get score div and update score at each input
 
@@ -24,7 +28,11 @@ function setupScore(currentcar){
 }
 
 function loop(){
-    speedScoring()
+    speed = getSpeed();
+    approach = getApproach();
+    speedScoring(speed, approach);
+    lookScoring(approach);
+    //crossingScoring();
 }
 
 export default {

@@ -19,6 +19,7 @@ var steerWheel = document.getElementById('wheel');
 var angle = 0;
 var accel = 0;
 var orientation = e_ori.RIGHT;
+var currentLook;
 
 //mustang
 //let recenter = false
@@ -248,6 +249,8 @@ function mustangLoopTap (car, scene) {
     currentSegment = driverPathBuild(car.position, currentSegment, selection) 
     if (currentSegment[1].type === 'junction')
         approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))
+    else 
+        approach = null;
     if(startupDone == false && currentSegment != null) {
         car.position = currentSegment[0].point
         startupDone = true
@@ -708,7 +711,8 @@ function toggleButtons(tab){
     var lk  = document.getElementById('lk');
     var acc = document.getElementById('accelerator');
     var brake = document.getElementById('brake');
-    var touchZone = document.getElementById('touchzone')
+    var touchZone = document.getElementById('touchzone');
+    var upLook = document.getElementById('uplook')
     var frontSensiDiv = document.getElementById('frontsensi');
     var sideSensiDiv = document.getElementById('sidesensi');
     var defmodes = document.getElementById('controlmode');
@@ -720,7 +724,6 @@ function toggleButtons(tab){
     down = document.getElementById('down');
     left = document.getElementById('left');
     right = document.getElementById('right');
-    var currentLook;
     var inter;
 
     up.addEventListener('click', function(){
@@ -785,6 +788,14 @@ function toggleButtons(tab){
             falseStick.style.display = 'block';
         }
     })
+
+    upLook.addEventListener('touchstart' ,function(e){
+        scene.activeCamera.lockedTarget.y = 3;
+    });
+
+    upLook.addEventListener('touchend' ,function(e){
+        scene.activeCamera.lockedTarget.y = -7;
+    });
 
     touchZone.addEventListener('touchmove', function(e){
         if (inter)
@@ -999,3 +1010,4 @@ function toggleButtons(tab){
 
   export const getSpeed = () => speed
   export const getApproach = () => approach
+  export const getLook = () => currentLook
