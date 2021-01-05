@@ -20,6 +20,7 @@ import createDefaultCar from './detailedcar'
 import loop from './controls/loops'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
 import startup from './startup'
+import score from './scoring/scoring'
 import { SineEase } from '@babylonjs/core/Animations/easing'
 
 const boot = () => {
@@ -68,7 +69,6 @@ const boot = () => {
     loop.setupControls(scene);
     physics.setupPhysics(scene, ground, boxcar/*, bots*/)
 
-    //loop.cameraOriSetup(camera);
     loop.setupJoystick();
     loop.cameraOrientationSetup(camera);
     
@@ -83,14 +83,15 @@ const boot = () => {
             && (steer = container['meshes'].find(mesh => mesh.name == 'sjoints'))
             && (motor = container['meshes'].find(mesh => mesh.name == 'joints'))*/
             && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar') )){ 
-                console.log('active alpha',scene.activeCamera)
-            switchcar = 'new';
-            oldcar = boxcar;
-            oldcar.dispose();
+                switchcar = 'new';
+                score.setupScore(mustang);
+                oldcar = boxcar;
+                oldcar.dispose();
         }
         if (switchcar === 'new'){
             //loop.loopSelector(scene, motor.joints, steer.sjoints, clio, mustang);
             loop.loopSelector(scene, null, null, null, mustang);
+            score.loop();
         }   
 
     })

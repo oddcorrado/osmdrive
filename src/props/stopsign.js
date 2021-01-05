@@ -5,7 +5,7 @@ import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { ActionManager, ExecuteCodeAction, DoNothingAction } from '@babylonjs/core/Actions'
-import { feedbackDivCreator } from '../creators/buttoncreator'
+import score from '../scoring/scoring'
 import { getSpeed } from '../controls/loops'
 
 
@@ -78,9 +78,9 @@ async function createAction(scene, line, trig, container){
             },
            function(){
               if (stopped === true)
-               feedbackDivCreator({text: 'Successful Stop', img: '../../images/smile.svg', color: 'green'})
+                  score.newScore('SIGNALING_STOP', 50);
               else
-               feedbackDivCreator({text: 'Unsuccessful Stop', img: '../../images/sad.svg', color: 'red'})
+                  score.newScore('SIGNALING_STOP', -100);
             clearSceneActionManager(scene)
             stopped = false;
            }
@@ -91,7 +91,7 @@ async function createAction(scene, line, trig, container){
 
 export function spawnSign(container, scene, x, y) {
    var mat = new StandardMaterial("matstop", scene);
-   var line = MeshBuilder.CreateBox('box', {width:1.5, height:3.8, depth: 0.3}, scene);      
+   var line = MeshBuilder.CreateBox('box', {width:1.5, height:3.5, depth: 0.3}, scene);      
    var trig = line.clone();
    var showLine = line.clone();
    const rotSign = new Vector3(0, Math.PI, 0);

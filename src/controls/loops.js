@@ -20,6 +20,7 @@ var steerWheel = document.getElementById('wheel');
 var angle = 0;
 var accel = 0;
 var orientation = e_ori.RIGHT;
+var currentLook;
 
 //mustang
 //let recenter = false
@@ -148,7 +149,6 @@ function loopSelector(scene, joints, sjoints, clio, mustang){
         // clioloop(joints, sjoints, clio);
     } else if (currentCar === 'ford'){
         if (switchCam == 'ford') {
-            console.log('test', scene.activeCamera)
             switchCam = 'none';
             scene.activeCamera.parent = mustang;
             scene.activeCamera.position = new Vector3(0, 2.2, -1.7);
@@ -230,6 +230,7 @@ var hardcoreRail = true;
 // setInterval(() => {
 //     console.log('default logging',currentSegment)
 // }, 5000);
+var approach;
 let acceleration = 0
 let speed = 0
 let startupDone = false
@@ -247,6 +248,10 @@ function mustangLoopTap (car, scene) {
     // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     selection = getCurrentTurn()
     currentSegment = driverPathBuild(car.position, currentSegment, selection) 
+    if (currentSegment[1].type === 'junction')
+        approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))
+    else 
+        approach = null;
     if(startupDone == false && currentSegment != null) {
         car.position = currentSegment[0].point
         startupDone = true
@@ -606,7 +611,8 @@ function toggleButtons(tab){
     var lk  = document.getElementById('lk');
     var acc = document.getElementById('accelerator');
     var brake = document.getElementById('brake');
-    var touchZone = document.getElementById('touchzone')
+    var touchZone = document.getElementById('touchzone');
+    var upLook = document.getElementById('uplook')
     var frontSensiDiv = document.getElementById('frontsensi');
     var sideSensiDiv = document.getElementById('sidesensi');
     var defmodes = document.getElementById('controlmode');
@@ -618,7 +624,6 @@ function toggleButtons(tab){
     down = document.getElementById('down');
     left = document.getElementById('left');
     right = document.getElementById('right');
-    var currentLook;
     var inter;
 
     up.addEventListener('click', function(){
@@ -683,6 +688,14 @@ function toggleButtons(tab){
             falseStick.style.display = 'block';
         }
     })
+
+    upLook.addEventListener('touchstart' ,function(e){
+        scene.activeCamera.lockedTarget.y = 3;
+    });
+
+    upLook.addEventListener('touchend' ,function(e){
+        scene.activeCamera.lockedTarget.y = -7;
+    });
 
     touchZone.addEventListener('touchmove', function(e){
         if (inter)
@@ -896,3 +909,5 @@ function toggleButtons(tab){
   }
 
   export const getSpeed = () => speed
+  export const getApproach = () => approach
+  export const getLook = () => currentLook

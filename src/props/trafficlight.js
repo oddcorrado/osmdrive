@@ -1,23 +1,15 @@
 import  '@babylonjs/loaders/OBJ'
 import {SceneLoader} from '@babylonjs/core/Loading/sceneLoader'
-import { Vector3, Axis, Space, Color3, ToLinearSpace } from '@babylonjs/core/Maths/math';
+import { Vector3, Color3} from '@babylonjs/core/Maths/math';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
-import { ActionManager, ExecuteCodeAction, DoNothingAction } from '@babylonjs/core/Actions';
+import { ActionManager, ExecuteCodeAction} from '@babylonjs/core/Actions';
 import { feedbackDivCreator } from '../creators/buttoncreator';
-import { getSpeed } from '../controls/loops'
+import score from '../scoring/scoring'
 
-
-function clearSceneActionManager(scene){
-   if (scene.actionManager.actions)
-      scene.actionManager.actions = [];
-}
-
-async function createAction(scene, line, trig, container){
-   var stopped = false;
+async function createAction(scene, line, container){
    line.actionManager = new ActionManager(scene);
-   trig.actionManager = new ActionManager(scene);
    return await new Promise (function(resolve) {
       const interval = setInterval(container =>  {
          if (container && container['meshes'].find(car => car.name == 'detailedcar')){
@@ -27,34 +19,7 @@ async function createAction(scene, line, trig, container){
       }, 100, container)
    }).then((car) =>
       {
-      trig.actionManager.registerAction( 
-         new ExecuteCodeAction(
-            {
-               trigger: ActionManager.OnIntersectionEnterTrigger,
-               parameter: {
-                  mesh: car,
-                  usePreciseIntersection: true
-               },
-            },
-             function(){
-               scene.actionManager.registerAction(
-                  new ExecuteCodeAction (
-                     {
-                        trigger: ActionManager.OnEveryFrameTrigger,
-                     }, 
-                     function(){
-                        const speed = car.physicsImpostor != null
-                           ? car.physicsImpostor.getLinearVelocity().length()
-                           : getSpeed()
-                        if (speed === 0) {
-                           stopped = true;
-                           return;
-                        }
-                     })
-                  )
-               })
-      )
-      trig.actionManager.registerAction( 
+      line.actionManager.registerAction( 
          new ExecuteCodeAction(
             {
                trigger: ActionManager.OnIntersectionExitTrigger,
@@ -64,63 +29,75 @@ async function createAction(scene, line, trig, container){
                },
             },
              function(){
-               clearSceneActionManager(scene)
+               if (status === 'red') 
+                  score.newScore('SIGNALING_RED_LIGHT', -100);
+               if (status === 'green' || status === 'orange')
+                  score.newScore('SIGNALING_RED_LIGHT', 50);
             })
-      )
-      line.actionManager.registerAction(
-         new ExecuteCodeAction(
-            {
-               trigger: ActionManager.OnIntersectionEnterTrigger,
-               parameter: {
-                  mesh: car,
-                  usePreciseIntersection: true
-               }
-            },
-           function(){
-              if (stopped === true)
-               feedbackDivCreator({text: 'Feu Réussi', img: '../../images/smile.svg', color: 'green'})
-              else
-               feedbackDivCreator({text: 'Feu non-respecté', img: '../../images/sad.svg', color: 'red'})
-            clearSceneActionManager(scene)
-            stopped = false;
-           }
-         )
       )
    })
 }
 
+var status;
+
+function setColors(colors, newcolor){
+   colors[0].emissiveColor = newcolor[0];
+   colors[1].emissiveColor = newcolor[1];
+   colors[2].emissiveColor = newcolor[2];
+}
+
+function createLightRotation(colors){
+   var none = new Color3(0, 0, 0);
+   var green = new Color3(0, 1, 0);
+   var orange = new Color3(1, 0.4, 0);
+   var red = new Color3(1, 0, 0);
+
+   colors[2].emissiveColor = red;
+   status = 'red';
+   setInterval(() => {
+      if (status === 'green'){
+         setColors(colors, [none, orange, none]);
+         status = 'orange';
+         setTimeout(() => {
+            setColors(colors, [none, none, red]);
+            status = 'red';
+         }, 2000)
+      } else if (status === 'red'){
+         setColors(colors, [green,none,none])
+         status = 'green';
+      }
+   }, 15000)
+}
+
 export function spawnTrafficLight(container, scene, x, y) {
-   var mat = new StandardMaterial("matstop", scene);
-   var line = MeshBuilder.CreateBox('box', {width:1.5, height:3.8, depth: 0.3}, scene);      
-   var trig = line.clone();
-   var showLine = line.clone();
+   let line = MeshBuilder.CreateBox('box', {width:1.5, height:1.5, depth: 0.3}, scene);     
    const rotSign = new Vector3(0, -Math.PI/2, 0);
    const posSign = new Vector3(x, 0, y);
    const lineRot = new Vector3(Math.PI/2, Math.PI/10*4, y);
    const linePos = new Vector3(x, 1, y + 3);
-   const showLinePos = new Vector3(x, -0.01, y + 3);
-   const trigPos = new Vector3(x-5, 1, y+3);
-
-   mat.diffuseColor = new Color3(1, 1, 1);
-   mat.emissiveColor = new Color3(1, 1, 1);
-   showLine.material = mat;
 
    line.position = linePos;
    line.rotation = lineRot;
-   trig.position = trigPos;
-   trig.rotation = lineRot;
-   trig.isVisible = false;
    line.isVisible = false;
-   showLine.position = showLinePos;
-   showLine.rotation = lineRot;
+
    return new SceneLoader.ImportMeshAsync('', "../mesh/TrafficLight/", "Traffic Light Low.obj", scene).then(function(newMesh) {
-      const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
-      sign.name = 'stop';
-      sign.scalingDeterminant = 0.8;
-      sign.position = posSign;
-      sign.rotation = rotSign;
-      createAction(scene, line, trig, container);
-      return sign;
+      console.log(newMesh)
+      var lights = [];
+      var colors = [new StandardMaterial('green', scene), new StandardMaterial('orange', scene), new StandardMaterial('red', scene)]
+      var meshColor = ['green', 'orange', 'red']
+
+      meshColor.forEach((color, i = 0) => {
+         lights.push(newMesh.meshes.find(msh => msh.name.includes(color)));
+         lights[i].material = colors[i];
+      })
+      const traffic = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
+      traffic.name = 'light';
+      traffic.scalingDeterminant = 0.8;
+      traffic.position = posSign;
+      traffic.rotation = rotSign;
+      createLightRotation(colors);
+      createAction(scene, line, container);
+      return traffic;
    })
 }
 
