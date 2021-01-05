@@ -91,9 +91,11 @@ export const driverPathBuild = (position, segment, junctionSelection) => {
         }
     }
 
+
     // console.log(position)
     // console.log(nodes)
     driverPathDisplay(nodes)
+    if(d < 30) { return([]) }
     return driverPathSwitch(position)
 }
 

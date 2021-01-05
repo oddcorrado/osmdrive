@@ -248,6 +248,7 @@ function mustangLoopTap (car, scene) {
     // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     selection = getCurrentTurn()
     currentSegment = driverPathBuild(car.position, currentSegment, selection) 
+    if(currentSegment == null || currentSegment.length == 0) { return }
     if (currentSegment[1].type === 'junction')
         approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))
     else 
@@ -258,11 +259,11 @@ function mustangLoopTap (car, scene) {
     }  
 
     if (nextdir.up === true){
-        speed = Math.min(0.2, speed + 0.001)
+        speed = Math.min(2, speed + 0.002)
     }
 
     if (nextdir.down === true) {
-        speed = Math.max(0, speed - 0.003)
+        speed = Math.max(0, speed - 0.004)
     }
 
     if(speed > 0) {
@@ -574,7 +575,7 @@ function toggleButtons(tab){
         up.style.opacity = 1;
     } else {
         nextdir.up = false;
-        up.style.opacity = 0.7;
+        up.style.opacity = 0.2;
     }
 
     if (tab[1] === true){
@@ -582,7 +583,7 @@ function toggleButtons(tab){
         down.style.opacity = 1;
     } else {
         nextdir.down = false;
-        down.style.opacity = 0.7;
+        down.style.opacity = 0.2;
     }
 
     if (tab[2] === true){
@@ -590,7 +591,7 @@ function toggleButtons(tab){
         left.style.opacity = 1;
     } else {
         nextdir.left = false;
-        left.style.opacity = 0.7;
+        left.style.opacity = 0.2;
     }
 
     if (tab[3] === true){
@@ -598,7 +599,7 @@ function toggleButtons(tab){
         right.style.opacity = 1;
     } else {
         nextdir.right = false;
-        right.style.opacity = 0.7;
+        right.style.opacity = 0.2;
     }
 
 }
@@ -626,42 +627,72 @@ function toggleButtons(tab){
     right = document.getElementById('right');
     var inter;
 
-    up.addEventListener('click', function(){
+    /* up.addEventListener('click', function(){
         if (!isTurning) {
             speeding = true;
             nextdir.down = false;
-            down.style.opacity = 0.7;
+            down.style.opacity = 0.2;
             nextdir.up = !nextdir.up;
             console.log(nextdir.up)
-            up.style.opacity = (up.style.opacity == 1 ? 0.7 : 1);
+            up.style.opacity = (up.style.opacity == 1 ? 0.2 : 1);
         }
-    })    
+    }) */ 
 
-    down.addEventListener('click', function(){
+    up.addEventListener('mousedown', function(){
+        nextdir.up = true
+        up.style.opacity = 1
+    })  
+
+    up.addEventListener('mouseup', function(){
+        nextdir.up = false
+        up.style.opacity = 0.2
+    })  
+
+    up.addEventListener('mouseleave', function(){
+        nextdir.up = false
+        up.style.opacity = 0.2
+    })  
+
+    down.addEventListener('mousedown', function(){
+        nextdir.down = true
+        down.style.opacity = 1
+    })  
+
+    down.addEventListener('mouseup', function(){
+        nextdir.down = false
+        down.style.opacity = 0.2
+    })  
+
+    down.addEventListener('mouseleave', function(){
+        nextdir.down = false
+        down.style.opacity = 0.2
+    })  
+
+    /* down.addEventListener('click', function(){
         if (!isTurning) {
             breaking = true;
             nextdir.up = false;
-            up.style.opacity = 0.7;
+            up.style.opacity = 0.2;
             nextdir.down = !nextdir.down;
-            down.style.opacity = (down.style.opacity == 1 ? 0.7 : 1);
+            down.style.opacity = (down.style.opacity == 1 ? 0.2 : 1);
         }
-    })    
+    })   */ 
 
     left.addEventListener('click', function(){
         if (!isTurning) {
             nextdir.right = false;
-            right.style.opacity = 0.7;
+            right.style.opacity = 0.2;
             nextdir.left = !nextdir.left;
-            left.style.opacity = left.style.opacity == 1 ? 0.7 : 1;
+            left.style.opacity = left.style.opacity == 1 ? 0.2 : 1;
         }
     })    
 
     right.addEventListener('click', function(){
         if (!isTurning){
             nextdir.left = false;
-            left.style.opacity = 0.7;
+            left.style.opacity = 0.2;
             nextdir.right = !nextdir.right;
-            right.style.opacity = right.style.opacity == 1 ? 0.7 : 1;  
+            right.style.opacity = right.style.opacity == 1 ? 0.2 : 1;  
         }
     })    
 
@@ -786,7 +817,7 @@ function toggleButtons(tab){
     //             elem.style.right = "32rem";
     //         })
     //         mode.dir = 'tilt';
-    //         VirtualJoystick.Canvas.style.opacity = '0.7';
+    //         VirtualJoystick.Canvas.style.opacity = '0.2';
     //         mode.spd = 'slide';
     //     } else if (mode.global === 'mode2'){
     //         mode.global = 'custom';
@@ -796,7 +827,7 @@ function toggleButtons(tab){
     //             elem.style.display = "none";
     //         })
     //         toggleCustomModes('block');
-    //         VirtualJoystick.Canvas.style.opacity = '0.7';
+    //         VirtualJoystick.Canvas.style.opacity = '0.2';
     //     } else if (mode.global === 'custom'){
     //         mode.global = 'slide';
     //         toggleCustomModes('none');
@@ -805,7 +836,7 @@ function toggleButtons(tab){
     //             if (opt != 'gear' && opt != 'global')
     //                 mode[opt] = "slide" 
     //         });
-    //         VirtualJoystick.Canvas.style.opacity = '0.7'
+    //         VirtualJoystick.Canvas.style.opacity = '0.2'
     //         arrows.style.display = 'none';
     //         touchZone.style.display = 'none';
     //     } 
@@ -834,7 +865,7 @@ function toggleButtons(tab){
             brake.style.display = 'block'; 
         } else {
             mode.spd = 'slide';
-            VirtualJoystick.Canvas.style.opacity = '0.7'
+            VirtualJoystick.Canvas.style.opacity = '0.2'
             touchZone.style.display = 'none';
         }
         if (mode.lk === 'slide' && mode.spd != 'slide'){
