@@ -18,6 +18,19 @@ export const geoSegmentGetProjection = (pos, start, end) => {
     return projection
 }
 
+export const geoAngleForInterpolation = (from, to) => {
+    if(from > to) {
+        while(Math.abs(from - to) > Math.PI) {
+            to += 2 * Math.PI
+        }
+    } else {
+        while(Math.abs(from - to) > Math.PI){
+            to -= 2 * Math.PI
+        }
+    }
+    return to
+}
+
 // KWIK TEST
 // console.log('PRJ', geoSegmentGetProjection(new Vector3(20, 0, 10), new Vector3(10, 0, 10), new Vector3(30 ,0, 30)))
 // console.log('PRJ', geoSegmentGetProjection(new Vector3(30, 0, 0), new Vector3(10, 0, 10), new Vector3(30 ,0, 30)))
