@@ -247,9 +247,9 @@ function mustangLoopTap (car, scene) {
     // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     selection = getCurrentTurn()
     currentSegment = driverPathBuild(car.position, currentSegment, selection) 
-    if (currentSegment[1].type === 'junction')
+    if (currentSegment[1].type === 'junction'){
         approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))
-    else 
+    } else 
         approach = null;
     if(startupDone == false && currentSegment != null) {
         car.position = currentSegment[0].point
