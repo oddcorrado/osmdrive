@@ -654,6 +654,16 @@ function toggleButtons(tab){
         up.style.opacity = 0.2
     })  
 
+    up.addEventListener('touchstart', function(){
+        nextdir.up = true
+        up.style.opacity = 1
+    })  
+
+    up.addEventListener('touchend', function(){
+        nextdir.up = false
+        up.style.opacity = 0.2
+    })  
+
     down.addEventListener('mousedown', function(){
         nextdir.down = true
         down.style.opacity = 1
@@ -665,6 +675,16 @@ function toggleButtons(tab){
     })  
 
     down.addEventListener('mouseleave', function(){
+        nextdir.down = false
+        down.style.opacity = 0.2
+    })  
+
+    down.addEventListener('touchstart', function(){
+        nextdir.down = true
+        down.style.opacity = 1
+    })  
+
+    down.addEventListener('touchend', function(){
         nextdir.down = false
         down.style.opacity = 0.2
     })  
