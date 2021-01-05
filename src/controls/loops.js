@@ -249,10 +249,11 @@ function mustangLoopTap (car, scene) {
     selection = getCurrentTurn()
     currentSegment = driverPathBuild(car.position, currentSegment, selection) 
     if(currentSegment == null || currentSegment.length == 0) { return }
-    if (currentSegment[1].type === 'junction')
+    if (currentSegment[1].type === 'junction'){
         approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))
-    else 
-        approach = null;
+    } else { 
+        approach = null
+    }
     if(startupDone == false && currentSegment != null) {
         car.position = currentSegment[0].point
         startupDone = true

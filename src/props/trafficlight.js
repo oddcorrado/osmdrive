@@ -75,21 +75,26 @@ export function spawnTrafficLight(container, scene, x, y) {
    const posSign = new Vector3(x, 0, y);
    const lineRot = new Vector3(Math.PI/2, Math.PI/10*4, y);
    const linePos = new Vector3(x, 1, y + 3);
-
+   var nb = 0;
    line.position = linePos;
    line.rotation = lineRot;
    line.isVisible = false;
 
-   return new SceneLoader.ImportMeshAsync('', "../mesh/TrafficLight/", "Traffic Light Low.obj", scene).then(function(newMesh) {
+   return new SceneLoader.ImportMeshAsync('', "../mesh/DoubleTrafficLight/", "doubletraffic.obj", scene).then(function(newMesh) {
       console.log(newMesh)
       var lights = [];
       var colors = [new StandardMaterial('green', scene), new StandardMaterial('orange', scene), new StandardMaterial('red', scene)]
       var meshColor = ['green', 'orange', 'red']
-
-      meshColor.forEach((color, i = 0) => {
-         lights.push(newMesh.meshes.find(msh => msh.name.includes(color)));
-         lights[i].material = colors[i];
+      var test;
+      var x = 0;
+      meshColor.forEach((color, colnb = 0) => {
+         test = newMesh.meshes.filter(msh => msh.name.includes(color))
+         lights.push(...test)
+         lights[x].material = colors[colnb];
+         lights[x+1].material = colors[colnb];
+         x+=2;
       })
+      console.log(lights);
       const traffic = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
       traffic.name = 'light';
       traffic.scalingDeterminant = 0.8;
