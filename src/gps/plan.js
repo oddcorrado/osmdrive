@@ -8,7 +8,7 @@ let plan = ['I','S', 'L', 'S', 'S', 'L', 'L', 'R', 'S', 'R', 'L', 'S', 'E'];
 let arrow;
 
 function checkJunctionGps(current, prev){
-    //console.log(current[1].roadIndex, 'L:',current[0].nexts[1].roadIndex, 'R:', current[0].nexts[0].roadIndex)
+    ///console.log(current[1].roadIndex, 'L:',current[0].nexts[1].roadIndex, 'R:', current[0].nexts[0].roadIndex)
     if (plan[idx] === 'S'){
         if (current[1].roadIndex === prev.roadIndex)
             score.newScore('RIGHT_TURN', 20)
