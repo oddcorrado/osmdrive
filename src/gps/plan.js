@@ -15,12 +15,12 @@ function checkJunctionGps(current, prev){
         else
             score.newScore('WRONG_TURN', -20)
     } else if (plan[idx] === 'L') {
-        if (current[0].nexts[1].roadIndex === current[1].roadIndex)
+        if (current[0].nexts[1] && current[0].nexts[1].roadIndex === current[1].roadIndex)
             score.newScore('RIGHT_TURN', 20)
         else 
             score.newScore('WRONG_TURN', -20)
     } else if (plan[idx] === 'R'){
-        if (current[0].nexts[0].roadIndex === current[1].roadIndex)
+        if (current[0].nexts[0] && current[0].nexts[0].roadIndex === current[1].roadIndex)
             score.newScore('RIGHT_TURN', 20)
         else 
             score.newScore('WRONG_TURN', -20)
