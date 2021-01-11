@@ -1,6 +1,6 @@
 import e_sound from '../enum/soundenum';
 import e_ori from '../enum/orientation';
-import {playSound, toggleSound} from '../sounds/carsound';
+//import {playSound, toggleSound} from '../sounds/carsound';
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick';
 import { Vector3 } from '@babylonjs/core/Maths/math'
 import {toggleCustomModes} from './menu'
@@ -100,7 +100,7 @@ function setSpeedWitness(speed, stickY){
         div.src = '../../images/Vclear.svg';
     }
   
-    setSound(speed);
+    //setSound(speed);
     if (stickY != 0) {
         neutral.src = '../../images/circle.svg';
         if (stickY>0.80)
@@ -756,6 +756,14 @@ function toggleButtons(tab){
     // upLook.addEventListener('touchend' ,function(e){
     //     scene.activeCamera.lockedTarget.y = -7;
     // });
+
+    touchZone.addEventListener('touchstart', function(e){
+        if (inter)
+            clearInterval(inter);
+        var pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
+        currentLook = e.targetTouches[0].clientX - pos > 300 ? 300 : (e.targetTouches[0].clientX - pos < -300 ? -300 : e.targetTouches[0].clientX - pos) ;
+        scene.activeCamera.lockedTarget.x = currentLook
+    })
 
     touchZone.addEventListener('touchmove', function(e){
         if (inter)

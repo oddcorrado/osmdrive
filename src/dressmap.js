@@ -10,7 +10,7 @@ import { spawnSign } from './props/stopsign'
 import { spawnTrafficLight } from './props/trafficlight'
 import { ActionManager } from '@babylonjs/core/Actions';
 import botshandler from './bots'
-import {setSounds} from './sounds/carsound'
+//import {setSounds} from './sounds/carsound'
 var propsContainer;
 
 var duplicate = function(container, x, y) {
@@ -70,7 +70,7 @@ export function disableTrees(){
 
 export default function dressMap(scene, container){
     scene.actionManager = new ActionManager(scene)
-    setSounds(scene);
+    //setSounds(scene);
     //createTrees(scene, propsContainer);
    // botshandler.createBots(scene, container);
     console.log(container)

@@ -1,4 +1,4 @@
-import { Sound } from "@babylonjs/core/Audio/sound"
+/* import { Sound } from "@babylonjs/core/Audio/sound"
 import audio from "@babylonjs/core/Audio/audioSceneComponent"
 import { Engine } from "@babylonjs/core/Engines/engine";
 import _ from '../enum/soundenum'
@@ -43,3 +43,4 @@ export function playSound(name, vol){
         old.type = name;
     }
 }
+*/
