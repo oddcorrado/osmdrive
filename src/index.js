@@ -22,6 +22,7 @@ import { AssetContainer } from '@babylonjs/core/assetContainer'
 import startup from './startup'
 import score from './scoring/scoring'
 import { SineEase } from '@babylonjs/core/Animations/easing'
+import {setupGps} from './gps/plan'
 
 const boot = () => {
     var oldcar;
@@ -55,18 +56,17 @@ const boot = () => {
     //createMainCar(scene, camera, internalCamera, container);
 
 
-    //Create map meshes 
+    //Create map road and multiple meshes 
     createWays(scene, planes)
     var grids// = createBuildings(scene)
     dressMap(scene, container);
-    // bots.forEach(bot => {//comment to disable bots by default
-    //     bot.isVisible = false;
-    //     bot.setEnabled(false);
-    // })
+    
 
+    //Create all menus and UI Elements
     createMenu(scene, camera, internalCamera, freecamera, /*bots,*/ grids);
     createButtons(scene);
     loop.setupControls(scene);
+    setupGps();
     physics.setupPhysics(scene, ground, boxcar/*, bots*/)
 
     loop.setupJoystick();

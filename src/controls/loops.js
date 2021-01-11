@@ -11,6 +11,7 @@ import { getWayDir } from '../ways/way'
 import { driverPathBuild } from '../ways/logic/driver'
 import { Quaternion } from '@babylonjs/core/Maths/math.vector'
 import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/geosegment'
+import {gpsCheck} from '../gps/plan'
 
 let rightJoystick = null;
 let sideTilt = 0;
@@ -236,6 +237,9 @@ let speed = 0
 let startupDone = false
 let prevAngle = 0
 
+
+var previousDebug = null;
+
 function mustangLoopTap (car, scene) {
     //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
@@ -247,7 +251,8 @@ function mustangLoopTap (car, scene) {
     // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
     // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     selection = getCurrentTurn()
-    currentSegment = driverPathBuild(car.position, currentSegment, selection) 
+    currentSegment = driverPathBuild(car.position, currentSegment, selection)
+    gpsCheck(currentSegment, car);
     if (currentSegment[1].type === 'junction'){
         approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))
     } else 
@@ -632,7 +637,6 @@ function toggleButtons(tab){
             nextdir.down = false;
             down.style.opacity = 0.7;
             nextdir.up = !nextdir.up;
-            console.log(nextdir.up)
             up.style.opacity = (up.style.opacity == 1 ? 0.7 : 1);
         }
     })    
@@ -689,13 +693,13 @@ function toggleButtons(tab){
         }
     })
 
-    upLook.addEventListener('touchstart' ,function(e){
-        scene.activeCamera.lockedTarget.y = 3;
-    });
+    // upLook.addEventListener('touchstart' ,function(e){
+    //     scene.activeCamera.lockedTarget.y = 3;
+    // });
 
-    upLook.addEventListener('touchend' ,function(e){
-        scene.activeCamera.lockedTarget.y = -7;
-    });
+    // upLook.addEventListener('touchend' ,function(e){
+    //     scene.activeCamera.lockedTarget.y = -7;
+    // });
 
     touchZone.addEventListener('touchmove', function(e){
         if (inter)
@@ -911,3 +915,4 @@ function toggleButtons(tab){
   export const getSpeed = () => speed
   export const getApproach = () => approach
   export const getLook = () => currentLook
+  export const getCurrentSegment = () => currentSegment

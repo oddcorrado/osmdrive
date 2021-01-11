@@ -12,11 +12,9 @@ export default function lookScoring(approach){
 
      if (!approach && checking === true) {
         checking = false;
-        console.log(lookScore, checks[0], checks[1])
-        lookScore = lookScore === 0 ? -100 : lookScore > 80 ? lookScore * 0.625 : -50
-        console.log(lookScore, checks[0], checks[1])
-        score.newScore('INTERSECTION_CHECK', lookScore.toFixed());
-        lookScore = 0;
+        lookScore = lookScore <= 0 ? -100 : lookScore > 80 ? lookScore * 0.625 : -50
+        score.newScore('INTERSECTION_CHECK', lookScore | 0);
+        checks = [0,0];
     } else if (approach && approach < 12){
         checking = true;
         checks[0] = currentLook < checks[0] ? currentLook  < -80 ? -80 : currentLook : checks[0]; 

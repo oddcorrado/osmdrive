@@ -13,13 +13,13 @@ function resetInterval(id){
 }
 
 function speedingCheck(speed, approach){
-    if (speed > 30 &&  (!approach || approach > 12 )) {
+    if (speed > 0.2 &&  (!approach || approach > 12 )) {
         if (!inter.fast){
             inter.fast = setInterval(() => {
                 score.newScore('SPEED_TOO_FAST', -10);
             }, 5000)
         }
-    } else if (speed < 15 && (!approach || approach > 12 )) {   
+    } else if (speed < 0.1 && (!approach || approach > 12 )) {   
         if (!inter.slow){
             inter.slow = setInterval(() => {
                 score.newScore('SPEED_TOO_SLOW', -10);
@@ -33,7 +33,7 @@ function speedingCheck(speed, approach){
 
 //Check speed in turns and intersections
 function speedingIntersectionCheck(speed, approach){
-    if (isTurning){
+    if (isTurning && speed>0.2){
         if (!inter.turnfast){
             inter.turnfast = setInterval(() => {
                 score.newScore('SPEED_TURN_TOO_FAST', -10);
@@ -41,7 +41,7 @@ function speedingIntersectionCheck(speed, approach){
         }
     } else
         inter.turnfast = resetInterval(inter.turnfast);
-    if (approach < 3 && speed > 30)
+    if (approach < 3 && speed > 0.2)
         if (!inter.juncfast){
             inter.juncfast = setInterval(() => {
                 score.newScore('INTERSECTION_TOO_FAST', -10);
@@ -67,7 +67,6 @@ function stopCheck(speed, approach, hasStarted){
 
 export default function speedScoring (speed, approach){
     hasStarted = !hasStarted && speed > 0 ? true : hasStarted;
-//    console.log(speed);
     //speedingCheck(speed, approach);
     //speedingIntersectionCheck(speed, approach);
     stopCheck(speed, approach, hasStarted);
