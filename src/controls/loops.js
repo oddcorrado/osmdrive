@@ -89,9 +89,8 @@ function cameraOrientationSetup(camera){
     });   
 }
 
-function setSpeedWitness(vel, stickY){
+function setSpeedWitness(speed, stickY){
     var speedDiv = document.getElementById('speed');
-    var speed = 3.6*(Math.abs(vel.x) + Math.abs(vel.z))
     speedDiv.innerText = `${(speed).toFixed()}`;
     speedDiv.style.color = speed > 50 ? 'red' : '#56CCF2';
   
@@ -102,7 +101,7 @@ function setSpeedWitness(vel, stickY){
     }
   
     setSound(speed);
-    if (rightJoystick.pressed){
+    if (stickY != 0) {
         neutral.src = '../../images/circle.svg';
         if (stickY>0.80)
             document.getElementById('maxf').src = '../../images/Vstrong.svg';    
@@ -116,9 +115,9 @@ function setSpeedWitness(vel, stickY){
             document.getElementById('avgb').src = '../../images/Vstrong.svg';
         if (stickY<-0.8)
             document.getElementById('maxb').src = '../../images/Vstrong.svg';
-      } else {
+    } else {
         neutral.src = '../../images/greencircle.svg';
-      }
+    }
 }
 
   function setSound(speed){
@@ -239,11 +238,11 @@ let prevAngle = 0
 
 
 var previousDebug = null;
-
+//CURRENT LOOP
 function mustangLoopTap (car, scene) {
     //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
-    // setSpeedWitness(vel, nextdir.up ? 1 : nextdir.down ? -1 : 0 );
+    setSpeedWitness(speed*150, nextdir.up ? 1 : nextdir.down ? -1 : 0 );
 
 
     // *********************
@@ -252,7 +251,7 @@ function mustangLoopTap (car, scene) {
     // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     selection = getCurrentTurn()
     currentSegment = driverPathBuild(car.position, currentSegment, selection) 
-    gpsCheck(currentSegment, car);
+    gpsCheck(currentSegment);
     if(currentSegment == null || currentSegment.length == 0) { return }
     if (currentSegment[1].type === 'junction'){
         approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))

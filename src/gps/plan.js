@@ -46,20 +46,14 @@ export function setupGps(){
 
 let prevNormal;
 
-export function gpsCheck(current, car){
-    //console.log(car.rotationQuaternion);
+export function gpsCheck(current){
     prevNormal = prevNormal ? prevNormal : current[1];
-    prev = prev ? prev : current[0];
 
     if (current[1].type == 'normal' && prevNormal != current[1]){
         checkJunctionGps(current, prevNormal)
         prevNormal = current[1];
     }
-    // if (current[0].junctionIndex != prev.junctionIndex){
-    //     if (current[0].type == 'junction'){
-    //     }   
-    //     prev = current[0]; 
-    // }
+  
 }
 
 
