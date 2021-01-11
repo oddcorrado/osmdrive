@@ -19,7 +19,7 @@ function speedingCheck(speed, approach){
                 score.newScore('SPEED_TOO_FAST', -10);
             }, 5000)
         }
-    } else if (speed < 20 && (!approach || approach > 12 )) {   
+    } else if (hasStarted && speed < 20 && (!approach || approach > 12 )) {   
         if (!inter.slow){
             inter.slow = setInterval(() => {
                 score.newScore('SPEED_TOO_SLOW', -10);
@@ -67,7 +67,7 @@ function stopCheck(speed, approach, hasStarted){
 
 export default function speedScoring (speed, approach){
     hasStarted = !hasStarted && speed > 0 ? true : hasStarted;
-    speedingCheck(speed*150, approach);
+    speedingCheck(speed*150, approach, hasStarted);
     //speedingIntersectionCheck(speed, approach);
     stopCheck(speed, approach, hasStarted);
 }

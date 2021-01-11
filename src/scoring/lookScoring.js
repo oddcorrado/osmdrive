@@ -15,7 +15,7 @@ export default function lookScoring(approach){
         lookScore = lookScore <= 0 ? -100 : lookScore > 80 ? lookScore * 0.625 : -50
         score.newScore('INTERSECTION_CHECK', lookScore | 0);
         checks = [0,0];
-    } else if (approach && approach < 12){
+    } else if (approach && approach < 20){
         checking = true;
         checks[0] = currentLook < checks[0] ? currentLook  < -80 ? -80 : currentLook : checks[0]; 
         checks[1] = currentLook > checks[1] ? currentLook > 80 ? 80 : currentLook : checks[1];
