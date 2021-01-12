@@ -106,6 +106,7 @@ const boxSpacing = 2
 const createBoxes = () => {
     for (let i = 0; i < boxCount; i++) {
         const b = MeshBuilder.CreateBox("box", {size: 0.5}, globalScene)
+        //b.isVisible = false;
         b.position = new Vector3(0 , 0.2 , 0)
         boxes.push(b)
     }

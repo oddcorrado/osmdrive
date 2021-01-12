@@ -7,7 +7,7 @@ export default function createButtons (scene){
     var brake = buttonDriveCreator('z-index: 10; bottom: 2rem; right: 14vw; height:6rem; width: 6rem;display: none;',{style: 'height: 6rem; width: 6rem;', id:'brake', img: '../images/brake2.svg'});
     var wheel = buttonDriveCreator('z-index: 0;bottom: 4vh; left: -4vw; height:33vh; width: 33vw;display: none;', {style: 'height: 33vh; width: 33vw; ', id: 'wheel', img: '../images/steerwheel2.svg'})
     var dashboard = buttonDriveCreator('z-index: 0; bottom: 0vh; right: 35vw; height: 25vh; width: 29vw;', {style: 'height: 25vh; width: 29vw;', id: 'dash', img: '../images/dashboard2.png'});
-    var rev = buttonDriveCreator('z-index: 10;bottom: 0.5rem; right: 0.5rem; height:2rem; opacity: 0.7;', {style: 'height: 2rem;', id: 'rev', img: '../images/reverse.png'});
+    var rev= buttonDriveCreator('z-index: 10;bottom: 0.5rem; right: 0.5rem; height:2rem; opacity: 0.7;', {style: 'height: 2rem;', id: 'rev', img: '../images/reverse.png'});
     var upLook = divCreator('z-index: 10; opacity: 0.7; background:  no-repeat center/100% url(\'../images/uplook.svg\');z-index: 4; bottom: 53vh; left: 8vw; height: 15vh; width: 7vw; display: none;', {id: 'uplook', text:''});
     var eye = divCreator('z-index: 10; opacity: 0.8; background:  no-repeat center/100% url(\'../images/visible.svg\');z-index:4; bottom: 41vh; left: 8vw; height: 15vh; width: 7vw; display: block;', {id: 'eye', text:''});
     var touchZone = divCreator('z-index: 10; opacity: 0.7; background:  no-repeat center/100% url(\'../images/arrows.svg\');z-index: 5; bottom: 40vh; left: 2vw; height: 16vh; width: 19vw; display: block;', {id: 'touchzone', text:''});

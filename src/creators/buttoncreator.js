@@ -80,7 +80,7 @@ export function valueButtonCreator(maindiv, img){
 
 export function accelerationWitness(){
     var div = `
-    <div style='position: absolute; bottom: 0vh; right: 26vw; height: 20vh;'>
+    <div style='position: absolute; display: none; bottom: 0vh; right: 26vw; height: 20vh;'>
         <div>
             <div style='height: 2vh; width: 4vw'>
                 <img class='accelwit' id='maxf' style='height: 6vh; width: 4vw' src='../../images/Vclear.svg'></img>

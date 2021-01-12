@@ -238,7 +238,7 @@ let prevAngle = 0
 
 
 var previousDebug = null;
-//CURRENT LOOP
+//CURRENT LOOP HERE
 function mustangLoopTap (car, scene) {
     //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
@@ -280,7 +280,7 @@ function mustangLoopTap (car, scene) {
         const bestTo = geoAngleForInterpolation(prevAngle, to)
         const angle = prevAngle * 0.9 + bestTo * 0.1
         if(Math.abs(angle - prevAngle) > 0.1) {
-            toggleButtons([nextdir.up, false, false, false]);
+            toggleButtons([nextdir.up, false, false, nextdir.down]);
         } // FIXME
         prevAngle = angle
         car.rotationQuaternion = Quaternion.FromEulerAngles(0, angle, 0)
@@ -638,12 +638,7 @@ function toggleButtons(tab){
             nextdir.down = false;
             down.style.opacity = 0.2;
             nextdir.up = !nextdir.up;
-<<<<<<< HEAD
             up.style.opacity = (up.style.opacity == 1 ? 0.7 : 1);
-=======
-            console.log(nextdir.up)
-            up.style.opacity = (up.style.opacity == 1 ? 0.2 : 1);
->>>>>>> 58b2186b2500df8511fa80b79c2f177f742145ac
         }
     }) */ 
 

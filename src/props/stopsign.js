@@ -99,7 +99,7 @@ export function spawnSign(container, scene, x, y) {
    const lineRot = new Vector3(Math.PI/2, Math.PI/10*4, y);
    const linePos = new Vector3(x, 1, y + 3);
    const showLinePos = new Vector3(x, -0.01, y + 3);
-   const trigPos = new Vector3(x-5, 1, y+3);
+   const trigPos = new Vector3(x-2.5, 1, y+3);
 
    mat.diffuseColor = new Color3(1, 1, 1);
    mat.emissiveColor = new Color3(1, 1, 1);

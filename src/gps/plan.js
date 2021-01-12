@@ -1,5 +1,7 @@
 import arrowCreator from '../creators/gpsCreator'
 import score from '../scoring/scoring'
+import { Vector3 } from '@babylonjs/core/Maths/math';
+import { Quaternion } from 'cannon';
 
 let prev;
 let next;
@@ -39,9 +41,15 @@ function nextArrow(next){
         }
 }
 
-export function setupGps(){
+export function setupGps(car){
+    console.log('car', car);
+    
+   // arrow = car.subMeshes[46];//car.subMeshes.filter(mesh => mesh.name == 'arrow')
+    //arrow.rotation = new Vector3(0, 0, 0);
+    //console.log('arrow', arrow);
     //createMap()
-    arrow = arrowCreator();
+    //console.log(x)
+   // arrow = arrowCreator();
 }
 
 let prevNormal;
