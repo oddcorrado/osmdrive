@@ -122,7 +122,7 @@ export function scoreDivCreator(){
     return div;
 }
 
-export function tapButtonCreator(){
+export function tapButtonCreatorOld(){
     var div = `<div id='tapbutton' style="position: absolute;top: 32vh; right: 3vw; z-index: 10;width: 30vw; height: 40vh; text-align:center">
         <div>
             <img id='up' style="height: 14vh; width: 14vw; opacity:0.7" src='../../images/upbutton.svg'></img>
@@ -138,3 +138,36 @@ export function tapButtonCreator(){
 
     return div;
 }; 
+
+export function tapButtonCreator(){
+    var div = `
+    <div>
+    <div style="position: absolute;
+            bottom: 1vh;
+            left: 5vh;
+            z-index: 10;
+            width: 35vw;
+            height: 30vh;
+            display: flex;
+            flex-direction: row;
+            justify-content: start;">
+            <img id='left' style="height: 30vh; opacity:0.7; display:inline" src='../../images/steerLeft.png'></img>
+            <img id='right' style="height: 30vh; opacity:0.7;display: inline" src='../../images/steerRight.png'></img>
+        </div>
+        <div style="position: absolute;
+            bottom: 1vh;
+            right: 10vh;
+            z-index: 10;
+            width: 35vw;
+            height: 30vh;
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: space-between;">
+            <img id='up' style="height: 30vh; opacity:0.7" src='../../images/acceleratorSimple.png'></img>
+            <img id='down' style="height: 30vh; width: 14vw; opacity:0.7" src='../../images/brakeSimple.png'></img> 
+
+        </div>
+    </div>`
+
+    return div;
+}

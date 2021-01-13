@@ -22,6 +22,7 @@ var angle = 0;
 var accel = 0;
 var orientation = e_ori.RIGHT;
 var currentLook;
+const unselectedOpacity = 0.4
 
 //mustang
 //let recenter = false
@@ -238,6 +239,12 @@ let prevAngle = 0
 
 
 var previousDebug = null;
+var fakeAcceleration = 0
+const fakeAccelerationStep = 0.005
+const fakeAccelerationMax = 0.08
+var fakeYaw = 0
+const fakeYawStep = 0.005
+const fakeYawMax = 0.2
 //CURRENT LOOP HERE
 function mustangLoopTap (car, scene) {
     //  var steerWheel = document.getElementById('wheel');
@@ -265,10 +272,16 @@ function mustangLoopTap (car, scene) {
 
     if (nextdir.up === true){
         speed = Math.min(2, speed + 0.002)
+        fakeAcceleration = Math.max(-fakeAccelerationMax, fakeAcceleration - fakeAccelerationStep)
     }
 
     if (nextdir.down === true) {
         speed = Math.max(0, speed - 0.004)
+        fakeAcceleration = Math.min(fakeAccelerationMax, fakeAcceleration + fakeAccelerationStep)
+    }
+
+    if(nextdir.down === false && nextdir.up === false) {
+        fakeAcceleration *= 0.9
     }
 
     if(speed > 0) {
@@ -279,11 +292,20 @@ function mustangLoopTap (car, scene) {
         const to = -Math.atan2(dir.z, dir.x) + Math.PI/2
         const bestTo = geoAngleForInterpolation(prevAngle, to)
         const angle = prevAngle * 0.9 + bestTo * 0.1
+        if(Math.abs(angle-prevAngle) > 0.001) {
+            if(angle > prevAngle) { fakeYaw = Math.min(fakeYawMax, fakeYaw + fakeYawStep) }
+            else { fakeYaw = Math.max(-fakeYawMax, fakeYaw - fakeYawStep) }
+        } else {
+            fakeYaw *= 0.95
+        }
         if(Math.abs(angle - prevAngle) > 0.1) {
             toggleButtons([nextdir.up, false, false, nextdir.down]);
         } // FIXME
         prevAngle = angle
-        car.rotationQuaternion = Quaternion.FromEulerAngles(0, angle, 0)
+        car.rotationQuaternion = Quaternion.FromEulerAngles(fakeAcceleration, angle, fakeYaw)
+    } else {
+        fakeYaw *= 0.95  
+        car.rotationQuaternion = Quaternion.FromEulerAngles(fakeAcceleration, prevAngle, fakeYaw)
     }
 
     // var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
@@ -580,7 +602,7 @@ function toggleButtons(tab){
         up.style.opacity = 1;
     } else {
         nextdir.up = false;
-        up.style.opacity = 0.2;
+        up.style.opacity = unselectedOpacity;
     }
 
     if (tab[1] === true){
@@ -588,7 +610,7 @@ function toggleButtons(tab){
         down.style.opacity = 1;
     } else {
         nextdir.down = false;
-        down.style.opacity = 0.2;
+        down.style.opacity = unselectedOpacity;
     }
 
     if (tab[2] === true){
@@ -596,7 +618,7 @@ function toggleButtons(tab){
         left.style.opacity = 1;
     } else {
         nextdir.left = false;
-        left.style.opacity = 0.2;
+        left.style.opacity = unselectedOpacity;
     }
 
     if (tab[3] === true){
@@ -604,7 +626,7 @@ function toggleButtons(tab){
         right.style.opacity = 1;
     } else {
         nextdir.right = false;
-        right.style.opacity = 0.2;
+        right.style.opacity = unselectedOpacity;
     }
 
 }
@@ -636,7 +658,7 @@ function toggleButtons(tab){
         if (!isTurning) {
             speeding = true;
             nextdir.down = false;
-            down.style.opacity = 0.2;
+            down.style.opacity = unselectedOpacity;
             nextdir.up = !nextdir.up;
             up.style.opacity = (up.style.opacity == 1 ? 0.7 : 1);
         }
@@ -649,12 +671,12 @@ function toggleButtons(tab){
 
     up.addEventListener('mouseup', function(){
         nextdir.up = false
-        up.style.opacity = 0.2
+        up.style.opacity = unselectedOpacity
     })  
 
     up.addEventListener('mouseleave', function(){
         nextdir.up = false
-        up.style.opacity = 0.2
+        up.style.opacity = unselectedOpacity
     })  
 
     up.addEventListener('touchstart', function(){
@@ -664,7 +686,7 @@ function toggleButtons(tab){
 
     up.addEventListener('touchend', function(){
         nextdir.up = false
-        up.style.opacity = 0.2
+        up.style.opacity = unselectedOpacity
     })  
 
     down.addEventListener('mousedown', function(){
@@ -674,12 +696,12 @@ function toggleButtons(tab){
 
     down.addEventListener('mouseup', function(){
         nextdir.down = false
-        down.style.opacity = 0.2
+        down.style.opacity = unselectedOpacity
     })  
 
     down.addEventListener('mouseleave', function(){
         nextdir.down = false
-        down.style.opacity = 0.2
+        down.style.opacity = unselectedOpacity
     })  
 
     down.addEventListener('touchstart', function(){
@@ -689,34 +711,34 @@ function toggleButtons(tab){
 
     down.addEventListener('touchend', function(){
         nextdir.down = false
-        down.style.opacity = 0.2
+        down.style.opacity = unselectedOpacity
     })  
 
     /* down.addEventListener('click', function(){
         if (!isTurning) {
             breaking = true;
             nextdir.up = false;
-            up.style.opacity = 0.2;
+            up.style.opacity = unselectedOpacity;
             nextdir.down = !nextdir.down;
-            down.style.opacity = (down.style.opacity == 1 ? 0.2 : 1);
+            down.style.opacity = (down.style.opacity == 1 ? unselectedOpacity : 1);
         }
     })   */ 
 
     left.addEventListener('click', function(){
         if (!isTurning) {
             nextdir.right = false;
-            right.style.opacity = 0.2;
+            right.style.opacity = unselectedOpacity;
             nextdir.left = !nextdir.left;
-            left.style.opacity = left.style.opacity == 1 ? 0.2 : 1;
+            left.style.opacity = left.style.opacity == 1 ? unselectedOpacity : 1;
         }
     })    
 
     right.addEventListener('click', function(){
         if (!isTurning){
             nextdir.left = false;
-            left.style.opacity = 0.2;
+            left.style.opacity = unselectedOpacity;
             nextdir.right = !nextdir.right;
-            right.style.opacity = right.style.opacity == 1 ? 0.2 : 1;  
+            right.style.opacity = right.style.opacity == 1 ? unselectedOpacity : 1;  
         }
     })    
 
@@ -849,7 +871,7 @@ function toggleButtons(tab){
     //             elem.style.right = "32rem";
     //         })
     //         mode.dir = 'tilt';
-    //         VirtualJoystick.Canvas.style.opacity = '0.2';
+    //         VirtualJoystick.Canvas.style.opacity = 'unselectedOpacity';
     //         mode.spd = 'slide';
     //     } else if (mode.global === 'mode2'){
     //         mode.global = 'custom';
@@ -859,7 +881,7 @@ function toggleButtons(tab){
     //             elem.style.display = "none";
     //         })
     //         toggleCustomModes('block');
-    //         VirtualJoystick.Canvas.style.opacity = '0.2';
+    //         VirtualJoystick.Canvas.style.opacity = 'unselectedOpacity';
     //     } else if (mode.global === 'custom'){
     //         mode.global = 'slide';
     //         toggleCustomModes('none');
@@ -868,7 +890,7 @@ function toggleButtons(tab){
     //             if (opt != 'gear' && opt != 'global')
     //                 mode[opt] = "slide" 
     //         });
-    //         VirtualJoystick.Canvas.style.opacity = '0.2'
+    //         VirtualJoystick.Canvas.style.opacity = 'unselectedOpacity'
     //         arrows.style.display = 'none';
     //         touchZone.style.display = 'none';
     //     } 
