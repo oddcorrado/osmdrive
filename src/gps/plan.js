@@ -8,8 +8,16 @@ let prev;
 let rotations = [{S: -Math.PI/10, L: 0, R: 0, E: 0},
                 {S: 0, L: -Math.PI/2, R: Math.PI/2, E: 0},
                 {S: 0, L: Math.PI/10, R: -Math.PI/10, E: 0}];
+let imageSources = {
+    S: '../../images/straight.svg',
+    L: '../../images/leftturn.svg',
+    R: '../../images/rightturn.svg',
+    E: '../../images/park.svg'
+}
+
+
 let idx = 1;
-let plan = ['I','S', 'L', 'S', 'S', 'L', 'L', 'R', 'S', 'R', 'L', 'S', 'E'];
+let plan = ['I','S', 'R', 'L', 'L', 'S', 'L', 'R', 'S', 'L', 'S', 'S', 'S', 'S', 'E'];
 let arrow;
 
 function checkJunctionGps(current, prev){
@@ -30,18 +38,21 @@ function checkJunctionGps(current, prev){
             score.newScore('WRONG_TURN', -20)
     }
     ++idx;
+    arrow.src = imageSources[plan[idx]];
 }
 
 export function setupGps(scene, container){
     createArrow(scene, container);
+    arrow = document.getElementById('gps');
 }
 
 let prevNormal;
 
 export function gpsCheck(current, car, dir, gps, angle){
     prevNormal = prevNormal ? prevNormal : current[1];
-    gps.position = new Vector3(car.position.x + (dir.x > 0 ? 4 : dir.x < 0 ? -4 : 0), -0.2, car.position.z + (dir.z > 0 ? 4 : dir.z < 0 ? -4 : 0))
-    gps.rotation = new Vector3(rotations[0][plan[idx]], angle+rotations[1][plan[idx]], rotations[2][plan[idx]]);
+
+    // gps.position = new Vector3(car.position.x + (dir.x > 0 ? 4 : dir.x < 0 ? -4 : 0), -0.2, car.position.z + (dir.z > 0 ? 4 : dir.z < 0 ? -4 : 0))
+    // gps.rotation = new Vector3(rotations[0][plan[idx]], angle+rotations[1][plan[idx]], rotations[2][plan[idx]]);
     if (current[1].type == 'normal' && prevNormal != current[1]){
         checkJunctionGps(current, prevNormal)
         prevNormal = current[1];

@@ -77,7 +77,6 @@ export default function dressMap(scene, container){
     console.log(container)
     spawnTrafficLight(container, scene, 95, -5);
     spawnSign(container, scene, 195, -5);
-    spawnNoEntry(container, scene, 200, 5);
-
+    spawnNoEntry(container, scene, 304, 105);
 }
 
