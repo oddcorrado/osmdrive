@@ -138,7 +138,7 @@ function setSpeedWitness(speed, stickY){
     }
 }
 
-function loopSelector(scene, joints, sjoints, clio, mustang){
+function loopSelector(scene, joints, sjoints, clio, mustang, gps){
     if (currentCar === 'clio'){
         if (switchCam === 'clio') {
              switchCam = 'none';
@@ -155,7 +155,7 @@ function loopSelector(scene, joints, sjoints, clio, mustang){
             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50);
         }
         // mustangloop(mustang, scene);
-        mustangLoopTap(mustang, scene);
+        mustangLoopTap(mustang, scene, gps);
     }
 }
 
@@ -239,7 +239,7 @@ let prevAngle = 0
 
 var previousDebug = null;
 //CURRENT LOOP HERE
-function mustangLoopTap (car, scene) {
+function mustangLoopTap (car, scene, gps) {
     //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
     setSpeedWitness(speed*150, nextdir.up ? 1 : nextdir.down ? -1 : 0 );
@@ -251,7 +251,6 @@ function mustangLoopTap (car, scene) {
     // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     selection = getCurrentTurn()
     currentSegment = driverPathBuild(car.position, currentSegment, selection) 
-    gpsCheck(currentSegment);
     if(currentSegment == null || currentSegment.length == 0) { return }
     if (currentSegment[1].type === 'junction'){
         approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))
@@ -282,6 +281,7 @@ function mustangLoopTap (car, scene) {
         if(Math.abs(angle - prevAngle) > 0.1) {
             toggleButtons([nextdir.up, false, false, nextdir.down]);
         } // FIXME
+        gpsCheck(currentSegment, car, dir, gps, angle);
         prevAngle = angle
         car.rotationQuaternion = Quaternion.FromEulerAngles(0, angle, 0)
     }
@@ -968,7 +968,7 @@ function toggleButtons(tab){
     clioloop: (joints, sjoints, car) => clioloop(joints, sjoints, car),
     mustangloop: (car, scene) => mustangloop(car, scene),
     setupControls: scene => setupControls(scene),
-    loopSelector: (scene, joints, sjoints, clio, mustang) =>  loopSelector(scene, joints, sjoints, clio, mustang),
+    loopSelector: (scene, joints, sjoints, clio, mustang, gps) =>  loopSelector(scene, joints, sjoints, clio, mustang,gps),
   }
 
   export const getSpeed = () => speed

@@ -2,15 +2,17 @@ import arrowCreator from '../creators/gpsCreator'
 import score from '../scoring/scoring'
 import { Vector3 } from '@babylonjs/core/Maths/math';
 import { Quaternion } from 'cannon';
+import createArrow from '../props/3darrow'
 
 let prev;
-let next;
+let rotations = [{S: -Math.PI/10, L: 0, R: 0, E: 0},
+                {S: 0, L: -Math.PI/2, R: Math.PI/2, E: 0},
+                {S: 0, L: Math.PI/10, R: -Math.PI/10, E: 0}];
 let idx = 1;
 let plan = ['I','S', 'L', 'S', 'S', 'L', 'L', 'R', 'S', 'R', 'L', 'S', 'E'];
 let arrow;
 
 function checkJunctionGps(current, prev){
-    ///console.log(current[1].roadIndex, 'L:',current[0].nexts[1].roadIndex, 'R:', current[0].nexts[0].roadIndex)
     if (plan[idx] === 'S'){
         if (current[1].roadIndex === prev.roadIndex)
             score.newScore('RIGHT_TURN', 20)
@@ -27,41 +29,23 @@ function checkJunctionGps(current, prev){
         else 
             score.newScore('WRONG_TURN', -20)
     }
-    nextArrow(plan[++idx]);
+    ++idx;
 }
 
-function nextArrow(next){
-    if (arrow)
-        if (next === 'S'){
-            arrow.style.transform = 'rotateX(50deg)';
-        } else if (next === 'L'){
-            arrow.style.transform = 'rotateZ(-90deg)';
-        } else if (next === 'R'){
-            arrow.style.transform = 'rotateZ(90deg)';
-        }
-}
-
-export function setupGps(car){
-    console.log('car', car);
-    
-   // arrow = car.subMeshes[46];//car.subMeshes.filter(mesh => mesh.name == 'arrow')
-    //arrow.rotation = new Vector3(0, 0, 0);
-    //console.log('arrow', arrow);
-    //createMap()
-    //console.log(x)
-   // arrow = arrowCreator();
+export function setupGps(scene, container){
+    createArrow(scene, container);
 }
 
 let prevNormal;
 
-export function gpsCheck(current){
+export function gpsCheck(current, car, dir, gps, angle){
     prevNormal = prevNormal ? prevNormal : current[1];
-
+    gps.position = new Vector3(car.position.x + (dir.x > 0 ? 4 : dir.x < 0 ? -4 : 0), -0.2, car.position.z + (dir.z > 0 ? 4 : dir.z < 0 ? -4 : 0))
+    gps.rotation = new Vector3(rotations[0][plan[idx]], angle+rotations[1][plan[idx]], rotations[2][plan[idx]]);
     if (current[1].type == 'normal' && prevNormal != current[1]){
         checkJunctionGps(current, prevNormal)
         prevNormal = current[1];
     }
-  
 }
 
 

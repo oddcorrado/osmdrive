@@ -28,6 +28,7 @@ const boot = () => {
     var oldcar;
     var motor;
     var steer;
+    let gps;
     var clio;
     var mustang;
     var switchcar = 'old';
@@ -68,6 +69,7 @@ const boot = () => {
     loop.setupControls(scene);
     physics.setupPhysics(scene, ground, boxcar/*, bots*/)
 
+    setupGps(scene, container);
     loop.setupJoystick();
     loop.cameraOrientationSetup(camera);
     
@@ -81,16 +83,16 @@ const boot = () => {
          if (switchcar === 'old' /*&& (clio = container['meshes'].find(mesh => mesh.name == 'clio'))  
             && (steer = container['meshes'].find(mesh => mesh.name == 'sjoints'))
             && (motor = container['meshes'].find(mesh => mesh.name == 'joints'))*/
+            && (gps = container['meshes'].find(mesh => mesh.name == 'arrow'))
             && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar'))) { 
                 switchcar = 'new';
-                setupGps(mustang);
                 score.setupScore(mustang);
                 oldcar = boxcar;
                 oldcar.dispose();
         }
         if (switchcar === 'new'){
             //loop.loopSelector(scene, motor.joints, steer.sjoints, clio, mustang);
-            loop.loopSelector(scene, null, null, null, mustang);
+            loop.loopSelector(scene, null, null, null, mustang, gps);
             score.loop();
         }   
 
