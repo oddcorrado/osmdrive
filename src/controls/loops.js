@@ -246,6 +246,12 @@ var fakeYaw = 0
 const fakeYawStep = 0.005
 const fakeYawMax = 0.2
 //CURRENT LOOP HERE
+
+function getDriveTarget(car, nodes, distance) {
+    if(nodes.length < 2) return 
+    const proj = geoSegmentGetProjection(car.position, nodes[0].point, nodes[1].point)
+}
+
 function mustangLoopTap (car, scene) {
     //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;

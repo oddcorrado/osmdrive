@@ -159,8 +159,7 @@ export const driverPathSwitch = (position) => {
     if (nodes.length < 2) { return nodes[0] }
     if (position.subtract(nodes[1].point).length() < switchDistance) {
         nodes = nodes.slice(1)
-        return [nodes[0], nodes[1]]
     } 
 
-    return [nodes[0], nodes[1]]
+    return nodes
 }
