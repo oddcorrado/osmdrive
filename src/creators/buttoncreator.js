@@ -139,6 +139,30 @@ export function tapButtonCreatorOld(){
     return div;
 }; 
 
+export function dashboardCreator(){
+    var div = 
+       ` <div id='dashboard' style='position: absolute;
+            bottom: -8vh;
+            width: 14vw;
+            height: 35vh;
+            left: 43vw;
+            text-align: center;
+            border-radius: 4vw;
+            background-color: rgba(0,0,0,0.7);
+            color: white;
+            font-family: Microbrew Soft One, sans-serif'
+            >
+            <div style='margin-top: 2vh' id='next-turn'>
+                <img id='gps' style='height: 7vh; width: 6vw' src='../../images/straight.svg'></img>
+            </div>
+            <div id='speeddiv' style='background-color: none; height: 40%; width: 50%; border-radius: 2vh; margin-left: 25%; margin-top: 5%'>
+                <div id='speed' style=' width: 5vw; display: inline-block ;height: 7vh;font-size: 8vh;  font-weight: 400' id='speed'>0</div>    
+                <div style='font-size: 3vh;color: white; margin-top: 0.5vh;font-weight: normal; opacity: 0.4;'>KM/H</div>
+            </div> 
+        </div>`
+        return div;
+}
+
 export function tapButtonCreator(){
     var div = `
     <div>
@@ -152,22 +176,37 @@ export function tapButtonCreator(){
             flex-direction: row;
             justify-content: start;">
             <img id='left' style="height: 30vh; opacity:0.7; display:inline" src='../../images/steerLeft.png'></img>
-            <img id='right' style="height: 30vh; opacity:0.7;display: inline" src='../../images/steerRight.png'></img>
+            <img id='right' style="height: 30vh; opacity:0.7;display:inline" src='../../images/steerRight.png'></img>
         </div>
         <div style="position: absolute;
-            bottom: 1vh;
+            bottom: 5vh;
             right: 10vh;
             z-index: 10;
             width: 35vw;
             height: 30vh;
             display: flex;
-            flex-direction: row-reverse;
-            justify-content: space-between;">
-            <img id='up' style="height: 30vh; opacity:0.7" src='../../images/acceleratorSimple.png'></img>
-            <img id='down' style="height: 30vh; width: 14vw; opacity:0.7" src='../../images/brakeSimple.png'></img> 
-
+            flex-direction: row-reverse;">
+            <img id='up' style="height: 30vh; opacity:0.9" src='../../images/accel.svg'></img>
+            <img id='down' style="height: 15vh; width: 14vw; margin-top: 15vh; opacity:0.9" src='../../images/brake.svg'></img> 
         </div>
     </div>`
 
     return div;
 }
+
+export function wheelCreator(){
+    var div =
+    `<div style='position: absolute; z-index: 0;bottom: 4vh; left: -4vw; height:33vh; width: 33vw;'>
+        <img src='../images/steerwheel2.svg' style='height: 33vh; width: 33vw;'>
+        </img>
+        <img src='../images/center.svg' style='position:relative; height: 40%; bottom: 66%; left: 41%'></img>
+    </div>`
+     return div;
+}
+
+// export function viewZoneCreator(){
+//     var div =
+//     <div>
+
+//     </div>
+// }

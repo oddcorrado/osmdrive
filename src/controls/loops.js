@@ -22,7 +22,7 @@ var angle = 0;
 var accel = 0;
 var orientation = e_ori.RIGHT;
 var currentLook;
-const unselectedOpacity = 0.4
+const unselectedOpacity = 0.9
 
 //mustang
 //let recenter = false
@@ -89,12 +89,27 @@ function cameraOrientationSetup(camera){
        pos.innerText = `Alpha ${evt.alpha.toFixed(2)}, Beta ${evt.beta.toFixed(2)}, Gamma ${evt.gamma.toFixed(2)} ACCEL: ${accel.toFixed(2)}, ORIENTATION: ${camTilt}`;
     });   
 }
+var speedDiv;
+var speedDivBg;
+var interSpeed;
+function setSpeedAlert(speed){
+    if (speed > 31 && !interSpeed) {
+        speedDivBg.style.backgroundColor = interSpeed ? speedDivBg.style.backgroundColor : 'red';
+        interSpeed = setInterval(() => {
+            speedDivBg.style.backgroundColor = speedDivBg.style.backgroundColor == 'red' ? null : 'red';
+        }, 500);
+    } else if (speed < 31){
+        speedDivBg.style.backgroundColor = null;
+        clearInterval(interSpeed);
+        interSpeed = null;
+    }
+}
 
 function setSpeedWitness(speed, stickY){
-    var speedDiv = document.getElementById('speed');
+    speedDiv = speedDiv ? speedDiv : document.getElementById('speed');
+    speedDivBg = speedDivBg ? speedDivBg : document.getElementById('speeddiv');
+    setSpeedAlert(speed);
     speedDiv.innerText = `${(speed).toFixed()}`;
-    speedDiv.style.color = speed > 50 ? 'red' : '#56CCF2';
-  
     var divTab = document.getElementsByClassName('accelwit');
     var neutral = document.getElementById('neutral');
     for (let div of divTab){
@@ -139,7 +154,7 @@ function setSpeedWitness(speed, stickY){
     }
 }
 
-function loopSelector(scene, joints, sjoints, clio, mustang){
+function loopSelector(scene, joints, sjoints, clio, mustang, gps){
     if (currentCar === 'clio'){
         if (switchCam === 'clio') {
              switchCam = 'none';
@@ -156,7 +171,7 @@ function loopSelector(scene, joints, sjoints, clio, mustang){
             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50);
         }
         // mustangloop(mustang, scene);
-        mustangLoopTap(mustang, scene);
+        mustangLoopTap(mustang, scene, gps);
     }
 }
 
@@ -246,13 +261,7 @@ var fakeYaw = 0
 const fakeYawStep = 0.005
 const fakeYawMax = 0.2
 //CURRENT LOOP HERE
-
-function getDriveTarget(car, nodes, distance) {
-    if(nodes.length < 2) return 
-    const proj = geoSegmentGetProjection(car.position, nodes[0].point, nodes[1].point)
-}
-
-function mustangLoopTap (car, scene) {
+function mustangLoopTap (car, scene, gps) {
     //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
     setSpeedWitness(speed*150, nextdir.up ? 1 : nextdir.down ? -1 : 0 );
@@ -264,7 +273,6 @@ function mustangLoopTap (car, scene) {
     // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     selection = getCurrentTurn()
     currentSegment = driverPathBuild(car.position, currentSegment, selection) 
-    gpsCheck(currentSegment);
     if(currentSegment == null || currentSegment.length == 0) { return }
     if (currentSegment[1].type === 'junction'){
         approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))
@@ -307,6 +315,7 @@ function mustangLoopTap (car, scene) {
         if(Math.abs(angle - prevAngle) > 0.1) {
             toggleButtons([nextdir.up, false, false, nextdir.down]);
         } // FIXME
+        gpsCheck(currentSegment, car, dir, gps, angle);
         prevAngle = angle
         car.rotationQuaternion = Quaternion.FromEulerAngles(fakeAcceleration, angle, fakeYaw)
     } else {
@@ -637,6 +646,8 @@ function toggleButtons(tab){
 
 }
 
+
+
  function setupControls (scene){
     var interAccel;
     var interBrake;
@@ -658,6 +669,7 @@ function toggleButtons(tab){
     down = document.getElementById('down');
     left = document.getElementById('left');
     right = document.getElementById('right');
+    let wheel = document.getElementById('wheel');
     var inter;
 
     /* up.addEventListener('click', function(){
@@ -668,56 +680,83 @@ function toggleButtons(tab){
             nextdir.up = !nextdir.up;
             up.style.opacity = (up.style.opacity == 1 ? 0.7 : 1);
         }
-    }) */ 
+    }) */
+    
+    //currentLook = e.targetTouches[0].clientX - pos > 300 ? 300 : (e.targetTouches[0].clientX - pos < -300 ? -300 : e.targetTouches[0].clientX - pos) ;
 
+
+    wheel.addEventListener('touchstart', function(e){
+        let touch = touchZone.offsetLeft + (touchZone.offsetWidth / 2);
+        
+    })
+    //touchend
     up.addEventListener('mousedown', function(){
         nextdir.up = true
         up.style.opacity = 1
+        up.style.transform = 'rotateX(45deg)'
+      //  up.style.background = "linear-gradient(179.97deg, #FFFFF -24.84%, #FFFFF 99.97%)"
     })  
 
+
+    up.addEventListener('touchstart', function(){
+        nextdir.up = true
+        up.style.opacity = 1
+        up.style.transform = 'rotateX(45deg)'
+      //  up.style.background = "linear-gradient(179.97deg, #B48F0F -24.84%, #FFEC00 99.97%)"
+
+    })  
     up.addEventListener('mouseup', function(){
         nextdir.up = false
         up.style.opacity = unselectedOpacity
+        up.style.transform = 'rotateX(0deg)'
     })  
 
     up.addEventListener('mouseleave', function(){
         nextdir.up = false
         up.style.opacity = unselectedOpacity
+        up.style.transform = 'rotateX(0deg)'
+
     })  
 
-    up.addEventListener('touchstart', function(){
-        nextdir.up = true
-        up.style.opacity = 1
-    })  
 
     up.addEventListener('touchend', function(){
         nextdir.up = false
         up.style.opacity = unselectedOpacity
+        up.style.transform = 'rotateX(0deg)'
     })  
 
     down.addEventListener('mousedown', function(){
         nextdir.down = true
         down.style.opacity = 1
-    })  
-
-    down.addEventListener('mouseup', function(){
-        nextdir.down = false
-        down.style.opacity = unselectedOpacity
-    })  
-
-    down.addEventListener('mouseleave', function(){
-        nextdir.down = false
-        down.style.opacity = unselectedOpacity
+        down.style.transform = 'rotateX(30deg)'
+        // down.style.borderStyle = 'solid';
+        // down.style.borderImage = 'linear-gradient(#f6b73c, #4d9f0c) 30';
     })  
 
     down.addEventListener('touchstart', function(){
         nextdir.down = true
         down.style.opacity = 1
+        down.style.transform = 'rotateX(30deg)'
+    })  
+
+    down.addEventListener('mouseup', function(){
+        nextdir.down = false
+        down.style.opacity = unselectedOpacity
+        down.style.transform = 'rotateX(0deg)'
+
+    })  
+
+    down.addEventListener('mouseleave', function(){
+        nextdir.down = false
+        down.style.opacity = unselectedOpacity
+        down.style.transform = 'rotateX(0deg)'
+
     })  
 
     down.addEventListener('touchend', function(){
         nextdir.down = false
         down.style.opacity = unselectedOpacity
+        down.style.transform = 'rotateX(0deg)'
     })  
 
     /* down.addEventListener('click', function(){
@@ -996,7 +1035,7 @@ function toggleButtons(tab){
     clioloop: (joints, sjoints, car) => clioloop(joints, sjoints, car),
     mustangloop: (car, scene) => mustangloop(car, scene),
     setupControls: scene => setupControls(scene),
-    loopSelector: (scene, joints, sjoints, clio, mustang) =>  loopSelector(scene, joints, sjoints, clio, mustang),
+    loopSelector: (scene, joints, sjoints, clio, mustang, gps) =>  loopSelector(scene, joints, sjoints, clio, mustang,gps),
   }
 
   export const getSpeed = () => speed

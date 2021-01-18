@@ -44,9 +44,10 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     var camFresh = divCreator('top: 0; right: 0; height: 1rem;font-size:0.7rem; display: none', {text: '', id:'position'});
     var camOriFresh = divCreator('top: 0; left: 0; width: 40vw; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'camerapos'});
     var carPosFresh = divCreator('top: 0; left: 0; width: 40vw; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'carpos'});
-    var speedFresh = divCreator('font-family: aldrich ; text-align:center; bottom: -7vh; right: 35vw; height: 25vh; width: 29vw; display: block; color: #56CCF2;font-size: 5vw;', {text: '00', id: 'speed'});
+    var speedFresh = divCreator('font-family: aldrich ; text-align:center; bottom: -7vh; right: 35vw; height: 25vh; width: 29vw; display: none; color: #56CCF2;font-size: 5vw;', {text: '00', id: 'speedold'});
     var scoreFresh = scoreDivCreator();
     var falseStick = falseStickCreator();
+    
     var btnDivArrayMenu = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, btnGrids, btnEsp, btnCamOri, carPosFresh, btnBar];
     var divArray = [speedFresh, camFresh, camOriFresh];
     var insertArray =  [scoreFresh, falseStick, accelWitness];

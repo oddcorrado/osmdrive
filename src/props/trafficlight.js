@@ -81,7 +81,6 @@ export function spawnTrafficLight(container, scene, x, y) {
    line.isVisible = false;
 
    return new SceneLoader.ImportMeshAsync('', "../mesh/DoubleTrafficLight/", "doubletraffic.obj", scene).then(function(newMesh) {
-      console.log(newMesh)
       var lights = [];
       var colors = [new StandardMaterial('green', scene), new StandardMaterial('orange', scene), new StandardMaterial('red', scene)]
       var meshColor = ['green', 'orange', 'red']
@@ -94,7 +93,6 @@ export function spawnTrafficLight(container, scene, x, y) {
          lights[x+1].material = colors[colnb];
          x+=2;
       })
-      console.log(lights);
       const traffic = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
       traffic.name = 'light';
       traffic.scalingDeterminant = 0.8;
