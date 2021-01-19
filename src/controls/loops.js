@@ -8,10 +8,11 @@ import { roadCheckerExit } from '../checkers/roadChecker'
 import gamepad from './gamepad'
 import { recenterDisplay } from './recenterDisplay'
 import { getWayDir } from '../ways/way'
-import { driverPathBuild } from '../ways/logic/driver'
+import { driverPathBuild, driverGetSmootherTarget } from '../ways/logic/driver'
 import { Quaternion } from '@babylonjs/core/Maths/math.vector'
 import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/geosegment'
-import {gpsCheck} from '../gps/plan'
+import { gpsCheck } from '../gps/plan'
+import { vectorIntesection } from '../maths/geometry'
 
 let rightJoystick = null;
 let sideTilt = 0;
@@ -230,7 +231,7 @@ function getCurrentTurn(){
 let recenter = false
 let recenterStep = 'lift'
 let projection = null
-let currentSegment = null
+let nodes = null
 let selection = null // 'R' or 'L' or null
 
 var nextJuction = null;
@@ -244,14 +245,14 @@ var breaking = false;
 var hardcoreRail = true;
 
 // setInterval(() => {
-//     console.log('default logging',currentSegment)
+//     console.log('default logging',nodes)
 // }, 5000);
 var approach;
 let acceleration = 0
 let speed = 0
 let startupDone = false
 let prevAngle = 0
-
+let prevTarget = new Vector3(0, 0, 0)
 
 var previousDebug = null;
 var fakeAcceleration = 0
@@ -260,27 +261,29 @@ const fakeAccelerationMax = 0.08
 var fakeYaw = 0
 const fakeYawStep = 0.005
 const fakeYawMax = 0.2
+
 //CURRENT LOOP HERE
 function mustangLoopTap (car, scene, gps) {
     //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
     setSpeedWitness(speed*150, nextdir.up ? 1 : nextdir.down ? -1 : 0 );
 
-
     // *********************
     // CALCUL DU PATH
     // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
-    // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
+    // si nodes est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     selection = getCurrentTurn()
-    currentSegment = driverPathBuild(car.position, currentSegment, selection) 
-    if(currentSegment == null || currentSegment.length == 0) { return }
-    if (currentSegment[1].type === 'junction'){
-        approach = Math.sqrt(Math.pow(car.position.x - currentSegment[1].point.x, 2) + Math.pow(car.position.z - currentSegment[1].point.z, 2))
-    } else { 
-        approach = null
-    }
-    if(startupDone == false && currentSegment != null) {
-        car.position = currentSegment[0].point
+    const {nodes: builtNodes, selectionIndex} = driverPathBuild(car.position, nodes, selection) 
+    if(builtNodes == null || builtNodes.length == 0) { return }
+    nodes = builtNodes
+
+    const {target , normalProjection, nodes: newNodes, slice } = driverGetSmootherTarget(car.position, prevTarget, nodes, 7 + 3 * speed)
+    prevTarget = target
+    if(slice && selectionIndex === 0) { toggleButtons([nextdir.up, false, false, nextdir.down]) }
+    nodes = newNodes // FIXME   
+
+    if(startupDone == false && nodes != null) {
+        car.position = nodes[0].point
         startupDone = true
     }  
 
@@ -299,9 +302,11 @@ function mustangLoopTap (car, scene, gps) {
     }
 
     if(speed > 0) {
-        const dir = currentSegment[1].point.subtract(currentSegment[0].point).normalize().scale(speed)
-        const proj = geoSegmentGetProjection(car.position, currentSegment[0].point, currentSegment[1].point)
-        car.position = proj.add(dir)
+        // const dir = nodes[1].point.subtract(nodes[0].point).normalize().scale(speed)
+        const dir = target.subtract(car.position).normalize().scale(speed)
+        // const proj = geoSegmentGetProjection(car.position, nodes[0].point, nodes[1].point)
+        // car.position = proj.add(dir)
+        car.position = car.position.add(dir)
 
         const to = -Math.atan2(dir.z, dir.x) + Math.PI/2
         const bestTo = geoAngleForInterpolation(prevAngle, to)
@@ -312,10 +317,8 @@ function mustangLoopTap (car, scene, gps) {
         } else {
             fakeYaw *= 0.95
         }
-        if(Math.abs(angle - prevAngle) > 0.1) {
-            toggleButtons([nextdir.up, false, false, nextdir.down]);
-        } // FIXME
-        gpsCheck(currentSegment, car, dir, gps, angle);
+
+        gpsCheck(nodes, car, dir, gps, angle);
         prevAngle = angle
         car.rotationQuaternion = Quaternion.FromEulerAngles(fakeAcceleration, angle, fakeYaw)
     } else {
@@ -338,15 +341,15 @@ function mustangLoopTapSmooth (car, scene){
     // *********************
     // CALCUL DU PATH
     // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
-    // si currentSegment est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
+    // si nodes est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
     selection = isTurning ? null : getCurrentTurn();
-    currentSegment = driverPathBuild(car.position, currentSegment, selection)    
+    nodes = driverPathBuild(car.position, nodes, selection)    
     // ********************
-    oldjunct = oldjunct ? oldjunct : currentSegment[0];
-     if (currentSegment[1].type === 'junction' && oldjunct && oldjunct.junctionIndex != currentSegment[1].junctionIndex){
+    oldjunct = oldjunct ? oldjunct : nodes[0];
+     if (nodes[1].type === 'junction' && oldjunct && oldjunct.junctionIndex != nodes[1].junctionIndex){
             console.log('changed junction', nextJuction)
-            nextJuction = currentSegment[1];
-            oldjunct = currentSegment[1];
+            nextJuction = nodes[1];
+            oldjunct = nodes[1];
     }
 
     if (nextJuction) {
@@ -402,7 +405,7 @@ function mustangLoopTapSmooth (car, scene){
 
     if(nextdir.right && (approach <= 3 || isTurning === true)){
         isTurning = true;
-        currentSegment = null;
+        nodes = null;
 
         if (currentRot < Math.PI/2) {
             currentRot += 0.02;
@@ -419,7 +422,7 @@ function mustangLoopTapSmooth (car, scene){
 
     if (nextdir.left && (approach <= 1.5 || isTurning === true)){
         isTurning = true;
-        currentSegment = null;
+        nodes = null;
 
         if (currentRot < Math.PI/2) {//Change Math.PI/2 by the value of the angle of the next turn arcos() something
             currentRot += 0.01;
@@ -1041,4 +1044,4 @@ function toggleButtons(tab){
   export const getSpeed = () => speed
   export const getApproach = () => approach
   export const getLook = () => currentLook
-  export const getCurrentSegment = () => currentSegment
+  export const getCurrentSegment = () => nodes
