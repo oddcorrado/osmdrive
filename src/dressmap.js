@@ -8,6 +8,7 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
 import { spawnSign } from './props/stopsign'
 import spawnNoEntry  from './props/noentrysign'
+import spawnSpeedSign from './props/speedlimit'
 import { spawnTrafficLight } from './props/trafficlight'
 import { ActionManager } from '@babylonjs/core/Actions';
 import botshandler from './bots'
@@ -78,5 +79,6 @@ export default function dressMap(scene, container){
     spawnTrafficLight(container, scene, 95, -5);
     spawnSign(container, scene, 195, -5);
     spawnNoEntry(container, scene, 304, 105);
+    spawnSpeedSign(scene, '30', 15, -5)
 }
 

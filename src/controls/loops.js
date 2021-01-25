@@ -280,7 +280,7 @@ function mustangLoopTap (car, scene, gps) {
 
     const {target , normalProjection, nodes: newNodes, slice } = driverGetSmootherTarget(car.position, prevTarget, nodes, 7 + 3 * speed)
     prevTarget = target
-    if(slice && selectionIndex === 0) { toggleButtons([nextdir.up, false, false, nextdir.down]) }
+    if(slice && selectionIndex === 0) { resetWheel(); }
     nodes = newNodes // FIXME   
 
     if(startupDone == false && nodes != null) {
@@ -317,11 +317,7 @@ function mustangLoopTap (car, scene, gps) {
         } else {
             fakeYaw *= 0.95
         }
-        if(Math.abs(angle - prevAngle) > 0.1) {
-            //toggleButtons([nextdir.up, false, false, nextdir.down]);
-           resetWheel();
-        } // FIXME
-        gpsCheck(currentSegment, car, dir, gps, angle);
+        gpsCheck(nodes, car, dir, gps, angle);
         prevAngle = angle
         car.rotationQuaternion = Quaternion.FromEulerAngles(fakeAcceleration, angle, fakeYaw)
     } else {
