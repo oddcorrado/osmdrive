@@ -1,13 +1,14 @@
 
 export function buttonDriveCreator(style, content){
-    var tmpBtn = document.createElement('div');
-    var tmpImg = document.createElement('img');
+    var tmpBtn = document.createElement('div')
+    var tmpImg = document.createElement('img')
 
-    tmpImg.src = content.img;
-    tmpImg.setAttribute('style', content.style);
-    tmpBtn.setAttribute('style', style + `position: absolute;`);
-    tmpBtn.id = content.id;
-    tmpBtn.appendChild(tmpImg);
+    tmpImg.src = content.img
+    tmpImg.setAttribute('style', content.style)
+    tmpImg.setAttribute('draggable', false)
+    tmpBtn.setAttribute('style', style + `position: absolute;`)
+    tmpBtn.id = content.id
+    tmpBtn.appendChild(tmpImg)
     return tmpBtn;
 }
 
@@ -125,14 +126,14 @@ export function scoreDivCreator(){
 export function tapButtonCreatorOld(){
     var div = `<div id='tapbutton' style="position: absolute;top: 32vh; right: 3vw; z-index: 10;width: 30vw; height: 40vh; text-align:center">
         <div>
-            <img id='up' style="height: 14vh; width: 14vw; opacity:0.7" src='../../images/upbutton.svg'></img>
+            <img draggable=false id='up' style="height: 14vh; width: 14vw; opacity:0.7" src='../../images/upbutton.svg'></img>
         </div>
         <div>
             <img id='left' style="height: 14vh; width: 14vw; opacity:0.7; display:inline" src='../../images/leftbutton.svg'></img>
             <img id='right' style="height: 14vh; width: 14vw; opacity:0.7;display: inline" src='../../images/rightbutton.svg'></img>
         </div>
         <div style='display: block'>
-            <img id='down' style="height: 14vh; width: 14vw; opacity:0.7" src='../../images/downbutton.svg'></img> 
+            <img draggable=false id='down' style="height: 14vh; width: 14vw; opacity:0.7" src='../../images/downbutton.svg'></img> 
         </div>
     </div>`
 
@@ -175,8 +176,8 @@ export function tapButtonCreator(){
             display: flex;
             flex-direction: row;
             justify-content: start;">
-            <img id='left' style="height: 30vh; opacity:0.7; display:none" src='../../images/steerLeft.png'></img>
-            <img id='right' style="height: 30vh; opacity:0.7;display:none" src='../../images/steerRight.png'></img>
+            <img draggable=false id='left' style="height: 30vh; opacity:0.7; display:none" src='../../images/steerLeft.png'></img>
+            <img draggable=false id='right' style="height: 30vh; opacity:0.7;display:none" src='../../images/steerRight.png'></img>
         </div>
         <div style="position: absolute;
             bottom: 5vh;
@@ -186,8 +187,8 @@ export function tapButtonCreator(){
             height: 30vh;
             display: flex;
             flex-direction: row-reverse;">
-            <img id='up' style="height: 30vh; opacity:0.9" src='../../images/accel.svg'></img>
-            <img id='down' style="height: 15vh; width: 14vw; margin-top: 15vh; opacity:0.9" src='../../images/brake.svg'></img> 
+            <img draggable=false id='up' style="height: 30vh; opacity:0.9" src='../../images/accel.svg'></img>
+            <img draggable=false id='down' style="height: 15vh; width: 14vw; margin-top: 15vh; opacity:0.9" src='../../images/brake.svg'></img> 
         </div>
     </div>`
 
@@ -198,10 +199,10 @@ export function viewZoneCreator(){
     var div =
     `<div id='view' style='position: absolute; z-index:10;bottom: 40vh; left: 4vh; width: 30vw; height: 20vh; text-align: center'>
         <div style='margin-top: 5vh'>
-            <img style='height: 10vh; width: 20vw; text-align:center;' src='../images/viewzone.svg'></img>
+            <img draggable=false style='height: 10vh; width: 20vw; text-align:center;' src='../images/viewzone.svg'></img>
         </div>
         <div id='look-eye' style='position:relative; left: 0vh;bottom: 8vh;'>
-            <img style='height: 5vh; width: 5vw' src='../images/look.svg'></img>
+            <img draggable=false style='height: 5vh; width: 5vw' src='../images/look.svg'></img>
         </div>
     </div>`
     return div;
@@ -212,10 +213,10 @@ export function wheelCreator(){
     `<div id='wheelzone' style='position: absolute; z-index: 10;bottom: 2vh; left: 0; height:40vh; width: 35vw; text-align: center;'>
         <div id='wheel' style='margin-top: 6vh'>
             <div>
-                <img id=wheelimg src='../images/steerwheel2.svg' style='margin-left: auto; height: 33vh; width: 20vw; filter: none'></img>
+                <img draggable=false id=wheelimg src='../images/steerwheel2.svg' style='margin-left: auto; height: 33vh; width: 20vw; filter: none'></img>
             </div>
             <div style='position: absolute; bottom: 24%; left: 32%'>
-                <img id='center' src='../images/center.svg' style='height: 13vh; width: 13vw'></img>
+                <img draggable=false id='center' src='../images/center.svg' style='height: 13vh; width: 13vw'></img>
             </div>
         </div>
     </div>`

@@ -14,15 +14,16 @@ import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/ge
 import { gpsCheck } from '../gps/plan'
 import { vectorIntesection } from '../maths/geometry'
 
-let rightJoystick = null;
-let sideTilt = 0;
-let sideSensi = 50;
-var steer = 0;
-var steerWheel = document.getElementById('wheel');
-var angle = 0;
-var accel = 0;
-var orientation = e_ori.RIGHT;
-var currentLook;
+let rightJoystick = null
+let sideTilt = 0
+let sideSensi = 50
+let steer = 0
+let steerWheel = document.getElementById('wheel')
+let angle = 0
+let accel = 0
+let orientation = e_ori.RIGHT
+let currentLook
+let mouseAction = 'idle'
 const unselectedOpacity = 0.9
 
 //mustang
@@ -238,7 +239,6 @@ var nextJuction = null;
 var oldjunct;
 var approach;
 var currentRot = 0;
-var angle = 0;
 var isTurning = false;
 var speeding = false;
 var breaking = false;
@@ -259,8 +259,8 @@ var fakeAcceleration = 0
 const fakeAccelerationStep = 0.005
 const fakeAccelerationMax = 0.08
 var fakeYaw = 0
-const fakeYawStep = 0.005
-const fakeYawMax = 0.2
+const fakeYawStep = 0.001
+const fakeYawMax = 0.05
 
 //CURRENT LOOP HERE
 
@@ -278,9 +278,9 @@ function mustangLoopTap (car, scene, gps) {
     if(builtNodes == null || builtNodes.length == 0) { return }
     nodes = builtNodes
 
-    const {target , normalProjection, nodes: newNodes, slice } = driverGetSmootherTarget(car.position, prevTarget, nodes, 7 + 3 * speed)
+    const {target , normalProjection, nodes: newNodes, slice } = driverGetSmootherTarget(car.position, prevTarget, nodes, 4 + 6 * speed)
     prevTarget = target
-    if(slice && selectionIndex === 0) { resetWheel(); }
+    if(slice && selectionIndex === 0) { resetWheel() }
     nodes = newNodes // FIXME   
 
     if(startupDone == false && nodes != null) {
@@ -685,95 +685,134 @@ function resetWheel(){
     var eventsIn = ['touchmove', 'touchstart', 'mousedown']
     var eventsOut = ['touchend', 'mouseup', 'mouseleave']
 
+    const acceleratorPedal = () => {
+        nextdir.up = true
+        up.style.opacity = 1
+        up.style.transform = 'rotateX(45deg)'
+    }
 
-    eventsIn.forEach(ev => {
-        up.addEventListener(ev, function(e){
-            nextdir.up = true
-            up.style.opacity = 1
-           up.style.transform = 'rotateX(45deg)'
-        })
+    const acceleratorPedalEnd = () => {
+        nextdir.up = false
+        up.style.opacity = unselectedOpacity
+        up.style.transform = 'rotateX(0deg)'
+    }
 
-        down.addEventListener(ev, function(e){
-            if (speed > 0)
+    const brakePedal = () => {
+        if (speed > 0) {
             nextdir.down = true
             down.style.opacity = 1
             down.style.transform = 'rotateX(30deg)'
-            
-        })
-
-
-        touchZone.addEventListener(ev, function(e){
-            if (inter)
-                clearInterval(inter);
-            var pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
-            if (e.targetTouches)
-                currentLook = e.targetTouches[0].clientX - pos > 300 ? 300 : (e.targetTouches[0].clientX - pos < -300 ? -300 : e.targetTouches[0].clientX - pos) ;
-            scene.activeCamera.lockedTarget.x = currentLook;
-            var eyePos = parseInt(eye.style.left) + currentLook/300;
-            eye.style.left = `${eyePos > 0.9 ? 0.9 : eyePos < -0.9 ? -0.9 : eyePos}vw`
-        })
-
-    })
-
-    eventsOut.forEach(ev => {
-        up.addEventListener(ev, function(e){
-            nextdir.up = false
-            up.style.opacity = unselectedOpacity
-            up.style.transform = 'rotateX(0deg)'
-        })
-
-        down.addEventListener(ev, function(e){
-            nextdir.down = false
-            down.style.opacity = unselectedOpacity
-            down.style.transform = 'rotateX(0deg)'
-        })
-
-        touchZone.addEventListener(ev, function(e){
-            inter = setInterval( () =>  {
-                scene.activeCamera.lockedTarget.x = currentLook;
-                if (-3 < currentLook && currentLook < 3) {
-                    scene.activeCamera.lockedTarget.x = 0;
-                    clearInterval(inter);
-                    eye.style.left = `0vw`
-                } else if (currentLook > 0)
-                    currentLook -= 3;
-                else
-                    currentLook +=3;
-                eye.style.left = `${parseInt(eye.style.left) + currentLook/300}vw`
-            }, 3)
-        })
-    })
-
-    /* up.addEventListener('click', function(){
-        if (!isTurning) {
-            speeding = true;
-            nextdir.down = false;
-            down.style.opacity = unselectedOpacity;
-            nextdir.up = !nextdir.up;
-            up.style.opacity = (up.style.opacity == 1 ? 0.7 : 1);
         }
-    }) */
-    
-    //currentLook = e.targetTouches[0].clientX - pos > 300 ? 300 : (e.targetTouches[0].clientX - pos < -300 ? -300 : e.targetTouches[0].clientX - pos) ;
+    }
 
-    wheelzone.addEventListener('touchmove', function(e){
-        touch = (e.targetTouches[0].clientX - (touchZone.offsetLeft + touchZone.offsetWidth / 2))/2;
-        touch = touch > 45 ? 50 : touch < -45 ? -50 : touch;
+    const brakePedalEnd = () => {
+        nextdir.down = false
+        down.style.opacity = unselectedOpacity
+        down.style.transform = 'rotateX(0deg)'
+    }
+
+    const viewCheck = (x) => {
+        if (inter) { clearInterval(inter) }
+                
+        const pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
+
+        currentLook = x - pos > 300
+                ? 300
+                : (x - pos < -300 ? -300 : x - pos)
+        scene.activeCamera.lockedTarget.x = currentLook
+        var eyePos = parseInt(eye.style.left) + currentLook/300
+        eye.style.left = `${eyePos > 0.9 ? 0.9 : eyePos < -0.9 ? -0.9 : eyePos}vw`
+    }
+
+    const viewCheckEnd = () =>  {
+        inter = setInterval( () =>  {
+            scene.activeCamera.lockedTarget.x = currentLook
+            if (-16 < currentLook && currentLook < 16) {
+                scene.activeCamera.lockedTarget.x = 0;
+                clearInterval(inter);
+                eye.style.left = `0vw`
+            } else if (currentLook > 0) {
+                currentLook -= 16
+            } else {
+                currentLook += 16
+            }
+            eye.style.left = `${parseInt(eye.style.left) + currentLook/300}vw`
+        }, 16)
+    }
+
+    const wheelMove = (x) => {
+        touch = x - (touchZone.offsetLeft + touchZone.offsetWidth / 2) / 2
+        touch = touch > 45 ? 50 : touch < -45 ? -50 : touch
         wheel.style.transform = `rotateZ(${touch}deg)`
-    })
+    }
 
-    wheelzone.addEventListener('touchend', function(e){
+    const wheelMoveEnd = () => {
         touch = touch > 45 ? 50 : touch < -45 ? -50 : 0;
         nextdir.right = touch === 50 ? true : false;
         nextdir.left = touch === -50 ? true : false;
         center.src = nextdir.right || nextdir.left ? '../../images/cross.svg' :  '../../images/center.svg';
-       // wheel.src = nextdir.right || nextdir.left ? '../../images/wheelselect.svg' :  '../../images/steerwheel2.svg';
         wheel.style.transform = `rotateZ(${touch}deg)`
+    }
+
+    window.addEventListener('mouseup', e => {
+        switch(mouseAction) {
+            case 'accelerator':
+                acceleratorPedalEnd()
+                break
+            case 'brake':
+                brakePedalEnd()
+                break
+            case 'view':
+                viewCheckEnd()
+                break
+            case 'wheel':
+                wheelMoveEnd()
+                break
+        }
+        mouseAction = 'idle'
     })
 
-    center.addEventListener('touchstart', function(e){
-      resetWheel();
+    up.addEventListener('touchmove', () => acceleratorPedal())
+    up.addEventListener('touchstart', () => acceleratorPedal())
+    up.addEventListener('mousedown', () => {
+        mouseAction = 'accelerator'
+        acceleratorPedal() 
     })
+
+    down.addEventListener('touchmove', () => brakePedal())
+    down.addEventListener('touchstart', () => brakePedal())
+    down.addEventListener('mousedown', () => { 
+        mouseAction = 'brake'
+        brakePedal()
+    })
+
+    touchZone.addEventListener('touchmove', (e) => viewCheck(e.targetTouches[0].clientX))
+    touchZone.addEventListener('touchstart', (e) => viewCheck(e.targetTouches[0].clientX))
+    touchZone.addEventListener('mousedown', (e) => {
+        mouseAction = 'view'
+        viewCheck(e.clientX)
+    })
+    touchZone.addEventListener('mousemove', (e) => {
+        if(mouseAction === 'view') { viewCheck(e.clientX) }
+    })
+
+    up.addEventListener('touchend', () => acceleratorPedalEnd())
+
+    down.addEventListener('touchend', () => brakePedalEnd())
+
+    touchZone.addEventListener('touchend', () => viewCheckEnd())
+
+    wheelzone.addEventListener('touchmove', e => wheelMove(e.targetTouches[0].clientX))
+    wheelzone.addEventListener('mousedown', e => { 
+        mouseAction = 'wheel'
+        wheelMove(e.clientX / 2)
+    })
+    wheelzone.addEventListener('mousemove', e => { if(mouseAction === 'wheel') { wheelMove(e.clientX / 2) } })
+
+    wheelzone.addEventListener('touchend', () => wheelMoveEnd())
+
+    center.addEventListener('touchstart', () => resetWheel())
+    center.addEventListener('click', () => resetWheel())
 
     {
         /* old 
