@@ -1,13 +1,14 @@
-import { getSegmentGetClosest } from '../../geofind/geosegment'
+import { getSegmentGetClosest, geoSegmentGetProjection } from '../../geofind/geosegment'
 import { Vector3 } from '@babylonjs/core/Maths/math.vector'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { scene as globalScene } from '../../index'
+import { vectorIntersection } from '../../maths/geometry'
 
-let nodes = []
+// let nodes = []
 
 const pathLength = 300
 
-export const driverPathBuild = (position, segment, junctionSelection) => {
+export const driverPathBuild = (position, nodes, junctionSelection) => {
     if(position == null) { 
         nodes = []
         return []
@@ -16,10 +17,10 @@ export const driverPathBuild = (position, segment, junctionSelection) => {
     let prevNode = null
     let node = null
 
-    if(segment == null) {
+    if(nodes == null) {
         const closest = getSegmentGetClosest(position)
         if(closest != null) {
-            segment = closest.segment.nodes
+            const segment = closest.segment.nodes
             prevNode = segment[0].upwise ? segment[0] : segment[1]
             node = segment[0].upwise ? segment[1] : segment[0]
         } else {
@@ -42,6 +43,9 @@ export const driverPathBuild = (position, segment, junctionSelection) => {
 
     nodes = [prevNode, node]
 
+    let index = 0
+    let selectionIndex = -1
+
     while(d < pathLength && node != null) {
         d += node.point.subtract(prevNode.point).length()   
 
@@ -60,12 +64,14 @@ export const driverPathBuild = (position, segment, junctionSelection) => {
                         if(angle > 1) { 
                             selectedNode = n 
                             selectionDone = true
+                            selectionIndex = index
                         }
                         break
                     case 'R':
                         if(angle < -1) { 
                             selectedNode = n 
                             selectionDone = true
+                            selectionIndex = index
                         }
                         break
                 }
@@ -76,8 +82,7 @@ export const driverPathBuild = (position, segment, junctionSelection) => {
                 }
             }
             // console.log(dir, newDir, selectionDone, angle)
-        })
-
+        })  
         
         if(selectedNode != null && 
             !(selectedNode.roadIndex === nodes[0].roadIndex 
@@ -89,14 +94,15 @@ export const driverPathBuild = (position, segment, junctionSelection) => {
         } else {
             node = null
         }
+        index++
     }
 
 
     // console.log(position)
-    // console.log(nodes)
     driverPathDisplay(nodes)
     if(d < 30) { return([]) }
-    return driverPathSwitch(position)
+    // return driverPathSwitch(position)
+    return { nodes, selectionIndex }
 }
 
 const boxes = []
@@ -162,4 +168,59 @@ export const driverPathSwitch = (position) => {
     } 
 
     return nodes
+}
+
+let targetVisu = null
+let projVisu = null
+
+const createtargetVisu = () => {
+    targetVisu = MeshBuilder.CreateBox("box", {size: 1}, globalScene)
+    projVisu = MeshBuilder.CreateBox("box", {size: 2}, globalScene)
+}
+
+export const driverGetSmootherTarget = (point, prevTarget, nodes, distance) => {
+    // if(targetVisu == null) createtargetVisu()
+    let slice = false
+    if(nodes == null || nodes.length < 2) { return { target: point, normalProjection: point, nodes, slice } }
+
+    // let p = geoSegmentGetProjection(point, nodes[0].point, nodes[1].point)
+    const to = prevTarget.subtract(point).normalize()
+    const angle = Math.atan2(to.z, to.x)
+    const norm = new Vector3(10 * Math.cos(angle + Math.PI * 0.5), 0 , 10 * Math.sin(angle + Math.PI * 0.5))
+    let p = vectorIntersection(
+        point.add(norm.normalize().scale(100)),
+        point.add(norm.normalize().scale(-100)),
+        nodes[0].point,
+        nodes[1].point)
+
+    if(p == null) {
+        p = point
+    }
+
+    const normalProjection = p
+    let d = distance
+    let ni = 1
+    let target = null
+    
+    while(ni < nodes.length && target == null) {
+        const ssize = p.subtract(nodes[ni].point).length()
+        if(d < ssize) {
+            target = p.add(nodes[ni].point.subtract(p).normalize().scale(d))
+        } else {
+            d -= ssize
+        }
+        p = nodes[ni].point
+        ni++
+    }
+    if(target == null) { target = p }
+
+    // targetVisu.position = target
+    // projVisu.position = normalProjection
+
+    if (normalProjection.subtract(nodes[1].point).length() < switchDistance) {
+        slice = true
+        nodes = nodes.slice(1)
+    } 
+
+    return { nodes, target, normalProjection, slice }
 }
