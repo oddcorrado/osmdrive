@@ -8,15 +8,14 @@ export default function createButtons (scene){
     var wheel = buttonDriveCreator('z-index: 0;bottom: 4vh; left: -4vw; height:33vh; width: 33vw;display: none;', {style: 'height: 33vh; width: 33vw; ', id: 'wheel', img: '../images/steerwheel2.svg'})
     //var dashboard = buttonDriveCreator('z-index: 0; bottom: 0vh; right: 35vw; height: 25vh; width: 29vw;', {style: 'height: 25vh; width: 29vw;', id: 'dash', img: '../images/dashboard2.png'});
     var rev = buttonDriveCreator('z-index: 10;bottom: 0.5rem; right: 0.5rem; height:2rem; opacity: 0.7;', {style: 'height: 2rem;', id: 'rev', img: '../images/reverse.png'});
-    var touchZone = divCreator('z-index: 10; opacity: 0.7; background:  no-repeat center/100% url(\'../images/arrows.svg\');z-index: 5; bottom: 40vh; left: 2vw; height: 16vh; width: 19vw; display: block;', {id: 'touchzone', text:''});
-    //document.body.insertAdjacentHTML('afterbegin', viewZoneCreator());
-    //document.body.insertAdjacentHTML('afterbegin', wheelCreator());
+    document.body.insertAdjacentHTML('afterbegin', viewZoneCreator());
+    document.body.insertAdjacentHTML('afterbegin', wheelCreator());
     document.body.insertAdjacentHTML('afterbegin', tapButtonCreator());
     document.body.insertAdjacentHTML('afterbegin', dashboardCreator());
     var speedDiv = document.getElementById('speeddiv');
 
     //var wheelZone = divCreator('opacity: 0.7; z-index: 15; top: 55vh; right: 75.5vw; height: 44vh; width: 24vw; display: block;', {id: 'wheelzone', text:''})
-    var btnDivArray = [accel, brake, wheel, dashboard, touchZone];
+    var btnDivArray = [accel, brake, wheel, dashboard];
 
     btnDivArray.forEach(btn => {
         document.body.appendChild(btn);

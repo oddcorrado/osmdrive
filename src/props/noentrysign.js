@@ -28,7 +28,7 @@ async function createAction(scene, trig, container){
                },
             },
             function(){
-               score.newScore('NO_TURN', -100);
+               score.newScore('NO_ENTRY', -100);
             })
       )
    })

@@ -82,8 +82,8 @@ const boot = () => {
         scene.render()
          if (switchcar === 'old' /*&& (clio = container['meshes'].find(mesh => mesh.name == 'clio'))  
             && (steer = container['meshes'].find(mesh => mesh.name == 'sjoints'))
-            && (motor = container['meshes'].find(mesh => mesh.name == 'joints'))*/
-            && (gps = container['meshes'].find(mesh => mesh.name == 'arrow'))
+            && (motor = container['meshes'].find(mesh => mesh.name == 'joints'))
+            && (gps = container['meshes'].find(mesh => mesh.name == 'arrow'))*/
             && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar'))) { 
                 switchcar = 'new';
                 score.setupScore(mustang);

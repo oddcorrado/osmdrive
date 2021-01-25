@@ -28,17 +28,17 @@ function changeColorAndText(divs, text = ['Enable', 'Disable'], colors = ['red',
 function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     // var test = divCreator('top:0; left: 0;height: 100vh; width: 50vw; border: solid 2px black', {id: 'test', text:'middle debug'})
     //  document.body.appendChild(test);// debug middle
-    var btnCam = buttonCreator('top:2vh; right: 0;background-color: black; display: none',{text: 'FreeCamera Switch (C)'});
-    var btnMenu = buttonCreator('top: 2vh; right: 0; background-color:black; display: block',{text: 'Debug Menu'});
-    var btnSwCam = buttonCreator('top: 6vh; right: 0;background-color: black; display: none',{text: 'Camera Switch'});
-    var btnJ = buttonCreator('top: 10vh; right: 0;background-color:green; display: none',{text: 'Disable Joysticks'});
-    var btnBots = buttonCreator('top: 14vh; right: 0;background-color:red; display: none',{text: 'Enable Bots'});
-    var btnGrids = buttonCreator('top: 18vh; right: 0;background-color:red; display: none',{text: 'Enable Grids'});
-    var btnEsp = buttonCreator('top: 22vh; right: 0;background-color:green; display: none',{text: 'Disable ESP'});
-    var btnCamOri = buttonCreator('top: 26vh; right: 0;background-color:red; display: none',{text: 'Enable Orientation Pos'});
-    var btnTrees = buttonCreator('top: 30vh; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
-    var btnBar = buttonCreator('top: 34vh; right: 0;background-color:black; display: none',{text: 'Hide TopBar'});
-    var btnWays = buttonCreator('top: 38vh; right: 0;background-color:black; display: none',{text: 'Show Ways'});
+    var btnMenu = buttonCreator('top: 10vh; right: 0; background-color:black; display: block',{text: 'Debug Menu'});
+    var btnCam = buttonCreator('top:10vh; right: 0;background-color: black; display: none',{text: 'FreeCamera Switch (C)'});
+    var btnSwCam = buttonCreator('top: 16vh; right: 0;background-color: black; display: none',{text: 'Camera Switch'});
+    var btnJ = buttonCreator('top: 20vh; right: 0;background-color:green; display: none',{text: 'Disable Joysticks'});
+    var btnBots = buttonCreator('top: 24vh; right: 0;background-color:red; display: none',{text: 'Enable Bots'});
+    var btnGrids = buttonCreator('top: 28vh; right: 0;background-color:red; display: none',{text: 'Enable Grids'});
+    var btnEsp = buttonCreator('top: 32vh; right: 0;background-color:green; display: none',{text: 'Disable ESP'});
+    var btnCamOri = buttonCreator('top: 36vh; right: 0;background-color:red; display: none',{text: 'Enable Orientation Pos'});
+    var btnTrees = buttonCreator('top: 40vh; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
+    var btnBar = buttonCreator('top: 44vh; right: 0;background-color:black; display: none',{text: 'Hide TopBar'});
+    var btnWays = buttonCreator('top: 48vh; right: 0;background-color:black; display: none',{text: 'Show Ways'});
 
     var accelWitness = accelerationWitness();
     var camFresh = divCreator('top: 0; right: 0; height: 1rem;font-size:0.7rem; display: none', {text: '', id:'position'});
@@ -74,14 +74,14 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
                 btn.style.display = 'block';
             })
             btnMenu.innerText = 'Hide Menu';
-            btnMenu.style.top = '45vh';
+            btnMenu.style.top = '52vh';
         } else {
             btnDivArrayMenu.forEach(btn => {
             if (btn != btnMenu)
                     btn.style.display = 'none';
             })
             btnMenu.innerText = 'Debug Menu';
-            btnMenu.style.top = '2vh';
+            btnMenu.style.top = '10vh';
         }
     }
 
@@ -174,28 +174,28 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 }
 
 function setControlMenu(scene){
-    var btnMenuControls = buttonCreator('top: 9vh; white-space: nowrap; left: 0; background-color:black; display: block;',{text: 'Control Settings'});
+    //var btnMenuControls = buttonCreator('top: 15vh; white-space: nowrap; left: 0; background-color:black; display: block;',{text: 'Control Settings'});
     var controlMenu = ['controlmode', 'lk', 'dir', 'spd'];
     var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam', 'sound', 'controlmode', 'carselector'];//controlmode out if different modes are reinstantiated
     var wasOpen = false;
 
-    document.body.appendChild(btnMenuControls);
+    //document.body.appendChild(btnMenuControls);
     
     //Default
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 10vw; line-height: 7vh; height: 7vh;border: solid #43c7f7 3px; background-color: #43c7f7; top: 10vh; left: 0; ;display:none;', id: 'controlmode'}, {src: '../../images/mode.svg', style: ';margin-left: 0.1rem; margin-bottom: 0.4vh; height: 6vh; width: 4vw;'}, {src: '../../images/mode2.svg', style:'margin-left: 10vw; opacity: 1; margin-top: 1vh; margin-left:1vw; height: 6vh; width: 4vw;'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 10vw; line-height: 7vh; height: 7vh;border: solid #fc6d62 3px; background-color: #fc6d62; top: 10vh; left: 11vw; ;display:none;', id: 'carselector'}, {src: '../../images/carselector.svg', style: ';margin-left: 0.1rem; margin-bottom: 0.4vh; height: 6vh; width: 4vw;'}, {src: '../../images/ford.svg', style:'margin-left: 10vw; opacity: 1; margin-top: 1vh; margin-left:1vw; height: 6vh; width: 4vw;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 10vw; line-height: 7vh; height: 7vh;border: solid #43c7f7 3px; background-color: #43c7f7; top: 16vh; left: 0; ;display:none;', id: 'controlmode'}, {src: '../../images/mode.svg', style: ';margin-left: 0.1rem; margin-bottom: 0.4vh; height: 6vh; width: 4vw;'}, {src: '../../images/mode2.svg', style:'margin-left: 10vw; opacity: 1; margin-top: 1vh; margin-left:1vw; height: 6vh; width: 4vw;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 10vw; line-height: 7vh; height: 7vh;border: solid #fc6d62 3px; background-color: #fc6d62; top: 16vh; left: 11vw; ;display:none;', id: 'carselector'}, {src: '../../images/carselector.svg', style: ';margin-left: 0.1rem; margin-bottom: 0.4vh; height: 6vh; width: 4vw;'}, {src: '../../images/ford.svg', style:'margin-left: 10vw; opacity: 1; margin-top: 1vh; margin-left:1vw; height: 6vh; width: 4vw;'}));
     //Buttons Advanced Control Menu
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #43c7f7 3px; background-color: #43c7f7; top: 33vh; left: 0; ;display:none;', id: 'lk'}, {src: '../../images/eye.svg', style: 'margin-left: 0.1rem; height: 2rem; width: 2rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem;width: 1.8rem;'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem; border: solid #7aed6b 3px; background-color: #7aed6b; top: 35vh; left: 0 ;display:none;', id: 'dir'}, {src: '../../images/steer.svg', style: 'margin-left: 0.1rem; opacity: 1,;margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #f5f05f 3px; background-color: #f5f05f; top: 39vh; left: 0 ;display:none;', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-left: 0.1rem;  height: 1.9rem; width: 1.9rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-left:0.3rem; height: 1.8rem; width: 1.8rem;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #43c7f7 3px; background-color: #43c7f7; top: 39vh; left: 0; ;display:none;', id: 'lk'}, {src: '../../images/eye.svg', style: 'margin-left: 0.1rem; height: 2rem; width: 2rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; margin-left:0.3rem; height: 1.8rem;width: 1.8rem;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem; border: solid #7aed6b 3px; background-color: #7aed6b; top: 41vh; left: 0 ;display:none;', id: 'dir'}, {src: '../../images/steer.svg', style: 'margin-left: 0.1rem; opacity: 1,;margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-bottom: 0.1rem; height: 1.8rem; width: 1.8rem;'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'width: 5rem; height: 1.7rem;border: solid #f5f05f 3px; background-color: #f5f05f; top: 45vh; left: 0 ;display:none;', id: 'spd'}, {src: '../../images/slide.svg',style: 'margin-left: 0.1rem;  height: 1.9rem; width: 1.9rem;'}, {src: '../../images/tilt.svg', style:'margin-left: 0.4rem; opacity: 1; margin-left:0.3rem; height: 1.8rem; width: 1.8rem;'}));
     //Buttons Sensitivity Menu
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 35.5vh; left: 0.2vw; height: 9vh; width: 8vw; display:none;', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 32.5vh; left: 7.5vw; height: 6vh; width: 5vw ;display:none;', id: 'setori'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 32.25vh; left: 11.75vw; height: 6vh; width: 5vw ;display:none;', id: 'setcam'}, {src: '',style: ''}, {src: '../../images/cam.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 32vh; left: 16vw; height: 6vh; width: 6vw; display:none;', id: 'sound'}, {src: '',style: ''}, {src: '../../images/nosound.svg', style:'opacity: 1; height: 6.5vh; width: 6.5vw'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 40.5vh; left: 0.2vw; height: 9vh; width: 8vw; display:none;', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 37.5vh; left: 7.5vw; height: 6vh; width: 5vw ;display:none;', id: 'setori'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 37.25vh; left: 11.75vw; height: 6vh; width: 5vw ;display:none;', id: 'setcam'}, {src: '',style: ''}, {src: '../../images/cam.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 35vh; left: 16vw; height: 6vh; width: 6vw; display:none;', id: 'sound'}, {src: '',style: ''}, {src: '../../images/nosound.svg', style:'opacity: 1; height: 6.5vh; width: 6.5vw'}));
 
-    document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 20vh; display:none;', mainid:'front', id: 'frontsensi', idminus:'frontdec', idplus:'frontinc'}, {style:'height: 6vh; width: 6wv;margin-top: 1%;', src:'../../images/frontsensi.svg'}));
-    document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 27vh; display:none;', mainid: 'side', id: 'sidesensi', idminus:'sidedec', idplus:'sideinc'}, {style:'height: 6vh; width: 3vw; margin-top: 1%;', src:'../../images/sidesensi.svg'}));
+    document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 25vh; display:none;', mainid:'front', id: 'frontsensi', idminus:'frontdec', idplus:'frontinc'}, {style:'height: 6vh; width: 6wv;margin-top: 1%;', src:'../../images/frontsensi.svg'}));
+    document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 32vh; display:none;', mainid: 'side', id: 'sidesensi', idminus:'sidedec', idplus:'sideinc'}, {style:'height: 6vh; width: 3vw; margin-top: 1%;', src:'../../images/sidesensi.svg'}));
     
 
     controlMenu.forEach(id => {
@@ -205,33 +205,33 @@ function setControlMenu(scene){
         controlTab[type.SENSI].push(document.getElementById(id));
     })
     
-    btnMenuControls.onclick = () => {
-        if (btnMenuControls.innerText === 'Control Settings') {
-            controlTab[type.SENSI].forEach((btn) => {
-                btn.style.display = 'block';
-            })
-            controlTab[type.MODE].forEach((btn) => {
-                if (wasOpen === false && btn != controlmode)
-                    wasOpen = btn.style.display === 'block' ? true : false;
-                if (btn != controlmode)
-                    btn.style.display = 'none';
-            })
-            btnMenuControls.innerText = 'Hide';
-            btnMenuControls.style.top = '45vh';
-            btnMenuControls.style.zIndex = '15';
-        } else {
-            controlTab[type.SENSI].forEach((btn) => {
-                btn.style.display = 'none';
-            })
-            if (wasOpen === true){
-                controlTab[type.MODE].forEach((btn) => {
-                    btn.style.display = 'block';
-                })
-            }
-            btnMenuControls.innerText = 'Control Settings';
-            btnMenuControls.style.top = '9vh';
-        }
-    }
+    // btnMenuControls.onclick = () => {
+    //     if (btnMenuControls.innerText === 'Control Settings') {
+    //         controlTab[type.SENSI].forEach((btn) => {
+    //             btn.style.display = 'block';
+    //         })
+    //         controlTab[type.MODE].forEach((btn) => {
+    //             if (wasOpen === false && btn != controlmode)
+    //                 wasOpen = btn.style.display === 'block' ? true : false;
+    //             if (btn != controlmode)
+    //                 btn.style.display = 'none';
+    //         })
+    //         btnMenuControls.innerText = 'Hide';
+    //         btnMenuControls.style.top = '45vh';
+    //         btnMenuControls.style.zIndex = '15';
+    //     } else {
+    //         controlTab[type.SENSI].forEach((btn) => {
+    //             btn.style.display = 'none';
+    //         })
+    //         if (wasOpen === true){
+    //             controlTab[type.MODE].forEach((btn) => {
+    //                 btn.style.display = 'block';
+    //             })
+    //         }
+    //         btnMenuControls.innerText = 'Control Settings';
+    //         btnMenuControls.style.top = '9vh';
+    //     }
+    // }
    
     
     // spd.addEventListener('click', function(){

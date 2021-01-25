@@ -42,7 +42,7 @@ function checkJunctionGps(current, prev){
 }
 
 export function setupGps(scene, container){
-    createArrow(scene, container);
+    //createArrow(scene, container);
     arrow = document.getElementById('gps');
 }
 

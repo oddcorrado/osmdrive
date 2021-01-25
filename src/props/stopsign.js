@@ -27,7 +27,7 @@ async function createAction(scene, line, trig, container){
       }, 100, container)
    }).then((car) =>
       {
-      trig.actionManager.registerAction( 
+         trig.actionManager.registerAction( 
          new ExecuteCodeAction(
             {
                trigger: ActionManager.OnIntersectionEnterTrigger,

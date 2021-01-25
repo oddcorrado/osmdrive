@@ -261,6 +261,7 @@ var fakeYaw = 0
 const fakeYawStep = 0.005
 const fakeYawMax = 0.2
 //CURRENT LOOP HERE
+
 function mustangLoopTap (car, scene, gps) {
     //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
@@ -283,7 +284,6 @@ function mustangLoopTap (car, scene, gps) {
         car.position = currentSegment[0].point
         startupDone = true
     }  
-
     if (nextdir.up === true){
         speed = Math.min(2, speed + 0.002)
         fakeAcceleration = Math.max(-fakeAccelerationMax, fakeAcceleration - fakeAccelerationStep)
@@ -291,11 +291,11 @@ function mustangLoopTap (car, scene, gps) {
 
     if (nextdir.down === true) {
         speed = Math.max(0, speed - 0.004)
-        fakeAcceleration = Math.min(fakeAccelerationMax, fakeAcceleration + fakeAccelerationStep)
+        fakeAcceleration =  Math.min(fakeAccelerationMax, fakeAcceleration + fakeAccelerationStep);
     }
 
     if(nextdir.down === false && nextdir.up === false) {
-        fakeAcceleration *= 0.9
+        fakeAcceleration *= 0.8
     }
 
     if(speed > 0) {
@@ -313,7 +313,8 @@ function mustangLoopTap (car, scene, gps) {
             fakeYaw *= 0.95
         }
         if(Math.abs(angle - prevAngle) > 0.1) {
-            toggleButtons([nextdir.up, false, false, nextdir.down]);
+            //toggleButtons([nextdir.up, false, false, nextdir.down]);
+           resetWheel();
         } // FIXME
         gpsCheck(currentSegment, car, dir, gps, angle);
         prevAngle = angle
@@ -604,25 +605,26 @@ var up;
 var down;
 var left;
 var right;
+var wheel;
+var center;
+let touch;
 
 function toggleTurn(){
     setTimeout(() => {
         isTurning = false;
     }, 1000)
 }
-
+/*
 function toggleButtons(tab){
     if (tab[0] === true){
         nextdir.up = true;
-        up.style.opacity = 1;
+
     } else {
         nextdir.up = false;
-        up.style.opacity = unselectedOpacity;
     }
 
     if (tab[1] === true){
         nextdir.down = true;
-        down.style.opacity = 1;
     } else {
         nextdir.down = false;
         down.style.opacity = unselectedOpacity;
@@ -643,10 +645,15 @@ function toggleButtons(tab){
         nextdir.right = false;
         right.style.opacity = unselectedOpacity;
     }
+}*/
 
+function resetWheel(){
+    wheel.style.transform = 'rotateZ(0deg)';
+    touch = 0;
+    nextdir.left = false;
+    nextdir.right = false;
+    center.src = '../../images/center.svg';
 }
-
-
 
  function setupControls (scene){
     var interAccel;
@@ -656,8 +663,7 @@ function toggleButtons(tab){
     var lk  = document.getElementById('lk');
     var acc = document.getElementById('accelerator');
     var brake = document.getElementById('brake');
-    var touchZone = document.getElementById('touchzone');
-    var upLook = document.getElementById('uplook')
+    var touchZone = document.getElementById('view');
     var frontSensiDiv = document.getElementById('frontsensi');
     var sideSensiDiv = document.getElementById('sidesensi');
     var defmodes = document.getElementById('controlmode');
@@ -669,8 +675,73 @@ function toggleButtons(tab){
     down = document.getElementById('down');
     left = document.getElementById('left');
     right = document.getElementById('right');
-    let wheel = document.getElementById('wheel');
+    var wheeldiv = document.getElementById('wheel');
+    wheel = document.getElementById('wheelimg');
+    center = document.getElementById('center');
+    let wheelzone = document.getElementById('wheelzone');
+    let eye = document.getElementById('look-eye');
     var inter;
+    var eventsIn = ['touchmove', 'touchstart', 'mousedown']
+    var eventsOut = ['touchend', 'mouseup', 'mouseleave']
+
+
+    eventsIn.forEach(ev => {
+        up.addEventListener(ev, function(e){
+            nextdir.up = true
+            up.style.opacity = 1
+           up.style.transform = 'rotateX(45deg)'
+        })
+
+        down.addEventListener(ev, function(e){
+            if (speed > 0)
+            nextdir.down = true
+            down.style.opacity = 1
+            down.style.transform = 'rotateX(30deg)'
+            
+        })
+
+
+        touchZone.addEventListener(ev, function(e){
+            if (inter)
+                clearInterval(inter);
+            var pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
+            if (e.targetTouches)
+                currentLook = e.targetTouches[0].clientX - pos > 300 ? 300 : (e.targetTouches[0].clientX - pos < -300 ? -300 : e.targetTouches[0].clientX - pos) ;
+            scene.activeCamera.lockedTarget.x = currentLook;
+            var eyePos = parseInt(eye.style.left) + currentLook/300;
+            eye.style.left = `${eyePos > 0.9 ? 0.9 : eyePos < -0.9 ? -0.9 : eyePos}vw`
+        })
+
+    })
+
+    eventsOut.forEach(ev => {
+        up.addEventListener(ev, function(e){
+            nextdir.up = false
+            up.style.opacity = unselectedOpacity
+            up.style.transform = 'rotateX(0deg)'
+        })
+
+        down.addEventListener(ev, function(e){
+            nextdir.down = false
+            down.style.opacity = unselectedOpacity
+            down.style.transform = 'rotateX(0deg)'
+        })
+
+        touchZone.addEventListener(ev, function(e){
+            inter = setInterval( () =>  {
+                scene.activeCamera.lockedTarget.x = currentLook;
+                if (-3 < currentLook && currentLook < 3) {
+                    scene.activeCamera.lockedTarget.x = 0;
+                    clearInterval(inter);
+                    eye.style.left = `0vw`
+                } else if (currentLook > 0)
+                    currentLook -= 3;
+                else
+                    currentLook +=3;
+                eye.style.left = `${parseInt(eye.style.left) + currentLook/300}vw`
+            }, 3)
+        })
+    })
 
     /* up.addEventListener('click', function(){
         if (!isTurning) {
@@ -684,90 +755,36 @@ function toggleButtons(tab){
     
     //currentLook = e.targetTouches[0].clientX - pos > 300 ? 300 : (e.targetTouches[0].clientX - pos < -300 ? -300 : e.targetTouches[0].clientX - pos) ;
 
-
-    wheel.addEventListener('touchstart', function(e){
-        let touch = touchZone.offsetLeft + (touchZone.offsetWidth / 2);
-        
+    wheelzone.addEventListener('touchmove', function(e){
+        touch = (e.targetTouches[0].clientX - (touchZone.offsetLeft + touchZone.offsetWidth / 2))/2;
+        touch = touch > 45 ? 50 : touch < -45 ? -50 : touch;
+        wheel.style.transform = `rotateZ(${touch}deg)`
     })
-    //touchend
-    up.addEventListener('mousedown', function(){
-        nextdir.up = true
-        up.style.opacity = 1
-        up.style.transform = 'rotateX(45deg)'
-      //  up.style.background = "linear-gradient(179.97deg, #FFFFF -24.84%, #FFFFF 99.97%)"
-    })  
 
+    wheelzone.addEventListener('touchend', function(e){
+        touch = touch > 45 ? 50 : touch < -45 ? -50 : 0;
+        nextdir.right = touch === 50 ? true : false;
+        nextdir.left = touch === -50 ? true : false;
+        center.src = nextdir.right || nextdir.left ? '../../images/cross.svg' :  '../../images/center.svg';
+       // wheel.src = nextdir.right || nextdir.left ? '../../images/wheelselect.svg' :  '../../images/steerwheel2.svg';
+        wheel.style.transform = `rotateZ(${touch}deg)`
+    })
 
-    up.addEventListener('touchstart', function(){
-        nextdir.up = true
-        up.style.opacity = 1
-        up.style.transform = 'rotateX(45deg)'
-      //  up.style.background = "linear-gradient(179.97deg, #B48F0F -24.84%, #FFEC00 99.97%)"
+    center.addEventListener('touchstart', function(e){
+      resetWheel();
+    })
 
-    })  
-    up.addEventListener('mouseup', function(){
-        nextdir.up = false
-        up.style.opacity = unselectedOpacity
-        up.style.transform = 'rotateX(0deg)'
-    })  
-
-    up.addEventListener('mouseleave', function(){
-        nextdir.up = false
-        up.style.opacity = unselectedOpacity
-        up.style.transform = 'rotateX(0deg)'
-
-    })  
-
-
-    up.addEventListener('touchend', function(){
-        nextdir.up = false
-        up.style.opacity = unselectedOpacity
-        up.style.transform = 'rotateX(0deg)'
-    })  
-
-    down.addEventListener('mousedown', function(){
-        nextdir.down = true
-        down.style.opacity = 1
-        down.style.transform = 'rotateX(30deg)'
-        // down.style.borderStyle = 'solid';
-        // down.style.borderImage = 'linear-gradient(#f6b73c, #4d9f0c) 30';
-    })  
-
-    down.addEventListener('touchstart', function(){
-        nextdir.down = true
-        down.style.opacity = 1
-        down.style.transform = 'rotateX(30deg)'
-    })  
-
-    down.addEventListener('mouseup', function(){
-        nextdir.down = false
-        down.style.opacity = unselectedOpacity
-        down.style.transform = 'rotateX(0deg)'
-
-    })  
-
-    down.addEventListener('mouseleave', function(){
-        nextdir.down = false
-        down.style.opacity = unselectedOpacity
-        down.style.transform = 'rotateX(0deg)'
-
-    })  
-
-    down.addEventListener('touchend', function(){
-        nextdir.down = false
-        down.style.opacity = unselectedOpacity
-        down.style.transform = 'rotateX(0deg)'
-    })  
-
-    /* down.addEventListener('click', function(){
-        if (!isTurning) {
-            breaking = true;
-            nextdir.up = false;
-            up.style.opacity = unselectedOpacity;
-            nextdir.down = !nextdir.down;
-            down.style.opacity = (down.style.opacity == 1 ? unselectedOpacity : 1);
-        }
-    })   */ 
+    {
+        /* old 
+//    down.addEventListener('click', function(){
+//         if (!isTurning) {
+//             breaking = true;
+//             nextdir.up = false;
+//             up.style.opacity = unselectedOpacity;
+//             nextdir.down = !nextdir.down;
+//             down.style.opacity = (down.style.opacity == 1 ? unselectedOpacity : 1);
+//         }
+//     })   
 
     left.addEventListener('click', function(){
         if (!isTurning) {
@@ -786,6 +803,8 @@ function toggleButtons(tab){
             right.style.opacity = right.style.opacity == 1 ? unselectedOpacity : 1;  
         }
     })    
+*/
+    }
 
     soundtoggle.addEventListener('touchstart', function (){
         if (soundtoggle.children[1].src.includes('no'))
@@ -811,43 +830,6 @@ function toggleButtons(tab){
         }
     })
 
-    // upLook.addEventListener('touchstart' ,function(e){
-    //     scene.activeCamera.lockedTarget.y = 3;
-    // });
-
-    // upLook.addEventListener('touchend' ,function(e){
-    //     scene.activeCamera.lockedTarget.y = -7;
-    // });
-
-    touchZone.addEventListener('touchstart', function(e){
-        if (inter)
-            clearInterval(inter);
-        var pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
-        currentLook = e.targetTouches[0].clientX - pos > 300 ? 300 : (e.targetTouches[0].clientX - pos < -300 ? -300 : e.targetTouches[0].clientX - pos) ;
-        scene.activeCamera.lockedTarget.x = currentLook
-    })
-
-    touchZone.addEventListener('touchmove', function(e){
-        if (inter)
-            clearInterval(inter);
-        var pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
-        currentLook = e.targetTouches[0].clientX - pos > 300 ? 300 : (e.targetTouches[0].clientX - pos < -300 ? -300 : e.targetTouches[0].clientX - pos) ;
-        scene.activeCamera.lockedTarget.x = currentLook
-    })
-
-    touchZone.addEventListener('touchend', function(e){
-        inter = setInterval( () =>  {
-            scene.activeCamera.lockedTarget.x = currentLook;
-            if (-3 < currentLook && currentLook < 3) {
-                scene.activeCamera.lockedTarget.x = 0;
-                clearInterval(inter);
-            } else if (currentLook > 0)
-                currentLook -= 3;
-            else
-                currentLook +=3;
-        }, 3)
-    })
-    
     document.getElementById('ori').addEventListener('touchstart', function(){
 
         orientation = (orientation == e_ori.LEFT ? e_ori.RIGHT : e_ori.LEFT);
@@ -998,6 +980,7 @@ function toggleButtons(tab){
     
     acc.addEventListener('touchstart', function(){
         acc.style.transform = 'rotate3d(1, 0, 0, 45deg)';
+        console.log('going');
         clearInterval(interAccel);
         if (accel > 0.03)
             btnAccel = 0.5;

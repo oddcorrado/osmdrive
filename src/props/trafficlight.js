@@ -30,9 +30,9 @@ async function createAction(scene, line, container){
             },
              function(){
                if (status === 'red') 
-                  score.newScore('SIGNALING_RED_LIGHT', -100);
+                  score.newScore('TRAFFIC_LIGHT_BAD', -100);
                if (status === 'green' || status === 'orange')
-                  score.newScore('SIGNALING_RED_LIGHT', 50);
+                  score.newScore('TRAFFIC_LIGHT_GOOD', 50);
             })
       )
    })

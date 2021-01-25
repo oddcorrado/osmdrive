@@ -111,11 +111,11 @@ export function accelerationWitness(){
 }
 
 export function scoreDivCreator(){
-   var div = ` <div style='display: block; height: 10vh; position: absolute; top: 1vh; left: 1vw; width: 20vw; color: #56CCF2; font-size: 7vh;'>
-        <div style='float: left'>
-            <img style='height: 7vh' src='../../images/car.svg'></img>
+   var div = ` <div style='display: block; height: 12vh;  font-family: "Asap Condensed", sans serif; font-size: 6vh; border-bottom-left-radius: 6vh;position: absolute; top: 0; right: 0; width: 15vw; background-color: #262626; color: white;'>
+        <div style='float: left; margin-left: 2vw; margin-top: 2vh'>
+            <img style='height: 4.5vh' src='../../images/star.svg'></img>
         </div>
-        <div id='score' style='float: left; margin-left: 1vw; height: 100%; padding-bottom: 3vh'>
+        <div id='score' style='float: left; margin-left: 2vw; margin-top: 1.8vh; height: 100%; padding-bottom: 3vh'>
             0
         </div>
     </div>`
@@ -175,8 +175,8 @@ export function tapButtonCreator(){
             display: flex;
             flex-direction: row;
             justify-content: start;">
-            <img id='left' style="height: 30vh; opacity:0.7; display:inline" src='../../images/steerLeft.png'></img>
-            <img id='right' style="height: 30vh; opacity:0.7;display:inline" src='../../images/steerRight.png'></img>
+            <img id='left' style="height: 30vh; opacity:0.7; display:none" src='../../images/steerLeft.png'></img>
+            <img id='right' style="height: 30vh; opacity:0.7;display:none" src='../../images/steerRight.png'></img>
         </div>
         <div style="position: absolute;
             bottom: 5vh;
@@ -194,19 +194,30 @@ export function tapButtonCreator(){
     return div;
 }
 
+export function viewZoneCreator(){
+    var div =
+    `<div id='view' style='position: absolute; z-index:10;bottom: 40vh; left: 4vh; width: 30vw; height: 20vh; text-align: center'>
+        <div style='margin-top: 5vh'>
+            <img style='height: 10vh; width: 20vw; text-align:center;' src='../images/viewzone.svg'></img>
+        </div>
+        <div id='look-eye' style='position:relative; left: 0vh;bottom: 8vh;'>
+            <img style='height: 5vh; width: 5vw' src='../images/look.svg'></img>
+        </div>
+    </div>`
+    return div;
+}
+
 export function wheelCreator(){
     var div =
-    `<div style='position: absolute; z-index: 0;bottom: 4vh; left: -4vw; height:33vh; width: 33vw;'>
-        <img src='../images/steerwheel2.svg' style='height: 33vh; width: 33vw;'>
-        </img>
-        <img src='../images/center.svg' style='position:relative; height: 40%; bottom: 66%; left: 41%'></img>
+    `<div id='wheelzone' style='position: absolute; z-index: 10;bottom: 2vh; left: 0; height:40vh; width: 35vw; text-align: center;'>
+        <div id='wheel' style='margin-top: 6vh'>
+            <div>
+                <img id=wheelimg src='../images/steerwheel2.svg' style='margin-left: auto; height: 33vh; width: 20vw; filter: none'></img>
+            </div>
+            <div style='position: absolute; bottom: 24%; left: 32%'>
+                <img id='center' src='../images/center.svg' style='height: 13vh; width: 13vw'></img>
+            </div>
+        </div>
     </div>`
      return div;
 }
-
-// export function viewZoneCreator(){
-//     var div =
-//     <div>
-
-//     </div>
-// }
