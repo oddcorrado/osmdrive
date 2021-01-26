@@ -79,6 +79,15 @@ export function valueButtonCreator(maindiv, img){
     return div;
 }
 
+export function menuOptions(){
+    var div = `
+    <div style='position: absolute; top: 13vh; right: 1vw; z-index: 10'>
+        <img id='sound' src='../../images/nosound.svg' style='height: 7vh; width: 5vw; z-index: 10'></img>
+        <img id='changecam' src='../../images/cam.svg' style='height: 7vh; width: 5vw; z-index: 10'></img>
+    </div>`
+    return div;
+}
+
 export function accelerationWitness(){
     var div = `
     <div style='position: absolute; display: none; bottom: 0vh; right: 26vw; height: 20vh;'>
@@ -112,7 +121,7 @@ export function accelerationWitness(){
 }
 
 export function scoreDivCreator(){
-   var div = ` <div style='display: block; height: 12vh;  font-family: "Asap Condensed", sans serif; font-size: 6vh; border-bottom-left-radius: 6vh;position: absolute; top: 0; right: 0; width: 15vw; background-color: #262626; color: white;'>
+   var div = ` <div style='display: block; height: 12vh;  font-family: "Asap Condensed", sans serif; font-weight: 700; font-size: 6vh; border-bottom-left-radius: 6vh;position: absolute; top: 0; right: 0; width: 15vw; background-color: #262626; color: white;'>
         <div style='float: left; margin-left: 2vw; margin-top: 2vh'>
             <img style='height: 4.5vh' src='../../images/star.svg'></img>
         </div>
@@ -122,23 +131,6 @@ export function scoreDivCreator(){
     </div>`
     return div;
 }
-
-export function tapButtonCreatorOld(){
-    var div = `<div id='tapbutton' style="position: absolute;top: 32vh; right: 3vw; z-index: 10;width: 30vw; height: 40vh; text-align:center">
-        <div>
-            <img draggable=false id='up' style="height: 14vh; width: 14vw; opacity:0.7" src='../../images/upbutton.svg'></img>
-        </div>
-        <div>
-            <img id='left' style="height: 14vh; width: 14vw; opacity:0.7; display:inline" src='../../images/leftbutton.svg'></img>
-            <img id='right' style="height: 14vh; width: 14vw; opacity:0.7;display: inline" src='../../images/rightbutton.svg'></img>
-        </div>
-        <div style='display: block'>
-            <img draggable=false id='down' style="height: 14vh; width: 14vw; opacity:0.7" src='../../images/downbutton.svg'></img> 
-        </div>
-    </div>`
-
-    return div;
-}; 
 
 export function dashboardCreator(){
     var div = 
@@ -151,13 +143,13 @@ export function dashboardCreator(){
             border-radius: 4vw;
             background-color: rgba(0,0,0,0.7);
             color: white;
-            font-family: Microbrew Soft One, sans-serif'
+            font-family: Microbrew Soft One, sans-serif';
             >
-            <div style='margin-top: 2vh' id='next-turn'>
+            <div style='margin-top: 3vh' id='next-turn'>
                 <img id='gps' style='height: 7vh; width: 6vw' src='../../images/straight.svg'></img>
             </div>
-            <div id='speeddiv' style='background-color: none; height: 40%; width: 50%; border-radius: 2vh; margin-left: 25%; margin-top: 5%'>
-                <div id='speed' style=' width: 5vw; display: inline-block ;height: 7vh;font-size: 8vh;  font-weight: 400' id='speed'>0</div>    
+            <div id='speeddiv' style='text-align:center; background-color: none; height: 40%; width: 50%; border-radius: 2vh; margin-left: 25%; margin-top: 5%'>
+                <div id='speed' style='text-align:center;width: 7vw; display: inline-block ;height: 7vh;font-size: 8vh; font-weight: 400' id='speed'>0</div>    
                 <div style='font-size: 3vh;color: white; margin-top: 0.5vh;font-weight: normal; opacity: 0.4;'>KM/H</div>
             </div> 
         </div>`
@@ -167,7 +159,7 @@ export function dashboardCreator(){
 export function tapButtonCreator(){
     var div = `
     <div>
-    <div style="position: absolute;
+        <div style="position: absolute;
             bottom: 1vh;
             left: 5vh;
             z-index: 10;
@@ -197,12 +189,12 @@ export function tapButtonCreator(){
 
 export function viewZoneCreator(){
     var div =
-    `<div id='view' style='position: absolute; z-index:10;bottom: 40vh; left: 4vh; width: 30vw; height: 20vh; text-align: center'>
+    `<div id='view' style='position: absolute; z-index:10;bottom: 45vh; left: 4vh; width: 30vw; height: 20vh; text-align: center'>
         <div style='margin-top: 5vh'>
-            <img draggable=false style='height: 10vh; width: 20vw; text-align:center;' src='../images/viewzone.svg'></img>
+            <img draggable=false style='height: 12vh; width: 25vw; text-align:center;' src='../images/zone.svg'></img>
         </div>
-        <div id='look-eye' style='position:relative; left: 0vh;bottom: 8vh;'>
-            <img draggable=false style='height: 5vh; width: 5vw' src='../images/look.svg'></img>
+        <div id='look-eye' style='position:relative; left: 0vh;bottom: 11.9vh;'>
+            <img draggable=false style='height: 10vh; width: 6vw' src='../images/interneye.svg'></img>
         </div>
     </div>`
     return div;
@@ -210,13 +202,13 @@ export function viewZoneCreator(){
 
 export function wheelCreator(){
     var div =
-    `<div id='wheelzone' style='position: absolute; z-index: 10;bottom: 2vh; left: 0; height:40vh; width: 35vw; text-align: center;'>
-        <div id='wheel' style='margin-top: 6vh'>
+    `<div id='wheelzone' style='position: absolute; z-index: 10;bottom: 7vh; left: 0; height:40vh; width: 35vw; text-align: center;'>
+        <div id='wheel' style='margin-top: 0vh'>
             <div>
-                <img draggable=false id=wheelimg src='../images/steerwheel2.svg' style='margin-left: auto; height: 33vh; width: 20vw; filter: none'></img>
+                <img draggable=false id=wheelimg src='../images/steerwheel.svg' style='height: 45vh; width: 30vw; opacity: 0.8'></img>
             </div>
-            <div style='position: absolute; bottom: 24%; left: 32%'>
-                <img draggable=false id='center' src='../images/center.svg' style='height: 13vh; width: 13vw'></img>
+            <div  id='center' style='position: absolute; bottom: 29%; left: 36.5%; z-index: 11; display:none'>
+                <img draggable=false src='../images/cross.svg' style='height: 13vh; width: 10vw'></img>
             </div>
         </div>
     </div>`

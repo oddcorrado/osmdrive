@@ -19,7 +19,7 @@ function speedingCheck(speed, approach){
                 score.newScore('SPEED_TOO_FAST', -10);
             }, 5000)
         }
-    } else if (hasStarted && speed < 20 && (!approach || approach > 12 )) {   
+    } else if (hasStarted && speed > 0 && speed < 20 && (!approach || approach > 12 )) {   
         if (!inter.slow){
             inter.slow = setInterval(() => {
                 score.newScore('SPEED_TOO_SLOW', -10);

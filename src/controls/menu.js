@@ -3,7 +3,7 @@ import { toggleDebugWays } from './../ways/logic/roads'
 import {disableTrees} from './../dressmap'
 import {toggleEsp} from './loops'
 import { Vector3 } from '@babylonjs/core/Maths/math';
-import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness, falseStickCreator, scoreDivCreator} from '../creators/buttoncreator.js';
+import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness, falseStickCreator, scoreDivCreator, menuOptions} from '../creators/buttoncreator.js';
 import type from '../enum/buttontype';
 
 var camPosInterval;
@@ -28,7 +28,7 @@ function changeColorAndText(divs, text = ['Enable', 'Disable'], colors = ['red',
 function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     // var test = divCreator('top:0; left: 0;height: 100vh; width: 50vw; border: solid 2px black', {id: 'test', text:'middle debug'})
     //  document.body.appendChild(test);// debug middle
-    var btnMenu = buttonCreator('top: 10vh; right: 0; background-color:black; display: block',{text: 'Debug Menu'});
+    var btnMenu = buttonCreator('top: 10vh; right: 0; background-color:black; display: none',{text: 'Debug Menu'});
     var btnCam = buttonCreator('top:10vh; right: 0;background-color: black; display: none',{text: 'FreeCamera Switch (C)'});
     var btnSwCam = buttonCreator('top: 16vh; right: 0;background-color: black; display: none',{text: 'Camera Switch'});
     var btnJ = buttonCreator('top: 20vh; right: 0;background-color:green; display: none',{text: 'Disable Joysticks'});
@@ -174,6 +174,10 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 }
 
 function setControlMenu(scene){
+    document.body.insertAdjacentHTML('afterbegin', menuOptions())
+
+
+    //USELESS, TO REMOVE
     //var btnMenuControls = buttonCreator('top: 15vh; white-space: nowrap; left: 0; background-color:black; display: block;',{text: 'Control Settings'});
     var controlMenu = ['controlmode', 'lk', 'dir', 'spd'];
     var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam', 'sound', 'controlmode', 'carselector'];//controlmode out if different modes are reinstantiated
@@ -191,9 +195,8 @@ function setControlMenu(scene){
     //Buttons Sensitivity Menu
     document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 40.5vh; left: 0.2vw; height: 9vh; width: 8vw; display:none;', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'}));
     document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 37.5vh; left: 7.5vw; height: 6vh; width: 5vw ;display:none;', id: 'setori'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 37.25vh; left: 11.75vw; height: 6vh; width: 5vw ;display:none;', id: 'setcam'}, {src: '',style: ''}, {src: '../../images/cam.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 35vh; left: 16vw; height: 6vh; width: 6vw; display:none;', id: 'sound'}, {src: '',style: ''}, {src: '../../images/nosound.svg', style:'opacity: 1; height: 6.5vh; width: 6.5vw'}));
-
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 19vh; right: 1.5vw; height: 5vh; width: 5vw ;display:none;', id: 'setcam'}, {src: '',style: ''}, {src: '../../images/cam.svg', style:'opacity: 1; height: 7vh; width: 5vw'}));
+    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 13vh; right: 1vw; height: 5vh; width: 6vw; display:none;', id: 'sound'}, {src: '',style: ''}, {src: '../../images/nosound.svg', style:'opacity: 1; height: 7vh; width: 6.5vw'}));
     document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 25vh; display:none;', mainid:'front', id: 'frontsensi', idminus:'frontdec', idplus:'frontinc'}, {style:'height: 6vh; width: 6wv;margin-top: 1%;', src:'../../images/frontsensi.svg'}));
     document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 32vh; display:none;', mainid: 'side', id: 'sidesensi', idminus:'sidedec', idplus:'sideinc'}, {style:'height: 6vh; width: 3vw; margin-top: 1%;', src:'../../images/sidesensi.svg'}));
     
