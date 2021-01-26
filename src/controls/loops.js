@@ -388,8 +388,8 @@ function mustangLoopTapSmooth (car, scene){
     var tmpdir = dir
     dir = getWayDir(car.position, hardcoreRail ? vel : null)
 
-    if (!dir)
-        dir = tmpdir;
+    if (!dir) { dir = tmpdir }
+        
 
     let dirAngle = Math.atan2(dir.z, dir.x)
 
@@ -685,6 +685,9 @@ function resetWheel(){
     var eventsIn = ['touchmove', 'touchstart', 'mousedown']
     var eventsOut = ['touchend', 'mouseup', 'mouseleave']
 
+    let viewInter = null
+    let viewX = 300
+
     const acceleratorPedal = () => {
         nextdir.up = true
         up.style.opacity = 1
@@ -772,6 +775,12 @@ function resetWheel(){
         mouseAction = 'idle'
     })
 
+    const kbView = (delta) => {
+        viewX = 300
+        if(viewInter != null) { clearInterval(viewInter) }
+        viewInter = setInterval( () =>  { viewX = Math.max(0, Math.min(600, viewX + delta)); viewCheck(viewX) }, 16)
+    }
+
     document.addEventListener('keydown', (event) => {
        switch(event.key) {
            case 'z' : acceleratorPedal(); break
@@ -779,10 +788,11 @@ function resetWheel(){
            case 'q' : wheelMove(-300); break
            case 'd' : wheelMove(300); break
            case 'x' : resetWheel(); break
-           case 'k' : viewCheck(0); break
-           case 'l' : viewCheck(600); break
+           case 'k' : kbView(-2); break
+           case 'l' : kbView(2); break
        }
     })
+    
 
     document.addEventListener('keyup', (event) => {
         switch(event.key) {
@@ -790,8 +800,8 @@ function resetWheel(){
             case 's' : brakePedalEnd(); break
             case 'q' : wheelMoveEnd(); break
             case 'd' : wheelMoveEnd(); break
-            case 'k' : viewCheckEnd(); break
-            case 'l' : viewCheckEnd(); break
+            case 'k' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
+            case 'l' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
         }
      })
 
