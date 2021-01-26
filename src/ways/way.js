@@ -12,6 +12,7 @@ import textPanel from '../textPanel'
 import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
 import { scene as globalScene } from '../index'
 import buildRoads, { roads } from './logic/roads'
+import buildPavements from './logic/pavements'
 
 import zoneGet from '../geofind/geozone'
 import { geoSegmentsInit, getSegmentGetClosest } from '../geofind/geosegment'
@@ -36,6 +37,7 @@ export default function createWays(scene, planes) {
     // find the junctions
     buildRoads()
     geoSegmentsInit(roads)
+    buildPavements()
 
     // remove old junctions from root lanes
 
