@@ -772,6 +772,29 @@ function resetWheel(){
         mouseAction = 'idle'
     })
 
+    document.addEventListener('keydown', (event) => {
+       switch(event.key) {
+           case 'z' : acceleratorPedal(); break
+           case 's' : brakePedal(); break
+           case 'q' : wheelMove(-300); break
+           case 'd' : wheelMove(300); break
+           case 'x' : resetWheel(); break
+           case 'k' : viewCheck(0); break
+           case 'l' : viewCheck(600); break
+       }
+    })
+
+    document.addEventListener('keyup', (event) => {
+        switch(event.key) {
+            case 'z' : acceleratorPedalEnd(); break
+            case 's' : brakePedalEnd(); break
+            case 'q' : wheelMoveEnd(); break
+            case 'd' : wheelMoveEnd(); break
+            case 'k' : viewCheckEnd(); break
+            case 'l' : viewCheckEnd(); break
+        }
+     })
+
     up.addEventListener('touchmove', () => acceleratorPedal())
     up.addEventListener('touchstart', () => acceleratorPedal())
     up.addEventListener('mousedown', () => {
