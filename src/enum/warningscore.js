@@ -10,7 +10,8 @@ const warningScore = {
     TRAFFIC_LIGHT_GOOD: 'Feu vert',
     TRAFFIC_LIGHT_BAD: 'Feu rouge',
     RIGHT_TURN: 'Bon virage',
-    WRONG_TURN: 'Mauvais virage'
+    WRONG_TURN: 'Mauvais virage',
+    YIELD: 'Cédez-le-passage'
 }
 
 export default warningScore;

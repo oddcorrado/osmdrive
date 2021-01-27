@@ -26,6 +26,8 @@ function changeColorAndText(divs, text = ['Enable', 'Disable'], colors = ['red',
 }
 
 function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
+    let {sound, changecam} = menuOptions();
+
     // var test = divCreator('top:0; left: 0;height: 100vh; width: 50vw; border: solid 2px black', {id: 'test', text:'middle debug'})
     //  document.body.appendChild(test);// debug middle
     var btnMenu = buttonCreator('top: 10vh; right: 0; background-color:black; display: none',{text: 'Debug Menu'});
@@ -115,6 +117,22 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
         }
     }
 
+    const switchCam = () => {
+        switch (scene.activeCamera){
+            case internalCamera:
+                scene.activeCamera = camera
+                break
+            case camera:
+                scene.activeCamera = freecamera
+                break
+            default:
+                scene.activeCamera = internalCamera
+        }
+    }
+    
+    changecam.addEventListener('touchmove', () => {switchCam()})
+    changecam.addEventListener('click', () => {switchCam()})
+
     btnSwCam.onclick = () => {
         if (scene.activeCamera != internalCamera) {
             // speedFresh.setAttribute('style', 'right:57.5vw');
@@ -174,13 +192,10 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
 }
 
 function setControlMenu(scene){
-    document.body.insertAdjacentHTML('afterbegin', menuOptions())
-
-
     //USELESS, TO REMOVE
     //var btnMenuControls = buttonCreator('top: 15vh; white-space: nowrap; left: 0; background-color:black; display: block;',{text: 'Control Settings'});
     var controlMenu = ['controlmode', 'lk', 'dir', 'spd'];
-    var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam', 'sound', 'controlmode', 'carselector'];//controlmode out if different modes are reinstantiated
+    var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam', /*'sound',*/ 'controlmode', 'carselector'];//controlmode out if different modes are reinstantiated
     var wasOpen = false;
 
     //document.body.appendChild(btnMenuControls);
@@ -196,7 +211,7 @@ function setControlMenu(scene){
     document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 40.5vh; left: 0.2vw; height: 9vh; width: 8vw; display:none;', id: 'ori'}, {src: '',style: ''}, {src: '../../images/smartphone.png', style:'opacity: 1; height: 9vh; width: 6vw'}));
     document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 37.5vh; left: 7.5vw; height: 6vh; width: 5vw ;display:none;', id: 'setori'}, {src: '',style: ''}, {src: '../../images/explore.svg', style:'opacity: 1; height: 6vh; width: 5vw'}));
     document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 19vh; right: 1.5vw; height: 5vh; width: 5vw ;display:none;', id: 'setcam'}, {src: '',style: ''}, {src: '../../images/cam.svg', style:'opacity: 1; height: 7vh; width: 5vw'}));
-    document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 13vh; right: 1vw; height: 5vh; width: 6vw; display:none;', id: 'sound'}, {src: '',style: ''}, {src: '../../images/nosound.svg', style:'opacity: 1; height: 7vh; width: 6.5vw'}));
+    //document.body.insertAdjacentHTML('afterbegin', divControlCreator({style: 'top: 13vh; right: 1vw; height: 5vh; width: 6vw; display:none;', id: 'sound'}, {src: '',style: ''}, {src: '../../images/nosound.svg', style:'opacity: 1; height: 7vh; width: 6.5vw'}));
     document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 25vh; display:none;', mainid:'front', id: 'frontsensi', idminus:'frontdec', idplus:'frontinc'}, {style:'height: 6vh; width: 6wv;margin-top: 1%;', src:'../../images/frontsensi.svg'}));
     document.body.insertAdjacentHTML('afterbegin', valueButtonCreator({style: 'top: 32vh; display:none;', mainid: 'side', id: 'sidesensi', idminus:'sidedec', idplus:'sideinc'}, {style:'height: 6vh; width: 3vw; margin-top: 1%;', src:'../../images/sidesensi.svg'}));
     

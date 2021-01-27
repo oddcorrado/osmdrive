@@ -1,9 +1,10 @@
 const sound = {
     NONE: -1,
-    LOW: 0,
-    MEDIUM: 1,
-    HIGH: 2,
-    BRAKE: 3
+    IDLE: 0,
+    LOW:1,
+    MEDIUM: 2,
+    HIGH: 3,
+    BRAKE: 4
 }
 
 export default sound 

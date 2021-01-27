@@ -81,11 +81,13 @@ export function valueButtonCreator(maindiv, img){
 
 export function menuOptions(){
     var div = `
-    <div style='position: absolute; top: 13vh; right: 1vw; z-index: 10'>
-        <img id='sound' src='../../images/nosound.svg' style='height: 7vh; width: 5vw; z-index: 10'></img>
-        <img id='changecam' src='../../images/cam.svg' style='height: 7vh; width: 5vw; z-index: 10'></img>
+    <div style='position: absolute; top: 15vh; right: 1vw'>
+        <img id='sound' src='../../images/nosound.svg' style='height: 7vh; width: 5vw; z-index: 12'></img>
+        <img id='changecam' src='../../images/cam.svg' style='height: 7vh; width: 5vw; z-index: 12'></img>
     </div>`
-    return div;
+    document.body.insertAdjacentHTML('afterbegin', div)
+    
+    return {sound: document.getElementById('sound'), changecam: document.getElementById('changecam')};
 }
 
 export function accelerationWitness(){
@@ -125,7 +127,7 @@ export function scoreDivCreator(){
         <div style='float: left; margin-left: 2vw; margin-top: 2vh'>
             <img style='height: 4.5vh' src='../../images/star.svg'></img>
         </div>
-        <div id='score' style='float: left; margin-left: 2vw; margin-top: 1.8vh; height: 100%; padding-bottom: 3vh'>
+        <div id='score' style='float: left; margin-left: 2vw; margin-top: 1.8vh; height: 100%'>
             0
         </div>
     </div>`

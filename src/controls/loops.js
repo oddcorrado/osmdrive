@@ -1,6 +1,6 @@
 import e_sound from '../enum/soundenum';
 import e_ori from '../enum/orientation';
-//import {playSound, toggleSound} from '../sounds/carsound';
+import {playAccel, playEngine, toggleSound} from '../sounds/carsound';
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick';
 import { Vector3 } from '@babylonjs/core/Maths/math'
 import {toggleCustomModes} from './menu'
@@ -14,41 +14,19 @@ import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/ge
 import { gpsCheck } from '../gps/plan'
 import { vectorIntesection } from '../maths/geometry'
 
-let rightJoystick = null
 let sideTilt = 0
-let sideSensi = 50
-let steer = 0
-let steerWheel = document.getElementById('wheel')
-let angle = 0
 let accel = 0
-let orientation = e_ori.RIGHT
 let currentLook
 let mouseAction = 'idle'
 const unselectedOpacity = 0.9
 
-//mustang
-//let recenter = false
-//let recenterStep = 'lift'
-//let projection = null
-var btnAccel = 0;
-let leftJoystick = null;
-let pace = 0;
 let esp = true;
-let dir = new Vector3(1, 0, 0);
-let hide = false;
 
-//let sideSensi = 20;
-let sideMaxTilt = 30;//todo
-
-let frontMidAngle = 45;
 let frontTilt = -45;
-let frontSensi = 10;
-
-var cameraOffset = null;
-var currAlpha;
+let cameraOffset = null;
+let currAlpha;
 let camTilt = 0;
 
-let mode = {lk: 'slide', dir: 'tilt', spd: 'slide', gear: 'front', global: 'mode2'};
 let nextdir = {up: false, down: false, right: false, left: false};
 var currentCar = 'ford';
 var switchCam = 'ford';
@@ -57,13 +35,6 @@ export function toggleEsp(){
     esp = !esp;
 }
 
-function toggleStick(curr, next){
-    var stick = document.getElementById('falsestick');
-    if (stick && stick.style.display == curr) {
-        stick.style.display = next;
-    }
-  }
-  
 function setupJoystick(){
 }
 
@@ -89,77 +60,34 @@ function cameraOrientationSetup(camera){
 var speedDiv;
 var speedDivBg;
 var interSpeed;
-function setSpeedAlert(speed){
-    if (speed > 31 && !interSpeed) {
-        speedDivBg.style.backgroundColor = interSpeed ? speedDivBg.style.backgroundColor : 'red';
-        interSpeed = setInterval(() => {
-            speedDivBg.style.backgroundColor = speedDivBg.style.backgroundColor == 'red' ? null : 'red';
-        }, 500);
-    } else if (speed < 31){
-        speedDivBg.style.backgroundColor = null;
-        clearInterval(interSpeed);
-        interSpeed = null;
-    }
+
+
+function setSound(speed){
+    if (speed <= 1){
+        playEngine(e_sound.IDLE, 0.5)
+    } else {
+        playEngine(e_sound.LOW, speed/100)
+    }   
 }
 
 function setSpeedWitness(speed, stickY){
     speedDiv = speedDiv ? speedDiv : document.getElementById('speed');
-    speedDivBg = speedDivBg ? speedDivBg : document.getElementById('speeddiv');
-    setSpeedAlert(speed);
     speedDiv.innerText = `${(speed).toFixed()}`;
-    var divTab = document.getElementsByClassName('accelwit');
-    var neutral = document.getElementById('neutral');
-    for (let div of divTab){
-        div.src = '../../images/Vclear.svg';
-    }
-  
-    //setSound(speed);
-    if (stickY != 0) {
-        neutral.src = '../../images/circle.svg';
-        if (stickY>0.80)
-            document.getElementById('maxf').src = '../../images/Vstrong.svg';    
-        if (stickY>0.40)
-            document.getElementById('avgf').src = '../../images/Vstrong.svg';
-        if (stickY>0)
-            document.getElementById('minf').src = '../../images/Vstrong.svg';
-        if (stickY<0)
-            document.getElementById('minb').src = '../../images/Vstrong.svg';
-        if (stickY<-0.4)
-            document.getElementById('avgb').src = '../../images/Vstrong.svg';
-        if (stickY<-0.8)
-            document.getElementById('maxb').src = '../../images/Vstrong.svg';
-    } else {
-        neutral.src = '../../images/greencircle.svg';
-    }
-}
-
-  function setSound(speed){
-    if (speed <= 1) {
-      playSound(e_sound.HIGH, 0.1);
-    } else if (speed > 75){
-      playSound(e_sound.HIGH, 1);
-    } else if (speed > 60){
-      playSound(e_sound.HIGH, 0.8);
-    } else if (speed > 45){
-      playSound(e_sound.HIGH, 0.6);
-    } else if (speed > 30){
-      playSound(e_sound.HIGH, 0.4);
-    } else if (speed > 15) {
-      playSound(e_sound.HIGH, 0.3);
-    } else if (speed > 1){
-      playSound(e_sound.HIGH, 0.2);
-    }
+    setSound(speed);
 }
 
 function loopSelector(scene, joints, sjoints, clio, mustang, gps){
    if (currentCar === 'ford'){
         if (switchCam == 'ford') {
-            switchCam = 'none';
-            scene.activeCamera.parent = mustang;
-            scene.activeCamera.position = new Vector3(0, 2.2, -1.7);
-            scene.activeCamera.lockedTarget = new Vector3(0, -7, 50);
+            switchCam = 'none'
+            scene.activeCamera.parent = mustang
+            scene.activeCamera.position = new Vector3(0, 2.2, -1.7)
+            scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
+            //90
+            // scene.activeCamera.position = new Vector3(0, 3.1, 0)
+            // scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
         }
-        mustangLoopTap(mustang, scene, gps);
+        mustangLoopTap(mustang, scene, gps)
     }
 }
 
@@ -292,9 +220,9 @@ function resetWheel(){
 }
 
  function setupControls (scene){
-    var touchZone = document.getElementById('view');
-    var soundtoggle = document.getElementById('sound');
-    var changecam = document.getElementById('setcam');
+    let touchZone = document.getElementById('view');
+    let soundtoggle = document.getElementById('sound');
+    let changecam = document.getElementById('setcam');
     up = document.getElementById('up');
     down = document.getElementById('down');
     left = document.getElementById('left');
@@ -311,12 +239,14 @@ function resetWheel(){
         nextdir.up = true
         up.style.opacity = 1
         up.style.transform = 'rotateX(45deg)'
+        playAccel(true);
     }
 
     const acceleratorPedalEnd = () => {
         nextdir.up = false
         up.style.opacity = unselectedOpacity
         up.style.transform = 'rotateX(0deg)'
+        playAccel(false);
     }
 
     const brakePedal = () => {
@@ -367,7 +297,6 @@ function resetWheel(){
 
     const wheelMove = (x) => {
         touch = x - (touchZone.offsetLeft + touchZone.offsetWidth / 2)
-        console.log(touch, x, touchZone.offsetLeft, touchZone.offsetWidth)
         touch = touch > 35 ? 40 : touch < -35 ? -40 : touch
         wheel.style.transform = `rotateZ(${touch}deg)`
     }
@@ -378,7 +307,15 @@ function resetWheel(){
         nextdir.left = touch === -40 ? true : false;
         center.style.display = nextdir.right || nextdir.left ? 'block' : 'none';
         wheel.style.transform = `rotateZ(${touch}deg)`
-        console.log('end', touch);
+    }
+
+    const soundSwitch = () => {
+        if (soundtoggle.src.includes('no')) {
+            soundtoggle.src = '../../images/sound.svg';
+        } else {
+            soundtoggle.src = '../../images/nosound.svg';
+        }
+        toggleSound();
     }
 
     window.addEventListener('mouseup', e => {
@@ -471,16 +408,8 @@ function resetWheel(){
     center.addEventListener('touchstart', () => resetWheel())
     center.addEventListener('click', () => resetWheel())
 
-    soundtoggle.addEventListener('touchmove', function (){
-        if (soundtoggle.src.includes('no')) {
-            soundtoggle.src = '../../images/sound.svg';
-        } else {
-            soundtoggle.src = '../../images/nosound.svg';
-        }
-        toggleSound();
-    })
-
-
+    soundtoggle.addEventListener('touchmove', () => soundSwitch())
+    soundtoggle.addEventListener('click', () => soundSwitch())
 }
 
   export default {
