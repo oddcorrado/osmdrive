@@ -37,7 +37,7 @@ function checkJunctionGps(current, prev){
         else 
             score.newScore('WRONG_TURN', -20)
     }
-    ++idx;
+    idx = plan[idx] === 'E' ? idx : idx+1;
     arrow.src = imageSources[plan[idx]];
 }
 

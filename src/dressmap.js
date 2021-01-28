@@ -6,13 +6,14 @@ import { ways } from './map'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder';
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
-import { spawnSign } from './props/stopsign'
+import spawnStop from './props/stopsign'
 import spawnNoEntry  from './props/noentrysign'
 import spawnSpeedSign from './props/speedlimit'
+import spawnYield from './props/yieldsign'
 import { spawnTrafficLight } from './props/trafficlight'
 import { ActionManager } from '@babylonjs/core/Actions';
 import botshandler from './bots'
-//import {setSounds} from './sounds/carsound'
+import {setSounds} from './sounds/carsound'
 var propsContainer;
 
 var duplicate = function(container, x, y) {
@@ -72,13 +73,14 @@ export function disableTrees(){
 
 export default function dressMap(scene, container){
     scene.actionManager = new ActionManager(scene)
-    //setSounds(scene);
+    setSounds(scene);
     //createTrees(scene, propsContainer);
    // botshandler.createBots(scene, container);
     console.log(container)
-    spawnTrafficLight(container, scene, 95, -5);
-    spawnSign(container, scene, 195, -5);
+    //spawnTrafficLight(container, scene, 95, -5);
+    spawnYield(container, scene, 95, -5);
+    spawnStop(container, scene, 195, -5);
     spawnNoEntry(container, scene, 304, 105);
-    spawnSpeedSign(scene, '30', 15, -5)
+    spawnSpeedSign(container, scene, '30', 15, -5)
 }
 

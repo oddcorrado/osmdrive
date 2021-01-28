@@ -1,7 +1,10 @@
 import score from './scoring'
 
-let hasStarted = false; 
-let inter = {fast: null, slow: null, junc: null, stop: null, turnfast: null, juncslow: null};
+let currentLimit = 130
+let hasStarted = false
+let interSpeed
+let speedDivBg
+let inter = {fast: null, slow: null, junc: null, stop: null, turnfast: null, juncslow: null}
 
 //Check speed in circulation
 function resetInterval(id){
@@ -12,14 +15,30 @@ function resetInterval(id){
     return id;
 }
 
+
+function setSpeedAlert(speed){
+    if (currentLimit < speed && !interSpeed) {
+        speedDivBg.style.backgroundColor = interSpeed ? speedDivBg.style.backgroundColor : 'red';
+        interSpeed = setInterval(() => {
+            speedDivBg.style.backgroundColor = speedDivBg.style.backgroundColor == 'red' ? null : 'red';
+        }, 500);
+    } else if (speed < currentLimit){
+        speedDivBg.style.backgroundColor = null;
+        clearInterval(interSpeed);
+        interSpeed = null;
+    }
+}
+
 function speedingCheck(speed, approach){
-    if (speed > 31 &&  (!approach || approach > 12 )) {
+    speedDivBg = speedDivBg ? speedDivBg : document.getElementById('speeddiv');
+    setSpeedAlert(speed);
+    if (speed > currentLimit &&  (!approach || approach > 12 )) {
         if (!inter.fast){
             inter.fast = setInterval(() => {
                 score.newScore('SPEED_TOO_FAST', -10);
             }, 5000)
         }
-    } else if (hasStarted && speed < 20 && (!approach || approach > 12 )) {   
+    } else if (hasStarted && speed > 0 && speed < (currentLimit*0.6) && (!approach || approach > 12 )) {   
         if (!inter.slow){
             inter.slow = setInterval(() => {
                 score.newScore('SPEED_TOO_SLOW', -10);
@@ -65,9 +84,12 @@ function stopCheck(speed, approach, hasStarted){
     }
 }
 
+export let setSpeedLimit = (speed) => {currentLimit = speed}
+
 export default function speedScoring (speed, approach){
     hasStarted = !hasStarted && speed > 0 ? true : hasStarted;
     speedingCheck(speed*150, approach, hasStarted);
     //speedingIntersectionCheck(speed, approach);
     stopCheck(speed, approach, hasStarted);
+    
 }
