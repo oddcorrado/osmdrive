@@ -97,8 +97,6 @@ export const ways = [
         {x: 300, y: 200},
         {x: 300, y: 250},
         {x: 300, y: 300}]},
-
-
     {name: "Rue AAAA", points: [
         {y: -300, x: -300},
         {y: -300, x: -250},

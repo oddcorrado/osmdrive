@@ -151,7 +151,7 @@ export default function buildRoads() {
 }
 
 // Creates an array of root junctions based on point distance
-function createJunctions(ways) {
+export function createJunctions(ways) {
     const points = []
     // gather all points
     ways.forEach(way => {
@@ -168,11 +168,13 @@ function createJunctions(ways) {
             }
         }
     })
+
+    return junctions
 }
 
 // create the paths with junctions marked
 // junction index is a junction id based on index inthe junction array
-function createPaths(ways) {
+export function createPaths(ways) {
     const localPaths = ways.map(way => {
         const nodes = way.points.map(point => ({
             point: new Vector3(point.x, 0.1, point.y),
@@ -181,6 +183,8 @@ function createPaths(ways) {
         return nodes
     })
     paths = localPaths
+
+    return paths
 }
 
 function unqualifiedIntersectionInsert(node) {

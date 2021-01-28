@@ -389,7 +389,6 @@ function mustangLoopTapSmooth (car, scene){
     dir = getWayDir(car.position, hardcoreRail ? vel : null)
 
     if (!dir) { dir = tmpdir }
-        
 
     let dirAngle = Math.atan2(dir.z, dir.x)
 

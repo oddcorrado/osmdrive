@@ -1,7 +1,259 @@
 import { ways } from '../../map'
+import { createJunctions, createPaths } from './roads'
+import { Vector3 } from '@babylonjs/core/Maths/math'
+import { Mesh } from '@babylonjs/core/Meshes/mesh'
+import { scene as globalScene } from '../../index'
+import { Color3 } from '@babylonjs/core/Maths/math.color'
 
-const buildPavements = () : void => {
-    console.log('buildPavements')
+let junctions = null
+let paths = null
+
+interface PavNode {
+    point: Vector3
+    junctionIndex: number
+    roadIndex: number
+    nodeIndex: number
+    id: string
+    nexts: PavNode[]
+}
+
+interface PavRoad {
+    nodes: PavNode[]
+}
+
+const getTripletId = (junctionIndex: number, id1: string, id2: string) => {
+    return (id2 > id1 
+        ? `${junctionIndex}/${id1}>${id2}`
+        : `${junctionIndex}/${id2}>${id1}`)
+}
+
+const triplets = new Map<string, boolean>()
+
+const createRoads = (paths: any):  PavRoad[] => {
+    const junctionMap = new Map<number, PavNode[]>()
+
+    // map to typescript
+    const roads : PavRoad[] = paths.map((path: any, ri: number) => ({
+            nodes: path.map((node: any, ni: number) => ({
+                point: node.point,
+                junctionIndex: node.junctionIndex,
+                roadIndex: ri,
+                nodeIndex: ni,
+                id: `${ri.toString().padStart(4,'0')}-${ni.toString().padStart(4,'0')}`,
+                nexts: []
+            }))
+        })
+    )
+
+    // cache all junctions by junction index
+    roads.forEach((road: PavRoad) => {
+        road.nodes.forEach((node: PavNode) => {
+            if(node.junctionIndex !== -1) { 
+                const js = junctionMap.has(node.junctionIndex) ? junctionMap.get(node.junctionIndex) : []
+                js.push(node)
+                junctionMap.set(node.junctionIndex, js) 
+            } 
+        })
+    })
+
+    // remap junction into nodes 
+    roads.forEach((road: PavRoad) => {
+        road.nodes.forEach((node: PavNode, ni: number) => {
+            let nexts : PavNode[] = []
+            if(ni > 0) { nexts.push(road.nodes[ni - 1]) }
+            if(ni < road.nodes.length - 1 ) { nexts.push(road.nodes[ni + 1]) }
+            if(node.junctionIndex !== -1) {
+                junctionMap.get(node.junctionIndex).filter((n: PavNode) => n.id != node.id).forEach((j: PavNode) => {
+                    if(j.nodeIndex > 0) { nexts.push(roads[j.roadIndex].nodes[j.nodeIndex - 1]) }
+                    if(j.nodeIndex < roads[j.roadIndex].nodes.length - 1) { nexts.push(roads[j.roadIndex].nodes[j.nodeIndex + 1]) }
+                })
+            } 
+            node.nexts = nexts
+        })
+    })
+
+    return roads
+}
+
+interface LeftNode {
+    node: PavNode
+    angle: number
+}
+const getLeftNode = (prev: PavNode, node: PavNode) : LeftNode | null => {
+    // console.log('\ngetLeftNode.........', node.id, prev.id, prev.point.x + '/' + prev.point.z, node.point.x + '/' + node.point.z)
+    if(node.nexts == null || node.nexts.length === 0) { return null }
+
+    const v = node.point.subtract(prev.point)
+    let best : number | null = null
+    let bestNode : PavNode | null = null
+    // console.log('v', v, node.nexts)
+    node.nexts.forEach((next: PavNode) => {
+        const vt = next.point.subtract(node.point)
+
+        const angle = Vector3.GetAngleBetweenVectors(v, vt, Vector3.Up())
+        // console.log('angle/v/vt', prev.junctionIndex, next.junctionIndex, node.id, next.id, angle, v.x + '/' + v.z, vt.x + '/' + vt.z)
+        if(next.id !== prev.id && (prev.junctionIndex === -1 || prev.junctionIndex !== next.junctionIndex)) {
+            if(best == null || angle < best) {
+                best = angle
+                bestNode = next
+                // console.log('vt chosen', angle, vt.x + '/' + vt.z)
+            }
+        }
+    })
+
+    // console.log('chosing...', bestNode.id)
+    return {node: bestNode, angle: best}
+}
+
+const createPolygon = (nodes: PavRoad[], prev: PavNode, node: PavNode): PavRoad | null => {
+    let cont = true
+    const polygon: PavRoad = { nodes: [] }
+    let processedSegments = new Map<string, boolean>([[`${prev.id}/${node.id}`, true]])
+
+    let loops = 0
+    let startId = node.id
+
+    polygon.nodes.push(prev)
+    polygon.nodes.push(node)
+
+    let totalAngle = 0
+
+    while(cont) {
+        if(node.nexts == null || node.nexts.length === 0) { return null }
+
+        const next = getLeftNode(prev, node)
+        // console.log('next', next)
+
+        if(next == null) { return null }
+
+        // check recurse
+        const segmentId = `${node.id}/${next.node.id}`
+        if(processedSegments.has(segmentId)) { return null }
+        processedSegments.set(segmentId, true)
+
+        if(next.node.id !== startId) {
+            polygon.nodes.push(next.node)
+        } else {
+            cont = false
+        }
+
+        prev = node
+        node = next.node
+        totalAngle += next.angle
+
+        if(loops++ > 50) { return polygon }
+    }
+
+    // console.log(`totalAngle: ${totalAngle}`)
+    if(totalAngle > 0) return null
+
+    // check triplets
+    let found = false
+    polygon.nodes.forEach((n: PavNode, i: number) => {
+        if(i > 0 && i < polygon.nodes.length - 1 && n.junctionIndex !== -1) {
+            const t = getTripletId(n.junctionIndex, polygon.nodes[i - 1].id, polygon.nodes[i + 1].id)
+            // console.log('checking ' + t + triplets.has(t) + triplets.get(t))
+
+            if(triplets.has(t)) { found = true }
+        }
+    })
+    if(found) { return null}
+
+    // add triplets
+    polygon.nodes.forEach((n: PavNode, i: number) => {
+        if(i > 0 && i < polygon.nodes.length - 1 && n.junctionIndex !== -1) {
+            const t = getTripletId(n.junctionIndex, polygon.nodes[i - 1].id, polygon.nodes[i + 1].id)
+            // console.log('adding ' + t)
+            triplets.set(t, true)
+        }
+    })
+    return polygon
+}
+
+const buildPolys = (roads: PavRoad[]) : PavRoad[] => {
+    const polys : PavRoad[] = []
+    for(let ri = 1; ri < roads.length; ri++) {
+        for(let ni = 1; ni < roads[ri].nodes.length; ni++) {
+            const node = roads[ri].nodes[ni]
+            const prev = roads[ri].nodes[ni - 1]
+            if(node.junctionIndex === -1) {
+                const poly = createPolygon(roads, prev,node)
+                // console.log('poly', poly)
+                if(poly != null ) { polys.push(poly) }
+            }
+        }
+    }
+    return polys
+}
+
+const getNormal = (seg: Vector3): Vector3 => {
+    const angle = Math.atan2(seg.z, seg.x)
+    const norm = new Vector3(Math.cos(angle + Math.PI * 0.5), 0 , Math.sin(angle + Math.PI * 0.5))
+
+    return norm
+}
+
+
+const reducePoly = (poly: PavRoad) : Vector3[] => {
+    const red1 : Vector3[] = []
+    const red2 : Vector3[] = []
+
+    poly.nodes.forEach((c: PavNode, i: number) => {
+        const n = i === poly.nodes.length - 1 ? poly.nodes[0] : poly.nodes[i + 1]
+        const p = i === 0 ? poly.nodes[poly.nodes.length - 1] : poly.nodes[i - 1]
+
+        const normPrev = getNormal(c.point.subtract(p.point)).scale(4)
+        const normNext = getNormal(n.point.subtract(c.point)).scale(4)
+
+        const point1 = c.point.add(normPrev.add(normNext))
+        const point2 = c.point.add(normPrev.scale(-1).add(normNext.scale(-1)))
+
+        red1.push(point1)
+        red2.push(point2)
+    })
+
+    let length1 = 0
+    for(let i = 1; i < red1.length; i++) { length1 += red1[i].subtract(red1[i - 1]).length()}
+
+    let length2 = 0
+    for(let i = 1; i < red1.length; i++) { length2+= red2[i].subtract(red2[i - 1]).length()}
+
+    console.log(length1 + ' vs ' + length2)
+    return (length1 < length2 ? red1 : red2)
+}
+
+const reducePolys = (polys: PavRoad[]) : Vector3[][] => {
+    const reds : Vector3[][] = []
+
+    polys.forEach((poly: PavRoad) => {
+        reds.push(reducePoly(poly))
+    })
+
+    return reds
+}
+
+const buildPavements = () : Vector3[][] => {
+    // we first isolate the junctions from the ways
+    junctions = createJunctions(ways) // FIXME: no global variables
+    paths = createPaths(ways) // FIXME: no global variables
+
+    const roads = createRoads(paths)
+
+    console.log('buildRoads', roads)
+
+    const polys = buildPolys(roads)
+    console.log('polys', polys)
+
+    const reds = reducePolys(polys)
+    console.log('reds', reds)
+
+    reds.forEach((poly, i) => {
+        let li = Mesh.CreateLines('li', poly, globalScene)
+        li.position.y = li.position.y + 0.1
+        li.color = Color3.Random()
+    })
+
+    return reds
 }
 
 export default buildPavements
