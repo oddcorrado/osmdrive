@@ -1,6 +1,6 @@
 import { Vector3 } from '@babylonjs/core/Maths/math';
 import { Camera } from '@babylonjs/core/Cameras/camera';
-import {tapButtonCreator, dashboardCreator, buttonDriveCreator, divCreator, viewZoneCreator, wheelCreator} from '../creators/buttoncreator'
+import {tapButtonCreator, dashboardCreator, buttonDriveCreator, divCreator, viewZoneCreator, wheelCreator, wheelLockedCreator} from '../creators/buttoncreator'
 
 export default function createButtons (scene){
     //var accel = buttonDriveCreator('z-index: 10; bottom: 2rem; right: 3.5vw; height:8rem; width: 8rem; display: none;',{style: 'height: 9rem; width: 9rem;', id:'accelerator',img: '../images/gas2.svg'});
@@ -10,6 +10,7 @@ export default function createButtons (scene){
     var rev = buttonDriveCreator('z-index: 10;bottom: 0.5rem; right: 0.5rem; height:2rem; opacity: 0.7;', {style: 'height: 2rem;', id: 'rev', img: '../images/reverse.png'});
     document.body.insertAdjacentHTML('afterbegin', viewZoneCreator());
     document.body.insertAdjacentHTML('afterbegin', wheelCreator());
+    document.body.insertAdjacentHTML('afterbegin', wheelLockedCreator());
     document.body.insertAdjacentHTML('afterbegin', tapButtonCreator());
     document.body.insertAdjacentHTML('afterbegin', dashboardCreator());
     var speedDiv = document.getElementById('speeddiv');

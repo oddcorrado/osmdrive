@@ -210,14 +210,27 @@ var right;
 var wheel;
 var center;
 let touch;
+let locked;
 
-function resetWheel(){
-    wheel.style.transform = 'rotateZ(0deg)';
-    nextdir.left = false;
-    nextdir.right = false;
-    approach = null;
-    center.style.display = 'none';
+// function resetWheel(){
+//     wheel.style.transform = 'rotateZ(0deg)';
+//     nextdir.left = false;
+//     nextdir.right = false;
+//     approach = null;
+//     center.style.display = 'none';
+// }
+
+
+function resetWheel () {
+    wheelimg.style.transform = 'rotateZ(0deg)'
+    nextdir.left = false
+    nextdir.right = false
+    approach = null
+    touch = 0
+    wheelimg.style.display = 'block'
+    locked.style.display= 'none'
 }
+
 
  function setupControls (scene){
     let touchZone = document.getElementById('view');
@@ -228,6 +241,8 @@ function resetWheel(){
     left = document.getElementById('left');
     right = document.getElementById('right');
     wheel = document.getElementById('wheel');
+    let wheelimg = document.getElementById('wheelimg');
+    locked = document.getElementById('wheellocked');
     center = document.getElementById('center');
     let wheelzone = document.getElementById('wheelzone');
     let eye = document.getElementById('look-eye');
@@ -238,22 +253,23 @@ function resetWheel(){
     const acceleratorPedal = () => {
         nextdir.up = true
         up.style.opacity = 1
-        up.style.transform = 'rotateX(45deg)'
-        playAccel(true);
+       // up.style.transform = 'rotateX(45deg)'
+       up.src = '../../images/accelpressed.svg'
+        playAccel(true)
     }
 
     const acceleratorPedalEnd = () => {
         nextdir.up = false
         up.style.opacity = unselectedOpacity
-        up.style.transform = 'rotateX(0deg)'
-        playAccel(false);
+        up.src = '../../images/accel.svg'
+        playAccel(false)
     }
 
     const brakePedal = () => {
         if (speed > 0) {
             nextdir.down = true
             down.style.opacity = 1
-            down.style.transform = 'rotateX(30deg)'
+            down.src = '../../images/brakepressed.svg'
         }
     }
 
@@ -261,6 +277,7 @@ function resetWheel(){
         nextdir.down = false
         down.style.opacity = unselectedOpacity
         down.style.transform = 'rotateX(0deg)'
+        down.src = '../../images/brake.svg'
     }
 
     const viewCheck = (x) => {
@@ -298,24 +315,40 @@ function resetWheel(){
     const wheelMove = (x) => {
         touch = x - (touchZone.offsetLeft + touchZone.offsetWidth / 2)
         touch = touch > 35 ? 40 : touch < -35 ? -40 : touch
-        wheel.style.transform = `rotateZ(${touch}deg)`
+        wheelimg.style.transform = `rotateZ(${touch}deg)`
+        wheelimg.style.display = 'block'
+        locked.style.display = 'none'
     }
 
     const wheelMoveEnd = () => {
-        touch = touch > 35 ? 40 : touch < -35 ? -40 : 0;
-        nextdir.right = touch === 40 ? true : false;
-        nextdir.left = touch === -40 ? true : false;
-        center.style.display = nextdir.right || nextdir.left ? 'block' : 'none';
-        wheel.style.transform = `rotateZ(${touch}deg)`
+        touch = touch > 35 ? 40 : touch < -35 ? -40 : 0
+        if (touch === 40){
+            nextdir.right = true
+            nextdir.left = false
+            wheelimg.style.display = 'none'
+            locked.style.display = 'block'
+            locked.style.transform = 'rotateY(0deg)'
+            locked.style.left = '8vw'
+        } else if (touch === -40){
+            nextdir.right = false
+            nextdir.left = true
+            wheelimg.style.display = 'none'
+            locked.style.display = 'block'
+            locked.style.transform = 'rotateY(180deg)'
+            locked.style.left = '5vw'
+        } else {
+            locked.style.display = 'none'
+        }
+        wheelimg.style.transform = `rotateZ(${touch}deg)`
     }
 
     const soundSwitch = () => {
         if (soundtoggle.src.includes('no')) {
-            soundtoggle.src = '../../images/sound.svg';
+            soundtoggle.src = '../../images/sound.svg'
         } else {
-            soundtoggle.src = '../../images/nosound.svg';
+            soundtoggle.src = '../../images/nosound.svg'
         }
-        toggleSound();
+        toggleSound()
     }
 
     window.addEventListener('mouseup', e => {
@@ -405,8 +438,8 @@ function resetWheel(){
 
     wheelzone.addEventListener('touchend', () => wheelMoveEnd())
 
-    center.addEventListener('touchstart', () => resetWheel())
-    center.addEventListener('click', () => resetWheel())
+    locked.addEventListener('touchmove', () => resetWheel())
+    locked.addEventListener('click', () => resetWheel())
 
     soundtoggle.addEventListener('touchmove', () => soundSwitch())
     soundtoggle.addEventListener('click', () => soundSwitch())

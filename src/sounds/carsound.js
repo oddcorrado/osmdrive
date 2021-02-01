@@ -59,6 +59,7 @@ export function playEngine(name, vol){
             speedSound[name].play()
         }
         speedSound[name].setVolume(vol)
+
         oldVol = vol;
         oldName = name;
     }

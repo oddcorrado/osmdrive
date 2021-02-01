@@ -57,11 +57,10 @@ console.log('os', os)
         if (window.innerWidth > window.innerHeight) {
             start.innerText = 'UBIQUITY\nLOADING...\nPLEASE WAIT'
             if (screenfull.isEnabled  && os.name !== 'Mac OS' && (os !== 'iOS')) {
-                screenfull.request()
+                 screenfull.request()
             }
             document.body.removeChild(start)
             boot()
-
             recenterDisplaySetup()
         }
     }

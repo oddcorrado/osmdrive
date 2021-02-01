@@ -77,7 +77,7 @@ export default function dressMap(scene, container){
     //createTrees(scene, propsContainer);
    // botshandler.createBots(scene, container);
     console.log(container)
-    //spawnTrafficLight(container, scene, 95, -5);
+    spawnTrafficLight(container, scene, 295, -105);
     spawnYield(container, scene, 95, -5);
     spawnStop(container, scene, 195, -5);
     spawnNoEntry(container, scene, 304, 105);
