@@ -70,7 +70,6 @@ const boot = () => {
     physics.setupPhysics(scene, ground, boxcar/*, bots*/)
 
     setupGps(scene, container);
-    loop.setupJoystick();
     loop.cameraOrientationSetup(camera);
     
     camera.parent = boxcar;

@@ -27,20 +27,20 @@ function changeColorAndText(divs, text = ['Enable', 'Disable'], colors = ['red',
 
 function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     let {sound, changecam} = menuOptions();
-
+    let top = 22
     // var test = divCreator('top:0; left: 0;height: 100vh; width: 50vw; border: solid 2px black', {id: 'test', text:'middle debug'})
-    //  document.body.appendChild(test);// debug middle
-    var btnMenu = buttonCreator('top: 10vh; right: 0; background-color:black; display: none',{text: 'Debug Menu'});
-    var btnCam = buttonCreator('top:10vh; right: 0;background-color: black; display: none',{text: 'FreeCamera Switch (C)'});
-    var btnSwCam = buttonCreator('top: 16vh; right: 0;background-color: black; display: none',{text: 'Camera Switch'});
-    var btnJ = buttonCreator('top: 20vh; right: 0;background-color:green; display: none',{text: 'Disable Joysticks'});
-    var btnBots = buttonCreator('top: 24vh; right: 0;background-color:red; display: none',{text: 'Enable Bots'});
-    var btnGrids = buttonCreator('top: 28vh; right: 0;background-color:red; display: none',{text: 'Enable Grids'});
-    var btnEsp = buttonCreator('top: 32vh; right: 0;background-color:green; display: none',{text: 'Disable ESP'});
-    var btnCamOri = buttonCreator('top: 36vh; right: 0;background-color:red; display: none',{text: 'Enable Orientation Pos'});
-    var btnTrees = buttonCreator('top: 40vh; right: 0;background-color:red; display: none',{text: 'Enable Trees'});
-    var btnBar = buttonCreator('top: 44vh; right: 0;background-color:black; display: none',{text: 'Hide TopBar'});
-    var btnWays = buttonCreator('top: 48vh; right: 0;background-color:black; display: none',{text: 'Show Ways'});
+    //document.body.appendChild(test);// debug middle
+    var btnMenu = buttonCreator(`top: ${top}vh; right: 0; background-color:black; display: block`,{text: 'Debug Menu'});
+    var btnCam = buttonCreator(`top: ${top}vh; right: 0;background-color: black; display: none`,{text: 'FreeCamera Switch (C)'});
+    var btnSwCam = buttonCreator(`top: ${top+4}vh; right: 0;background-color: black; display: none`,{text: 'Camera Switch'});
+    var btnJ = buttonCreator(`top: ${top+8}vh; right: 0;background-color:green; display: none`,{text: 'Disable Joysticks'});
+    var btnBots = buttonCreator(`top: ${top+12}vh; right: 0;background-color:red; display: none`,{text: 'Enable Bots'});
+    var btnGrids = buttonCreator(`top: ${top+16}vh; right: 0;background-color:red; display: none`,{text: 'Enable Grids'});
+    var btnEsp = buttonCreator(`top: ${top+20}vh; right: 0;background-color:green; display: none`,{text: 'Disable ESP'});
+    var btnCamOri = buttonCreator(`top: ${top+24}vh; right: 0;background-color:red; display: none`,{text: 'Enable Orientation Pos'});
+    var btnTrees = buttonCreator(`top: ${top+28}vh; right: 0;background-color:red; display: none`,{text: 'Enable Trees'});
+    var btnBar = buttonCreator(`top: ${top+32}vh; right: 0;background-color:black; display: none`,{text: 'Hide TopBar'});
+    var btnWays = buttonCreator(`top: ${top+36}vh; right: 0;background-color:black; display: none`,{text: 'Show Ways'});
 
     var accelWitness = accelerationWitness();
     var camFresh = divCreator('top: 0; right: 0; height: 1rem;font-size:0.7rem; display: none', {text: '', id:'position'});
@@ -76,14 +76,14 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
                 btn.style.display = 'block';
             })
             btnMenu.innerText = 'Hide Menu';
-            btnMenu.style.top = '52vh';
+            btnMenu.style.top = `${top + 42}vh`;
         } else {
             btnDivArrayMenu.forEach(btn => {
             if (btn != btnMenu)
                     btn.style.display = 'none';
             })
             btnMenu.innerText = 'Debug Menu';
-            btnMenu.style.top = '10vh';
+            btnMenu.style.top = `${top}vh`;
         }
     }
 

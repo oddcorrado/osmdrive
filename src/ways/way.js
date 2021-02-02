@@ -21,7 +21,7 @@ import { checkerDebugSegment } from '../checkers/roadChecker'
 const paths = []
 
 let enableDebug = false
-
+//let pavements
 export default function createWays(scene, planes) {
     const roadMat = new StandardMaterial("mat2", scene);
     roadMat.alpha = 1;
@@ -37,7 +37,9 @@ export default function createWays(scene, planes) {
     // find the junctions
     buildRoads()
     geoSegmentsInit(roads)
-    buildPavements()
+    let pavements = buildPavements()
+    console.log('pavements', pavements)
+    //pavements = buildPavements()
 
     // remove old junctions from root lanes
 
@@ -94,3 +96,5 @@ export function getWayDir(position, dir) {
 
     return targetDir
 }
+
+//export const getPavements = () => pavements

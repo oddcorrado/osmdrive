@@ -14,6 +14,8 @@ import { spawnTrafficLight } from './props/trafficlight'
 import { ActionManager } from '@babylonjs/core/Actions';
 import botshandler from './bots'
 import {setSounds} from './sounds/carsound'
+import getPavements from './ways/way'
+
 var propsContainer;
 
 var duplicate = function(container, x, y) {
@@ -72,9 +74,12 @@ export function disableTrees(){
 }
 
 export default function dressMap(scene, container){
+    // let pavements = getPavements()
+    // console.log(pavements)
     scene.actionManager = new ActionManager(scene)
     setSounds(scene);
-    //createTrees(scene, propsContainer);
+    
+    createTrees(scene, propsContainer);
    // botshandler.createBots(scene, container);
     console.log(container)
     spawnTrafficLight(container, scene, 295, -105);

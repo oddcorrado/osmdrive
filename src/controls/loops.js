@@ -436,7 +436,6 @@ function resetWheel () {
     wheelzone.addEventListener('mousedown', e => { 
         mouseAction = 'wheel'
         wheelMove(e.clientX )
-        //wheelMove(e.targetTouches[0].clientX)
     })
     wheelzone.addEventListener('mousemove', e => { if(mouseAction === 'wheel') { wheelMove(e.clientX) } })
 
