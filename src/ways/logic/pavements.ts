@@ -4,6 +4,7 @@ import { Vector3 } from '@babylonjs/core/Maths/math'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { scene as globalScene } from '../../index'
 import { Color3 } from '@babylonjs/core/Maths/math.color'
+import { vectorIntersection } from '../../maths/geometry'
 
 let junctions = null
 let paths = null
@@ -192,24 +193,64 @@ const getNormal = (seg: Vector3): Vector3 => {
 
     return norm
 }
+interface Segment {
+    a: Vector3
+    b: Vector3
+    normal: Vector3
+}
 
+const shiftSegment = (seg: Segment, push: number = 0) : Segment => {
+    const aa = seg.a.add(seg.normal)
+    const bb = seg.b.add(seg.normal)
+    const dir = bb.subtract(aa).normalize()
+
+    const shift : Segment = {
+        a: aa.subtract(dir.scale(push)),
+        b: bb.add(dir.scale(push)),
+        normal: seg.normal
+    }
+
+    return shift
+}
 
 const reducePoly = (poly: PavRoad) : Vector3[] => {
+    const segs1 : Segment[] = []
+    const segs2 : Segment[] = []
     const red1 : Vector3[] = []
     const red2 : Vector3[] = []
 
     poly.nodes.forEach((c: PavNode, i: number) => {
-        const n = i === poly.nodes.length - 1 ? poly.nodes[0] : poly.nodes[i + 1]
-        const p = i === 0 ? poly.nodes[poly.nodes.length - 1] : poly.nodes[i - 1]
+        const p = i === 0 ? poly.nodes[poly.nodes.length - 2] : poly.nodes[i - 1]
 
-        const normPrev = getNormal(c.point.subtract(p.point)).scale(4)
-        const normNext = getNormal(n.point.subtract(c.point)).scale(4)
+        const norm = getNormal(c.point.subtract(p.point)).scale(4)
+        // console.log("POINTS", c.point, p.point, norm, shiftSegment({a: p.point, b: c.point, normal: norm}, 10))
 
-        const point1 = c.point.add(normPrev.add(normNext))
-        const point2 = c.point.add(normPrev.scale(-1).add(normNext.scale(-1)))
+        segs1.push(shiftSegment({a: p.point, b: c.point, normal: norm}, 5))
+        segs2.push(shiftSegment({a: p.point, b: c.point, normal: norm.scale(-1)}, 5))
+    })
 
-        red1.push(point1)
-        red2.push(point2)
+    segs1.forEach((cSeg: Segment, i: number) => {
+        const pSeg = i === 0 ? segs1[segs1.length - 1] : segs1[i - 1]
+
+        const inter = vectorIntersection(pSeg.a, pSeg.b, cSeg.a, cSeg.b)
+
+        if (inter === null) {
+            red1.push(cSeg.a.scale(0.5).add(pSeg.b.scale(0.5)))
+        } else { 
+            red1.push (inter)
+        }
+    })
+
+    segs2.forEach((cSeg: Segment, i: number) => {
+        const pSeg = i === 0 ? segs1[segs1.length - 1] : segs1[i - 1]
+
+        const inter = vectorIntersection(pSeg.a, pSeg.b, cSeg.a, cSeg.b)
+
+        if (inter === null) {
+            red2.push(cSeg.a.scale(0.5).add(pSeg.b.scale(0.5)))
+        } else { 
+            red2.push (inter)
+        }
     })
 
     let length1 = 0
@@ -218,7 +259,6 @@ const reducePoly = (poly: PavRoad) : Vector3[] => {
     let length2 = 0
     for(let i = 1; i < red1.length; i++) { length2+= red2[i].subtract(red2[i - 1]).length()}
 
-    console.log(length1 + ' vs ' + length2)
     return (length1 < length2 ? red1 : red2)
 }
 
@@ -248,9 +288,10 @@ const buildPavements = () : Vector3[][] => {
     console.log('reds', reds)
 
     reds.forEach((poly, i) => {
-        let li = Mesh.CreateLines('li', poly, globalScene)
+        const closedPoly = poly.concat(poly, [poly[0]])
+        let li = Mesh.CreateLines('li', closedPoly, globalScene)
         li.position.y = li.position.y + 0.1
-        li.color = Color3.Random()
+        li.color = Color3.White()
     })
 
     return reds
