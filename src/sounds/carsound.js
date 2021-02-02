@@ -22,6 +22,7 @@ export function toggleSound(){
             speedSound[oldName.type].stop()
         }   
         speedSound[_.MEDIUM].stop()
+        speedSound[_.IDLE].stop()
         old.type = _.NONE
     }
 }

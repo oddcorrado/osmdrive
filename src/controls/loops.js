@@ -284,10 +284,10 @@ function resetWheel () {
         if (inter) { clearInterval(inter) }
                 
         const pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
-
         currentLook = x - pos > 300
                 ? 300
                 : (x - pos < -300 ? -300 : x - pos)
+        
         scene.activeCamera.lockedTarget.x = currentLook
         
         let eyePos = (parseInt(eye.style.left) + currentLook)/12
@@ -313,15 +313,18 @@ function resetWheel () {
     }
 
     const wheelMove = (x) => {
-        touch = x - (touchZone.offsetLeft + touchZone.offsetWidth / 2)
+        touch = x - (wheelzone.offsetLeft + wheelzone.offsetWidth / 2)
         touch = touch > 35 ? 40 : touch < -35 ? -40 : touch
         wheelimg.style.transform = `rotateZ(${touch}deg)`
         wheelimg.style.display = 'block'
         locked.style.display = 'none'
+        console.log(touch)
     }
 
     const wheelMoveEnd = () => {
+        console.log(touch)
         touch = touch > 35 ? 40 : touch < -35 ? -40 : 0
+        console.log(touch);
         if (touch === 40){
             nextdir.right = true
             nextdir.left = false
@@ -432,9 +435,10 @@ function resetWheel () {
     wheelzone.addEventListener('touchmove', e => wheelMove(e.targetTouches[0].clientX))
     wheelzone.addEventListener('mousedown', e => { 
         mouseAction = 'wheel'
-        wheelMove(e.clientX / 2)
+        wheelMove(e.clientX )
+        //wheelMove(e.targetTouches[0].clientX)
     })
-    wheelzone.addEventListener('mousemove', e => { if(mouseAction === 'wheel') { wheelMove(e.clientX / 2) } })
+    wheelzone.addEventListener('mousemove', e => { if(mouseAction === 'wheel') { wheelMove(e.clientX) } })
 
     wheelzone.addEventListener('touchend', () => wheelMoveEnd())
 

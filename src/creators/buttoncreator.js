@@ -187,8 +187,8 @@ export function viewZoneCreator(){
         <div style='margin-top: 5vh'>
             <img draggable=false style='height: 12vh; width: 25vw; text-align:center;' src='../images/zone.svg'></img>
         </div>
-        <div id='look-eye' style='position:relative; left: 0vh;bottom: 11.9vh;'>
-            <img draggable=false style='height: 10vh; width: 6vw' src='../images/interneye.svg'></img>
+        <div id='look-eye' style='position:relative; left: 0vh;bottom: 11.7vh;'>
+            <img draggable=false style='height: 10.2vh; width: 6vw' src='../images/interneye.svg'></img>
         </div>
     </div>`
     return div;
@@ -196,7 +196,7 @@ export function viewZoneCreator(){
 
 export function wheelCreator(){
     var div =
-    `<div id='wheelzone' style='position: absolute; z-index: 10;bottom: 7vh; left: 0; height:40vh; width: 35vw; text-align: center;display: block;'>
+    `<div id='wheelzone' style='position: absolute; z-index: 10;bottom: 7vh; left: 0; height:40vh; width: 35vw; text-align: center;'>
         <img draggable=false id='wheelimg' src='../images/steerwheel.svg' style='height: 45vh; margin-left: auto; margin-right: auto; opacity: 0.8'></img>
     </div>`
      return div;
