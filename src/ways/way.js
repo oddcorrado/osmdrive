@@ -13,10 +13,10 @@ import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
 import { scene as globalScene } from '../index'
 import buildRoads, { roads } from './logic/roads'
 import buildPavements from './logic/pavements'
-
 import zoneGet from '../geofind/geozone'
 import { geoSegmentsInit, getSegmentGetClosest } from '../geofind/geosegment'
 import { checkerDebugSegment } from '../checkers/roadChecker'
+import {createEnvironment} from '../environment/createEnvironment.ts'
 
 const paths = []
 
@@ -31,16 +31,14 @@ export default function createWays(scene, planes) {
     roadMat.backFaceCulling = false
     const roadTexture = new Texture('./textures/road.png', scene)
     roadTexture.vScale = 1
-    roadTexture.uScale = 20
+    roadTexture.uScale = 100
     roadMat.diffuseTexture = roadTexture
 
     // find the junctions
     buildRoads()
     geoSegmentsInit(roads)
     let pavements = buildPavements()
-    console.log('pavements', pavements)
-    //pavements = buildPavements()
-
+    createEnvironment(scene, pavements)
     // remove old junctions from root lanes
 
     ways.forEach(way => {

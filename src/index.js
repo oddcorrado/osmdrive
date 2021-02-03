@@ -60,7 +60,7 @@ const boot = () => {
     //Create map road and multiple meshes 
     createWays(scene, planes)
     var grids// = createBuildings(scene)
-    dressMap(scene, container);
+    dressMap(scene, container)
     
 
     //Create all menus and UI Elements

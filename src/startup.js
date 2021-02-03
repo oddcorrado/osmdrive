@@ -41,7 +41,7 @@ const startup = boot => {
 
     const ua = new UAParser()
     const os = ua.getOS()
-console.log('os', os)
+    console.log('os', os)
     const start = divCreator(startStyle, {id: 'startDiv', text: displayText(window.innerWidth, window.innerHeight)})
 
     start.style.color = displayColor(window.innerWidth, window.innerHeight)
@@ -57,7 +57,7 @@ console.log('os', os)
         if (window.innerWidth > window.innerHeight) {
             start.innerText = 'UBIQUITY\nLOADING...\nPLEASE WAIT'
             if (screenfull.isEnabled  && os.name !== 'Mac OS' && (os !== 'iOS')) {
-                // screenfull.request()
+                screenfull.request()
             }
             document.body.removeChild(start)
             boot()

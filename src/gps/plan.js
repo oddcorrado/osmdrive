@@ -2,7 +2,7 @@ import arrowCreator from '../creators/gpsCreator'
 import score from '../scoring/scoring'
 import { Vector3 } from '@babylonjs/core/Maths/math';
 import { Quaternion } from 'cannon';
-import createArrow from '../props/3darrow'
+import createArrow from '../roadsigns/3darrow'
 
 let prev;
 let rotations = [{S: -Math.PI/10, L: 0, R: 0, E: 0},

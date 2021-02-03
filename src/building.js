@@ -13,7 +13,7 @@ function materialCreator(scene, name){
     const tmpMat = new StandardMaterial(name, scene);
     tmpMat.alpha = 1;
     tmpMat.diffuseColor = new Color3(1, 1, 1);
-    tmpMat.emissiveColor = new Color3(0.3, 0.3, 0.3);
+    tmpMat.emissiveColor = new Color3(1, 1, 1);
     tmpMat.backFaceCulling = false
     return tmpMat;
 }

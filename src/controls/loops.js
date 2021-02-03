@@ -318,13 +318,10 @@ function resetWheel () {
         wheelimg.style.transform = `rotateZ(${touch}deg)`
         wheelimg.style.display = 'block'
         locked.style.display = 'none'
-        console.log(touch)
     }
 
     const wheelMoveEnd = () => {
-        console.log(touch)
         touch = touch > 35 ? 40 : touch < -35 ? -40 : 0
-        console.log(touch);
         if (touch === 40){
             nextdir.right = true
             nextdir.left = false
