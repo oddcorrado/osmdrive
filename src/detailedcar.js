@@ -12,7 +12,7 @@ export default function createMainCar (scene, camera, internalCamera, container)
     var car = Mesh.MergeMeshes(newMesh['meshes'], true, true, null, false, true)
     car.name = 'detailedcar'
     car.position = new Vector3(15, 1.5, -2)
-    car.scalingDeterminant = 0.8
+    car.scalingDeterminant = 0.6
     car.rotation = new Vector3(0,Math.PI/2,0)
     camera.parent = car
     internalCamera.parent = car
