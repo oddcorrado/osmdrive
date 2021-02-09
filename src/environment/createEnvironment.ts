@@ -4,6 +4,10 @@ import { Scene } from "@babylonjs/core/scene"
 import { Mesh } from "@babylonjs/core/Meshes/mesh"
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { Texture } from "@babylonjs/core/Materials/Textures/texture"
+import {createTextureCollection} from '../textureCollection'
+import {materialCreator} from '../building'
+import { Material } from "@babylonjs/core/Materials/material"
+import {setStatus} from '../index'
 
 const createCountry = (zone: Vector3[], scene: Scene, groundMat: StandardMaterial) => {
     if(zone){
@@ -13,18 +17,60 @@ const createCountry = (zone: Vector3[], scene: Scene, groundMat: StandardMateria
     }
 }
 
+const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: StandardMaterial[]) => {
+    let floor: Vector3[] = []
+    let top:Vector3[] = []
+    let positions: number[] = []
+    let keep: number[] = []
+    let maxX: number = null
+    let maxZ: number = null
+    let max = points.length
+    let offsetWalk = 5;
 
-const createSidewalk = (zone: Vector3[], scene: Scene, walkMat: StandardMaterial, sideMat: Color4[]) => {
+    for (let i = 0; i < max; i++){positions.push(i)}
+    for (let i = 0; i < 4; i++){
+        keep.push(positions.splice(Math.random() * (max-i) | 0, 1).pop()) 
+        maxX = maxX ? points[keep[i]].x > maxX ? points[keep[i]].x : maxX : points[keep[i]].x
+        maxZ = maxZ ? points[keep[i]].z > maxZ ? points[keep[i]].z : maxZ : points[keep[i]].z
+    }
+    points.filter((point, i = 0) => {
+        if (keep.includes(i)){
+            let x = point.x < maxX ? point.x + offsetWalk : point.x - offsetWalk
+            let z = point.z < maxZ ? point.z + offsetWalk : point.z - offsetWalk
+            floor.push(new Vector3(x, point.y, z))
+            top.push(new Vector3(x, point.y + 20, z))
+            return true;
+        }
+    })
+
+    let building = MeshBuilder.CreateRibbon('newbuilding', {pathArray: [floor, top], closePath: true}, scene)
+    building.material = collection[Math.random() * collection.length | 0]
+}
+
+const spawnBuilding = (from: Vector3, to: Vector3, scene: Scene) => {
+    //if (from.x + 10 < to.x && from.z + 10 < to.z){
+
+        //let coord = [from, new Vector3(from.x + 10, from.y, from.z), new Vector3(from.x + 10, from.y, from.z - 10), new Vector3(from.x, from.y, from.z-10)]
+        //let building = MeshBuilder.CreateRibbon('newbuilding', {pathArray: coord}, scene)
+    //}
+}
+
+const citySpawner = (zone: Vector3[], scene: Scene, collection: StandardMaterial[]) => {
+    spawnSingleRandomBuilding(zone, scene, collection)
+}
+
+const createSidewalk = (zone: Vector3[], scene: Scene, walkMat: StandardMaterial, collection: StandardMaterial[]) => {
     let roof: Vector3[]
     if (zone){
         roof = zone.map(x => new Vector3(x._x, x._y + 0.3, x._z))
-       let sides = MeshBuilder.CreateRibbon("sidewalk", { pathArray: [zone, roof], closeArray: true, closePath:true, colors:sideMat, sideOrientation: 3 },  scene)
+       let sides = MeshBuilder.CreateRibbon("sidewalk", { pathArray: [zone, roof], closeArray: true, closePath:true, sideOrientation: 3 },  scene)
         //let full = [...roof, ...zone]
        let walk = MeshBuilder.CreatePolygon("polygon", {shape: zone}, scene)
        //let sides = MeshBuilder.CreatePolygon("polygon", {shape: full}, scene)
         walk.position.y += 0.4
         walk.material = walkMat
         //sides.material = sideMat
+        citySpawner(zone, scene, collection)
     }
 }
 
@@ -44,19 +90,16 @@ export const createEnvironment = (scene: Scene, zones: Vector3[][]) => {
     groundMat.diffuseTexture = groundTexture
     sideMat.diffuseColor = new Color3(0.5, 0.52, 0.55)
     sideMat.emissiveColor = new Color3(0.5, 0.52, 0.55)
-    let color: Color4[]
-    for (let i = 0; i <= zones.length[1]*2; i++){
-        color.push(new Color4(0.5, 0.52, 0.55, 0))
-    }
-        
+
+    let collection: StandardMaterial[] = createTextureCollection(scene)
     //sideMat.diffuseTexture = sideTexture
     for (let i = 0; i<= zones.length; i++){
         let type = Math.random() * 2 | 0
-        console.log(type)
-      if (type === 0 ){//country
-        createSidewalk(zones[i], scene, walkMat, color)
-    } else { 
-        createCountry(zones[i], scene, groundMat)
+        if (type === 0 ){//country
+            createSidewalk(zones[i], scene, walkMat, collection)
+        } else { 
+            createCountry(zones[i], scene, groundMat)
         }   
     }
+    setStatus('randomgen')
 }

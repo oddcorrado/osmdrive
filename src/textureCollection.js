@@ -1,4 +1,7 @@
 import { Texture } from '@babylonjs/core/Materials/Textures/texture'
+import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
+import {materialCreator} from './building'
+
 function textureCreator(scene, source, uS, vS){
     const tmpTxtur = new Texture(source, scene)
 
@@ -8,7 +11,30 @@ function textureCreator(scene, source, uS, vS){
     return tmpTxtur
 }
 
-export function createTextureCollection (scene){
+function fillCollection(scene){
+    const textureCollection = [
+        textureCreator(scene, '../textures/building/texture1.jpg', 10, 1),
+        textureCreator(scene, '../textures/building/texture2.jpg', 10, 1),
+        textureCreator(scene, '../textures/building/texture3.jpg', 10, 1),
+        textureCreator(scene, '../textures/building/texture4.jpg', 10, 1) 
+    ]    
+    console.log(textureCollection)
+    return textureCollection
+}
+
+
+export function createTextureCollection (scene) {
+    let matTab = []
+    let textureCollection = fillCollection(scene)
+    textureCollection.forEach((texture, i = 0)  => {
+        matTab.push(materialCreator(scene))
+        matTab[i].diffuseTexture = textureCollection[i]
+    })
+
+    return matTab
+}
+
+export function createTextureCollectionOld (scene){
  const textureCollection = [
         [
             {texture: textureCreator(scene, '../textures/xsmallbuilding.jpg', 10, 1)},//type 0 (xsmall)

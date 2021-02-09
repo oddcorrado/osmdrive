@@ -29,9 +29,9 @@ export default function createWays(scene, planes) {
     roadMat.specularColor = new Color3(0, 0, 0)
     roadMat.emissiveColor = new Color3(0.3, 0.3, 0.3);
     roadMat.backFaceCulling = false
-    const roadTexture = new Texture('./textures/road.png', scene)
+    const roadTexture = new Texture('./textures/road2.jpeg', scene)//road, road2
     roadTexture.vScale = 1
-    roadTexture.uScale = 100
+    roadTexture.uScale = 50
     roadMat.diffuseTexture = roadTexture
 
     // find the junctions

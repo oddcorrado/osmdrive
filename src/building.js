@@ -5,11 +5,11 @@ import { Vector3 } from '@babylonjs/core/Maths/math'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { Color3 } from '@babylonjs/core/Maths/math.color'
 import { Texture } from '@babylonjs/core/Materials/Textures/texture'
-import {createTextureCollection} from './textureCollection'
+import {createTextureCollectionOld} from './textureCollection'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
 
-function materialCreator(scene, name){
+export function materialCreator(scene, name){
     const tmpMat = new StandardMaterial(name, scene);
     tmpMat.alpha = 1;
     tmpMat.diffuseColor = new Color3(1, 1, 1);
@@ -80,7 +80,7 @@ function getGridFromSide(pointA, pointB, nbPoints, levels){
 
 export default function createBuildings(scene) {
     var mats = [[],[],[],[],[]];
-    var textureCollection = createTextureCollection(scene);
+    var textureCollection = createTextureCollectionOld(scene);
     var grid = [];
     var tmpGrid;
     var gridMesh = [];

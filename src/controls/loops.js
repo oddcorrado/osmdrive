@@ -81,7 +81,7 @@ function loopSelector(scene, joints, sjoints, clio, mustang, gps){
         if (switchCam == 'ford') {
             switchCam = 'none'
             scene.activeCamera.parent = mustang
-            scene.activeCamera.position = new Vector3(0, 2.2, -1.7)
+            scene.activeCamera.position = new Vector3(0, 3.4, 0.1)
             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
             //90
             // scene.activeCamera.position = new Vector3(0, 3.1, 0)
@@ -129,7 +129,6 @@ const fakeYawStep = 0.001
 const fakeYawMax = 0.05
 
 //CURRENT LOOP HERE
-let test;
 function mustangLoopTap (car, scene, gps) {
     //  var steerWheel = document.getElementById('wheel');
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;

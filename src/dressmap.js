@@ -14,6 +14,8 @@ import { spawnTrafficLight } from './roadsigns/trafficlight'
 import { ActionManager } from '@babylonjs/core/Actions'
 import botshandler from './bots'
 import {setSounds} from './sounds/carsound'
+import {setStatus} from './index'
+
 let propsContainer
 let pavements
 
@@ -24,6 +26,7 @@ var duplicate = function(container, x, y) {
         node.position.x += x
         node.position.z += y
     }
+    entries.rootNodes.forEach(mesh => mesh.isVisible = true)
 }
 
 function getInterPos(curr, next){
@@ -51,7 +54,8 @@ function getInterPos(curr, next){
 function createTrees(scene, propsContainer) {
     new SceneLoader.LoadAssetContainer("../mesh/Tree/", "Tree.obj", scene, function(container){
     container.addAllToScene()
-    
+    container.meshes.forEach(mesh => mesh.isVisible = false)
+
     ways.forEach(way => {
 
         for (var i = 1; i < way.points.length-1; i++){
@@ -59,9 +63,9 @@ function createTrees(scene, propsContainer) {
             duplicate(container, posTab['xL'], posTab['yL'])
             duplicate(container, posTab['xR'], posTab['yR'])
         }
+        setStatus('trees')
      })
      propsContainer = container
-     console.log(propsContainer)
    })
 }
 
@@ -80,5 +84,6 @@ export default function dressMap(scene, container){
     spawnStop(container, scene, 195, -5)
     spawnNoEntry(container, scene, 304, 105)
     spawnSpeedSign(container, scene, '30', 15, -5)
+    setStatus('assets')
 }
 
