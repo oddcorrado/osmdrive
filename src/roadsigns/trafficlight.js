@@ -8,7 +8,10 @@ import { ActionManager, ExecuteCodeAction} from '@babylonjs/core/Actions';
 import { feedbackDivCreator } from '../creators/buttoncreator';
 import score from '../scoring/scoring'
 
-async function createAction(scene, line, container){
+let status = []
+let id = 0
+
+async function createAction(scene, line, container, idx){
    line.actionManager = new ActionManager(scene);
    return await new Promise (function(resolve) {
       const interval = setInterval(container =>  {
@@ -29,56 +32,48 @@ async function createAction(scene, line, container){
                },
             },
              function(){
-               if (status === 'red') 
+               if (status[idx] === 'red') 
                   score.newScore('TRAFFIC_LIGHT_BAD', -100);
-               if (status === 'green' || status === 'orange')
+               if (status[idx] === 'green' || status[idx] === 'orange')
                   score.newScore('TRAFFIC_LIGHT_GOOD', 50);
             })
       )
    })
 }
 
-var status;
-
 function setColors(colors, newcolor){
-   colors[0].emissiveColor = newcolor[0];
-   colors[1].emissiveColor = newcolor[1];
-   colors[2].emissiveColor = newcolor[2];
+   colors[0].emissiveColor = newcolor[0]
+   colors[1].emissiveColor = newcolor[1]
+   colors[2].emissiveColor = newcolor[2]
 }
 
-function createLightRotation(colors, type){
-   console.log('TYPE', type)
-   let debugtype = type === 'green' ? type : null
-   console.log(debugtype)
+function createLightRotation(colors, type, idx){
    var cols = {
       red: new Color3(1, 0, 0),
       none: new Color3(0, 0, 0),
       green: new Color3(0, 1, 0),
       orange: new Color3(1, 0.4, 0)
-   };
-
+   }
    colors[type === 'red' ? 2 : 0].emissiveColor = cols[type];
-   status = type
-   console.log('STATUS', status)
+  
    setInterval(() => {
-      if (debugtype === 'green'){
-         console.log('interval', status)
-      }
-      if (status === 'green'){
+      if (status[idx] === 'green'){
          setColors(colors, [cols['none'], cols['orange'], cols['none']]);
-         status = 'orange';
+         status[idx] = 'orange';
          setTimeout(() => {
             setColors(colors, [cols['none'], cols['none'], cols['red']]);
-            status = 'red';
+            status[idx] = 'red';
          }, 2000)
-      } else if (status === 'red'){
+      } else if (status[idx] === 'red'){
          setColors(colors, [cols['green'], cols['none'], cols['none']])
-         status = 'green';
+         status[idx] = 'green';
       }
    }, 15000)
 }
 
 export function spawnTrafficLight(container, scene, x, y, ori, type) {
+   status.push(type)
+   let idx = id++
    let line = MeshBuilder.CreateBox('box', {width:1.5, height:1.5, depth: 0.3}, scene);     
    //const rotSign = new Vector3(0, -Math.PI/2, 0)
    const rotSign = new Vector3(0, ori, 0)
@@ -109,8 +104,8 @@ export function spawnTrafficLight(container, scene, x, y, ori, type) {
       traffic.scalingDeterminant = 0.8
       traffic.position = posSign
       traffic.rotation = rotSign
-      createLightRotation(colors, type)
-      createAction(scene, line, container)
+      createLightRotation(colors, type, idx)
+      createAction(scene, line, container, idx)
       return traffic;
    })
 }

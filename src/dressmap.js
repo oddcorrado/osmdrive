@@ -79,16 +79,18 @@ export default function dressMap(scene, container){
     createTrees(scene, propsContainer)
 
    // botshandler.createBots(scene, container)
+    //AVAILABLE:
     // spawnTrafficLight(container, scene, 295, -105)
     // spawnYield(container, scene, 95, -5)
     // spawnStop(container, scene, 195, -5)
     // spawnNoEntry(container, scene, 304, 105)
-    // spawnSpeedSign(container, scene, '30', 15, -5)
+    // spawnSpeedSign(container, scene, '30', 15, -5)//'50', '100'
+    //
     spawnTrafficLight(container, scene, -195, -205, Math.PI, 'green')
-    spawnTrafficLight(container, scene, -195, -105, Math.PI, 'green')
+    spawnTrafficLight(container, scene, -195, -105, Math.PI, 'red')
     spawnTrafficLight(container, scene, -105, -105, -Math.PI/2, 'red')
-    spawnTrafficLight(container, scene, -5, -105, -Math.PI/2, 'green')
-    spawnTrafficLight(container, scene, 5, -5, Math.PI, 'red')
+    spawnTrafficLight(container, scene, -5, -105, -Math.PI/2, 'red')
+    spawnTrafficLight(container, scene, 5, -5, Math.PI, 'green')
     spawnStop(container, scene, 95, -5, Math.PI)
     spawnStop(container, scene, 195, -5, Math.PI)
     spawnYield(container, scene, 205, 95, Math.PI)

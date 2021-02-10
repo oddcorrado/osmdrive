@@ -25,6 +25,7 @@ import { SineEase } from '@babylonjs/core/Animations/easing'
 import {setupGps} from './gps/plan'
 import { DefaultLoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
+import {createLoading} from './creators/loadingCreator'
 
 let loadingStatus = {assets: false, car: false, randomgen: false, trees: false, walk: false, ground: false, count: 0}
 let loadingInter
@@ -40,6 +41,61 @@ export function setStatus(type){
     }
 }
 
+// DefaultLoadingScreen.prototype.displayLoadingUI = function () {
+//     if (document.getElementById("customLoadingScreenDiv")) {
+//         // Do not add a loading screen if there is already one
+//         document.getElementById("customLoadingScreenDiv").style.display = "initial"
+//         return
+//     }
+    
+//     this._loadingDiv = document.createElement("div")
+//     this._percentage = document.createElement("div")
+//     this._loadingDiv.id = "customLoadingScreenDiv"
+//     this._percentage.id = "percentage"
+//     this._loadingDiv.innerHTML = "UBIQUITY: Chargement"
+//     this._percentage.innerHTML = '(0%)'
+//     var customLoadingScreenCss = document.createElement('style')
+//     customLoadingScreenCss.type = 'text/css'
+//     customLoadingScreenCss.innerHTML = `
+//     #customLoadingScreenDiv{
+//         background-color: #035efc;
+//         padding-top:25%;
+//         color: white;
+//         font-size:50px;
+//         text-align:center;
+//         z-index: 200;
+//         opacity: 1;
+//     }
+//     #percentage{
+//         position:absolute;
+//         bottom: 20vh;
+//         left:25vw;
+//         text-align: center;
+//         width:60vw;
+//         color: white;
+//         font-size:50px;
+//         z-index: 201;
+//     }
+//     `
+//     loadingInter = setInterval(() => {
+//         let toload = []
+//         for (let  elem in loadingStatus){ if (loadingStatus[elem] == false) { toload.push(elem)}}
+//         this._percentage.innerHTML = `(${loadingStatus.count.toFixed(2)}%) loaded: ${lasttype},\n loading: ${toload}`
+//         if (this._loadingDiv.innerHTML.includes('...')){
+//             this._loadingDiv.innerHTML = 'UBIQUITY: Chargement'
+//         } else {
+//             this._loadingDiv.innerHTML = this._loadingDiv.innerHTML + '.'
+//         }
+            
+//     }, 200)
+//     document.getElementsByTagName('head')[0].appendChild(customLoadingScreenCss)
+//     this._resizeLoadingUI()
+//     window.addEventListener("resize", this._resizeLoadingUI)
+//     document.body.appendChild(this._percentage)
+//     document.body.appendChild(this._loadingDiv)
+// }
+
+
 DefaultLoadingScreen.prototype.displayLoadingUI = function () {
     if (document.getElementById("customLoadingScreenDiv")) {
         // Do not add a loading screen if there is already one
@@ -47,55 +103,33 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
         return
     }
     
-    this._loadingDiv = document.createElement("div")
-    this._percentage = document.createElement("div")
-    this._loadingDiv.id = "customLoadingScreenDiv"
-    this._percentage.id = "percentage"
-    this._loadingDiv.innerHTML = "UBIQUITY: Chargement"
-    this._percentage.innerHTML = '(0%)'
-    var customLoadingScreenCss = document.createElement('style')
-    customLoadingScreenCss.type = 'text/css'
-    customLoadingScreenCss.innerHTML = `
-    #customLoadingScreenDiv{
-        background-color: #035efc;
-        padding-top:25%;
-        color: white;
-        font-size:50px;
-        text-align:center;
-        z-index: 200;
-        opacity: 1;
-    }
-    #percentage{
-        position:absolute;
-        bottom: 20vh;
-        left:25vw;
-        text-align: center;
-        width:60vw;
-        color: white;
-        font-size:50px;
-        z-index: 201;
-    }
-    `
+    let {loadtext, loadbar} = createLoading()
+
+    // this._loadingDiv = document.createElement("div")
+    // this._percentage = document.createElement("div")
+    // this._loadingDiv.id = "customLoadingScreenDiv"
+    // this._percentage.id = "percentage"
+    // this._loadingDiv.innerHTML = "UBIQUITY: Chargement"
+    // this._percentage.innerHTML = '(0%)'
+    // var customLoadingScreenCss = document.createElement('style')
+    
     loadingInter = setInterval(() => {
         let toload = []
-        for (let  elem in loadingStatus){ if (loadingStatus[elem] == false) { toload.push(elem)}}
-        this._percentage.innerHTML = `(${loadingStatus.count.toFixed(2)}%) loaded: ${lasttype},\n loading: ${toload}`
-        if (this._loadingDiv.innerHTML.includes('...')){
-            this._loadingDiv.innerHTML = 'UBIQUITY: Chargement'
-        } else {
-            this._loadingDiv.innerHTML = this._loadingDiv.innerHTML + '.'
-        }
+        // for (let  elem in loadingStatus){ if (loadingStatus[elem] == false) { toload.push(elem)}}
+        // this._percentage.innerHTML = `(${loadingStatus.count.toFixed(2)}%) loaded: ${lasttype},\n loading: ${toload}`
+        // if (this._loadingDiv.innerHTML.includes('...')){
+        //     this._loadingDiv.innerHTML = 'UBIQUITY: Chargement'
+        // } else {
+        //     this._loadingDiv.innerHTML = this._loadingDiv.innerHTML + '.'
+        // }
             
     }, 200)
-    document.getElementsByTagName('head')[0].appendChild(customLoadingScreenCss)
     this._resizeLoadingUI()
     window.addEventListener("resize", this._resizeLoadingUI)
-    document.body.appendChild(this._percentage)
-    document.body.appendChild(this._loadingDiv)
 };
 
 DefaultLoadingScreen.prototype.hideLoadingUI = function(){
-    document.getElementById("customLoadingScreenDiv").style.display = "none"
+    document.getElementById("customLoadingScreenDiv").remove()
     document.getElementById("percentage").style.display = "none"
     clearInterval(loadingInter)
     console.log("LOADED")

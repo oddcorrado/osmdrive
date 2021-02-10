@@ -6,7 +6,7 @@ var divs = [];
 function slideDiv(div){
     var cur = 0
     let inter = setInterval(() => {
-        if (cur < 30) {
+        if (cur < 25) {
             cur += 1;
             div.style.left = `${parseInt(div.style.left)+1}vw`
         } else 
@@ -39,7 +39,7 @@ export function feedbackDivCreator(content){
                     </div>
                 </div>
             </div>
-            <div style='display: table-cell; height: 8.5vh; padding-left: 2vw; padding-right: 2vw; font-size: 3vh; vertical-align: middle; line-height: 3vh;  text-overflow: clip'>
+            <div style='display: table-cell; height: 8.5vh; padding-left: 2vw; padding-right: 2vw; font-size: 2.8vh; vertical-align: middle; line-height: 3vh;  text-overflow: clip'>
                 ${warningScore[content.text]}
             </div>
         </div>
