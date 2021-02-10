@@ -34,6 +34,7 @@ export function setStatus(type){
     lasttype = type;
     loadingStatus[type] = true
     loadingStatus.count += 100/6
+    // console.log(type, loadingStatus.count)
     if (loadingStatus.count >= 100){
        engine.hideLoadingUI()
     }
@@ -78,7 +79,7 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
     loadingInter = setInterval(() => {
         let toload = []
         for (let  elem in loadingStatus){ if (loadingStatus[elem] == false) { toload.push(elem)}}
-        this._percentage.innerHTML = `(${loadingStatus.count}%) loaded: ${lasttype},\n loading: ${toload}`
+        this._percentage.innerHTML = `(${loadingStatus.count.toFixed(2)}%) loaded: ${lasttype},\n loading: ${toload}`
         if (this._loadingDiv.innerHTML.includes('...')){
             this._loadingDiv.innerHTML = 'UBIQUITY: Chargement'
         } else {

@@ -46,30 +46,39 @@ function setColors(colors, newcolor){
    colors[2].emissiveColor = newcolor[2];
 }
 
-function createLightRotation(colors){
-   var none = new Color3(0, 0, 0);
-   var green = new Color3(0, 1, 0);
-   var orange = new Color3(1, 0.4, 0);
-   var red = new Color3(1, 0, 0);
+function createLightRotation(colors, type){
+   console.log('TYPE', type)
+   let debugtype = type === 'green' ? type : null
+   console.log(debugtype)
+   var cols = {
+      red: new Color3(1, 0, 0),
+      none: new Color3(0, 0, 0),
+      green: new Color3(0, 1, 0),
+      orange: new Color3(1, 0.4, 0)
+   };
 
-   colors[2].emissiveColor = red;
-   status = 'red';
+   colors[type === 'red' ? 2 : 0].emissiveColor = cols[type];
+   status = type
+   console.log('STATUS', status)
    setInterval(() => {
+      if (debugtype === 'green'){
+         console.log('interval', status)
+      }
       if (status === 'green'){
-         setColors(colors, [none, orange, none]);
+         setColors(colors, [cols['none'], cols['orange'], cols['none']]);
          status = 'orange';
          setTimeout(() => {
-            setColors(colors, [none, none, red]);
+            setColors(colors, [cols['none'], cols['none'], cols['red']]);
             status = 'red';
          }, 2000)
       } else if (status === 'red'){
-         setColors(colors, [green,none,none])
+         setColors(colors, [cols['green'], cols['none'], cols['none']])
          status = 'green';
       }
    }, 15000)
 }
 
-export function spawnTrafficLight(container, scene, x, y, ori) {
+export function spawnTrafficLight(container, scene, x, y, ori, type) {
    let line = MeshBuilder.CreateBox('box', {width:1.5, height:1.5, depth: 0.3}, scene);     
    //const rotSign = new Vector3(0, -Math.PI/2, 0)
    const rotSign = new Vector3(0, ori, 0)
@@ -100,7 +109,7 @@ export function spawnTrafficLight(container, scene, x, y, ori) {
       traffic.scalingDeterminant = 0.8
       traffic.position = posSign
       traffic.rotation = rotSign
-      createLightRotation(colors)
+      createLightRotation(colors, type)
       createAction(scene, line, container)
       return traffic;
    })
