@@ -9,11 +9,16 @@ import {materialCreator} from '../building'
 import { Material } from "@babylonjs/core/Materials/material"
 import {setStatus} from '../index'
 
+const fillAssetsCountry = (zone: Vector3[], scene: Scene) => {
+    //spawn between 2 random points 3 times random number of trees
+}
+
 const createCountry = (zone: Vector3[], scene: Scene, groundMat: StandardMaterial) => {
     if(zone){
         let ground = MeshBuilder.CreatePolygon("polygon", {shape: zone}, scene);
         ground.position.y += 0.1
         ground.material = groundMat
+        fillAssetsCountry(zone, scene)
     }
 }
 
@@ -81,6 +86,12 @@ export const createEnvironment = (scene: Scene, zones: Vector3[][]) => {
     let sideMat = walkMat.clone('side')
     const walkTexture = new Texture('./textures/walk.jpg', scene)
     const groundTexture = new Texture('./textures/grass.jpg', scene)
+    walkTexture.onLoadObservable.add(() => {
+        setStatus('walk')
+    })
+    groundTexture.onLoadObservable.add(() => {
+        setStatus('ground')
+    })
   //  const sideTexture = new Texture('./textures/sidewalk.jpg', scene)
     groundTexture.vScale = 50
     groundTexture.uScale = 50

@@ -69,16 +69,18 @@ function createLightRotation(colors){
    }, 15000)
 }
 
-export function spawnTrafficLight(container, scene, x, y) {
+export function spawnTrafficLight(container, scene, x, y, ori) {
    let line = MeshBuilder.CreateBox('box', {width:1.5, height:1.5, depth: 0.3}, scene);     
-   const rotSign = new Vector3(0, -Math.PI/2, 0);
-   const posSign = new Vector3(x, 0, y);
-   const lineRot = new Vector3(Math.PI/2, Math.PI/10*4, y);
-   const linePos = new Vector3(x, 1, y + 3);
-   var nb = 0;
-   line.position = linePos;
-   line.rotation = lineRot;
-   line.isVisible = false;
+   //const rotSign = new Vector3(0, -Math.PI/2, 0)
+   const rotSign = new Vector3(0, ori, 0)
+   const posSign = new Vector3(x, 0, y)
+   const lineRot = new Vector3(Math.PI/2, 0, y)
+   //const linePos = new Vector3(x - 3, 1, y + 2)
+   const linePos = new Vector3(ori >= Math.PI ? x - 3 : x + 2, 1, y + 3)
+   var nb = 0
+   line.position = linePos
+   line.rotation = lineRot
+   line.isVisible = false
 
    return new SceneLoader.ImportMeshAsync('', "../mesh/DoubleTrafficLight/", "doubletraffic.obj", scene).then(function(newMesh) {
       var lights = [];
@@ -94,12 +96,12 @@ export function spawnTrafficLight(container, scene, x, y) {
          x+=2;
       })
       const traffic = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
-      traffic.name = 'light';
-      traffic.scalingDeterminant = 0.8;
-      traffic.position = posSign;
-      traffic.rotation = rotSign;
-      createLightRotation(colors);
-      createAction(scene, line, container);
+      traffic.name = 'light'
+      traffic.scalingDeterminant = 0.8
+      traffic.position = posSign
+      traffic.rotation = rotSign
+      createLightRotation(colors)
+      createAction(scene, line, container)
       return traffic;
    })
 }

@@ -2,7 +2,6 @@ import arrowCreator from '../creators/gpsCreator'
 import score from '../scoring/scoring'
 import { Vector3 } from '@babylonjs/core/Maths/math';
 import { Quaternion } from 'cannon';
-import createArrow from '../roadsigns/3darrow'
 
 let prev;
 let rotations = [{S: -Math.PI/10, L: 0, R: 0, E: 0},
@@ -17,7 +16,7 @@ let imageSources = {
 
 
 let idx = 1;
-let plan = ['I','S', 'R', 'L', 'L', 'S', 'L', 'R', 'S', 'L', 'S', 'S', 'S', 'S', 'E'];
+let plan = ['I','S', 'R', 'S', 'L', 'R', 'S', 'L', 'S', 'R', 'L', 'E'];
 let arrow;
 
 function checkJunctionGps(current, prev){

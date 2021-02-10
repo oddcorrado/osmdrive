@@ -45,16 +45,17 @@ async function createAction(scene, trig, container){
    })
 }
 
-export default function spawnYield(container, scene, x, y) {
+export default function spawnYield(container, scene, x, y, ori) {
    let mat = new StandardMaterial("matstop", scene)
    let line = [MeshBuilder.CreateBox('line1', {width:1, height:1, depth: 0.3}, scene),
                MeshBuilder.CreateBox('line2', {width:1, height:1, depth: 0.3}, scene),
                MeshBuilder.CreateBox('line3', {width:1, height:1, depth: 0.3}, scene)]
    let trig = MeshBuilder.CreateBox('box', {width:1, height:1.5, depth: 0.3}, scene)
-   const rotSign = new Vector3(0, -Math.PI/2, 0)
+   //const rotSign = new Vector3(0, -Math.PI/2, 0)
+   const rotSign = new Vector3(0, ori, 0)
    const posSign = new Vector3(x, 0, y)
-   const lineRot = new Vector3(Math.PI/2, Math.PI/10*4, y)
-   const linePos = new Vector3(x, -0.01, y + 4.2)
+   const lineRot = new Vector3(Math.PI/2, ori/10* 2.3, y)
+   const linePos = new Vector3(x - 1.8, -0.01, y + 1)
    const trigPos = new Vector3(x, 1, y+3)
 
    mat.diffuseColor = new Color3(1, 1, 1)
@@ -62,7 +63,7 @@ export default function spawnYield(container, scene, x, y) {
 
    
    line.forEach((box, i = 0) => {
-      box.position = new Vector3(linePos.x,linePos.y,linePos.z - i*1.3)
+      box.position = new Vector3(linePos.x - i*1.3,linePos.y,linePos.z)
       box.rotation = lineRot
       box.material = mat
    })

@@ -26,13 +26,16 @@ import {setupGps} from './gps/plan'
 import { DefaultLoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader";
 
-let loadingStatus = {assets: false, car: false, randomgen: false, trees: false, count: 0}
+let loadingStatus = {assets: false, car: false, randomgen: false, trees: false, walk: false, ground: false, count: 0}
 let loadingInter
+let lasttype
+
 export function setStatus(type){
+    lasttype = type;
     loadingStatus[type] = true
-    loadingStatus.count++
-    if (loadingStatus.count === 4){
-        engine.hideLoadingUI()
+    loadingStatus.count += 100/6
+    if (loadingStatus.count >= 100){
+       engine.hideLoadingUI()
     }
 }
 
@@ -42,9 +45,13 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
         document.getElementById("customLoadingScreenDiv").style.display = "initial"
         return
     }
+    
     this._loadingDiv = document.createElement("div")
+    this._percentage = document.createElement("div")
     this._loadingDiv.id = "customLoadingScreenDiv"
+    this._percentage.id = "percentage"
     this._loadingDiv.innerHTML = "UBIQUITY: Chargement"
+    this._percentage.innerHTML = '(0%)'
     var customLoadingScreenCss = document.createElement('style')
     customLoadingScreenCss.type = 'text/css'
     customLoadingScreenCss.innerHTML = `
@@ -57,8 +64,21 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
         z-index: 200;
         opacity: 1;
     }
+    #percentage{
+        position:absolute;
+        bottom: 20vh;
+        left:25vw;
+        text-align: center;
+        width:60vw;
+        color: white;
+        font-size:50px;
+        z-index: 201;
+    }
     `
     loadingInter = setInterval(() => {
+        let toload = []
+        for (let  elem in loadingStatus){ if (loadingStatus[elem] == false) { toload.push(elem)}}
+        this._percentage.innerHTML = `(${loadingStatus.count}%) loaded: ${lasttype},\n loading: ${toload}`
         if (this._loadingDiv.innerHTML.includes('...')){
             this._loadingDiv.innerHTML = 'UBIQUITY: Chargement'
         } else {
@@ -69,25 +89,28 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
     document.getElementsByTagName('head')[0].appendChild(customLoadingScreenCss)
     this._resizeLoadingUI()
     window.addEventListener("resize", this._resizeLoadingUI)
+    document.body.appendChild(this._percentage)
     document.body.appendChild(this._loadingDiv)
 };
 
 DefaultLoadingScreen.prototype.hideLoadingUI = function(){
-    document.getElementById("customLoadingScreenDiv").style.display = "none";
-    console.log("scene is now loaded");
+    document.getElementById("customLoadingScreenDiv").style.display = "none"
+    document.getElementById("percentage").style.display = "none"
+    clearInterval(loadingInter)
+    console.log("LOADED")
 }
 
 const canvas = document.getElementById('renderCanvas')
-const engine = new Engine(canvas);
+const engine = new Engine(canvas)
 
 const boot = () => {
-    var oldcar;
-    var motor;
-    var steer;
+    let oldcar
+    let motor
+    let steer
     let gps;
-    var clio;
-    var mustang;
-    var switchcar = 'old';
+    let clio;
+    let mustang;
+    let switchcar = 'old';
     const planes = []
 
     // Get the canvas element from the DOM.

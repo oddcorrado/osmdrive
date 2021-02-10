@@ -89,16 +89,16 @@ async function createAction(scene, line, trig, container){
    })
 }
 
-export default function spawnStop(container, scene, x, y) {
+export default function spawnStop(container, scene, x, y, ori) {
    var mat = new StandardMaterial("matstop", scene)
-   var line = MeshBuilder.CreateBox('box', {width:1, height:3.7, depth: 0.3}, scene)      
+   var line = MeshBuilder.CreateBox('box', {width:1, height:3.8, depth: 0.3}, scene)      
    var trig = line.clone()
    var showLine = line.clone()
-   const rotSign = new Vector3(0, Math.PI, 0)
+   const rotSign = new Vector3(0, ori, 0)
    const posSign = new Vector3(x, 0, y)
-   const lineRot = new Vector3(Math.PI/2, Math.PI/10*4, y)
+   const lineRot = new Vector3(Math.PI/2, ori/20*8, y)
    const linePos = new Vector3(x, 1, y + 3)
-   const showLinePos = new Vector3(x, -0.01, y + 2.9)
+   const showLinePos = new Vector3(x+1, -0.01, y + 2.9)
    const trigPos = new Vector3(x-5.5, 1, y+3)
 
    mat.diffuseColor = new Color3(1, 1, 1)

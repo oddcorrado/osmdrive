@@ -11,7 +11,8 @@ export default function createMainCar (scene, camera, internalCamera, container)
     new SceneLoader.ImportMeshAsync('', "../mesh/Cliofixed/", "test270deg.obj", scene).then(function(newMesh) {
     var car = Mesh.MergeMeshes(newMesh['meshes'], true, true, null, false, true)
     car.name = 'detailedcar'
-    car.position = new Vector3(15, 1.5, -2)
+    //car.position = new Vector3(15, 1.5, -2)
+    car.position = new Vector3(-200, 1.5, -280)
     car.scalingDeterminant = 0.6
     car.rotation = new Vector3(0,Math.PI/2,0)
     camera.parent = car

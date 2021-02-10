@@ -63,8 +63,8 @@ function createTrees(scene, propsContainer) {
             duplicate(container, posTab['xL'], posTab['yL'])
             duplicate(container, posTab['xR'], posTab['yR'])
         }
-        setStatus('trees')
      })
+     setStatus('trees')
      propsContainer = container
    })
 }
@@ -79,11 +79,20 @@ export default function dressMap(scene, container){
     createTrees(scene, propsContainer)
 
    // botshandler.createBots(scene, container)
-    spawnTrafficLight(container, scene, 295, -105)
-    spawnYield(container, scene, 95, -5)
-    spawnStop(container, scene, 195, -5)
-    spawnNoEntry(container, scene, 304, 105)
-    spawnSpeedSign(container, scene, '30', 15, -5)
+    // spawnTrafficLight(container, scene, 295, -105)
+    // spawnYield(container, scene, 95, -5)
+    // spawnStop(container, scene, 195, -5)
+    // spawnNoEntry(container, scene, 304, 105)
+    // spawnSpeedSign(container, scene, '30', 15, -5)
+    spawnTrafficLight(container, scene, -195, -205, Math.PI)
+    spawnTrafficLight(container, scene, -195, -105, Math.PI)
+    spawnTrafficLight(container, scene, -105, -105, -Math.PI/2)
+    spawnTrafficLight(container, scene, -5, -105, -Math.PI/2)
+    spawnTrafficLight(container, scene, 5, -5, Math.PI)
+    spawnStop(container, scene, 95, -5, Math.PI)
+    spawnStop(container, scene, 195, -5, Math.PI)
+    spawnYield(container, scene, 205, 95, Math.PI)
+    spawnNoEntry(container, scene, 203, 207)
     setStatus('assets')
 }
 
