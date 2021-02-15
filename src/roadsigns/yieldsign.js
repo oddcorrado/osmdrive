@@ -67,7 +67,6 @@ export default function spawnYield(container, scene, x, y, ori) {
       box.rotation = lineRot
       box.material = mat
    })
-   line.forEach(box => {console.log(box.position)})
    trig.position = trigPos
    trig.rotation = lineRot
    trig.isVisible = false

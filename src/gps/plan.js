@@ -2,22 +2,24 @@ import arrowCreator from '../creators/gpsCreator'
 import score from '../scoring/scoring'
 import { Vector3 } from '@babylonjs/core/Maths/math';
 import { Quaternion } from 'cannon';
+import {createEndOfLevel} from '../creators/loadingCreator';
 
-let prev;
+let prev
 let rotations = [{S: -Math.PI/10, L: 0, R: 0, E: 0},
                 {S: 0, L: -Math.PI/2, R: Math.PI/2, E: 0},
-                {S: 0, L: Math.PI/10, R: -Math.PI/10, E: 0}];
+                {S: 0, L: Math.PI/10, R: -Math.PI/10, E: 0}]
+
 let imageSources = {
     S: '../../images/straight.svg',
     L: '../../images/leftturn.svg',
     R: '../../images/rightturn.svg',
-    E: '../../images/park.svg'
+    E: '../../images/park.svg',
 }
 
 
-let idx = 1;
-let plan = ['I','S', 'R', 'S', 'L', 'R', 'S', 'L', 'S', 'R', 'L', 'E'];
-let arrow;
+let idx = 1
+let plan = ['I','S', 'R', 'S', 'L', 'R', 'S', 'L', 'S', 'R', 'L', 'E']
+let arrow
 
 function checkJunctionGps(current, prev){
     if (plan[idx] === 'S'){
@@ -35,6 +37,8 @@ function checkJunctionGps(current, prev){
             score.newScore('RIGHT_TURN', 20)
         else 
             score.newScore('WRONG_TURN', -20)
+    } else if (plan[idx] ==='E'){
+        setTimeout(() => {createEndOfLevel()}, 1000)
     }
     idx = plan[idx] === 'E' ? idx : idx+1;
     arrow.src = imageSources[plan[idx]];

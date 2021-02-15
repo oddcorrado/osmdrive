@@ -120,10 +120,10 @@ let startupDone = false
 let prevAngle = 0
 let prevTarget = new Vector3(0, 0, 0)
 
-var previousDebug = null;
+var previousDebug = null
 var fakeAcceleration = 0
-const fakeAccelerationStep = 0.005
-const fakeAccelerationMax = 0.08
+const fakeAccelerationStep = 0.001
+const fakeAccelerationMax = 0.03
 var fakeYaw = 0
 const fakeYawStep = 0.001
 const fakeYawMax = 0.05
@@ -171,6 +171,7 @@ function mustangLoopTap (car, scene, gps) {
 
     if(nextdir.down === false && nextdir.up === false) {
         fakeAcceleration *= 0.8
+        //fakeAcceleration *= 0.8
     }
 
     if(speed > 0) {
@@ -193,7 +194,7 @@ function mustangLoopTap (car, scene, gps) {
         prevAngle = angle
         car.rotationQuaternion = Quaternion.FromEulerAngles(fakeAcceleration, angle, fakeYaw)
     } else {
-        fakeYaw *= 0.95  
+        fakeYaw *= 0.95
         car.rotationQuaternion = Quaternion.FromEulerAngles(fakeAcceleration, prevAngle, fakeYaw)
     }
 
@@ -327,14 +328,14 @@ function resetWheel () {
             wheelimg.style.display = 'none'
             locked.style.display = 'block'
             locked.style.transform = 'rotateY(0deg)'
-            locked.style.left = '8vw'
+            locked.style.left = '7vw'
         } else if (touch === -40){
             nextdir.right = false
             nextdir.left = true
             wheelimg.style.display = 'none'
             locked.style.display = 'block'
             locked.style.transform = 'rotateY(180deg)'
-            locked.style.left = '5vw'
+            locked.style.left = '4vw'
         } else {
             locked.style.display = 'none'
         }

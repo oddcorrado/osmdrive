@@ -1,6 +1,6 @@
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
 import { toggleDebugWays } from './../ways/logic/roads'
-import {disableTrees} from './../dressmap'
+import {disableTrees} from '../environment/dressmap'
 import {toggleEsp} from './loops'
 import { Vector3 } from '@babylonjs/core/Maths/math';
 import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness, falseStickCreator, scoreDivCreator, menuOptions} from '../creators/buttoncreator.js';

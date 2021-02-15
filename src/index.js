@@ -14,7 +14,7 @@ import botshandler from './bots'
 import physics from './physics'
 import createFreeCamera from './cameras/freecamera'
 import createCamera from './cameras/camera'
-import dressMap from './dressmap'
+import dressMap from './environment/dressmap'
 import {createMainCar} from './carwithphysics'
 import createDefaultCar from './detailedcar'
 import loop from './controls/loops'
@@ -115,14 +115,15 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
     
     loadingInter = setInterval(() => {
         let toload = []
-        // for (let  elem in loadingStatus){ if (loadingStatus[elem] == false) { toload.push(elem)}}
-        // this._percentage.innerHTML = `(${loadingStatus.count.toFixed(2)}%) loaded: ${lasttype},\n loading: ${toload}`
-        // if (this._loadingDiv.innerHTML.includes('...')){
-        //     this._loadingDiv.innerHTML = 'UBIQUITY: Chargement'
-        // } else {
-        //     this._loadingDiv.innerHTML = this._loadingDiv.innerHTML + '.'
-        // }
-            
+        for (let  elem in loadingStatus){ if (loadingStatus[elem] == false) { toload.push(elem)}}
+        loadbar.style.width = `${loadingStatus.count}%`
+       // this._percentage.innerHTML = `(${loadingStatus.count.toFixed(2)}%) loaded: ${lasttype},\n loading: ${toload}`
+        if (loadtext.innerHTML.includes('...')){
+            loadtext.innerHTML = 'Chargement'
+        } else {
+            loadtext.innerHTML = loadtext.innerHTML + '.'
+        }
+        
     }, 200)
     this._resizeLoadingUI()
     window.addEventListener("resize", this._resizeLoadingUI)
@@ -130,7 +131,6 @@ DefaultLoadingScreen.prototype.displayLoadingUI = function () {
 
 DefaultLoadingScreen.prototype.hideLoadingUI = function(){
     document.getElementById("customLoadingScreenDiv").remove()
-    document.getElementById("percentage").style.display = "none"
     clearInterval(loadingInter)
     console.log("LOADED")
 }

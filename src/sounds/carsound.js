@@ -19,10 +19,8 @@ export function toggleSound(){
     togSound = !togSound
     if (togSound === false) {
         if (oldName != _.NONE){
-            speedSound[oldName.type].stop()
+            speedSound[oldName].stop()
         }   
-        speedSound[_.MEDIUM].stop()
-        speedSound[_.IDLE].stop()
         old.type = _.NONE
     }
 }

@@ -18,7 +18,6 @@ function fillCollection(scene){
         textureCreator(scene, '../textures/building/texture3.jpg', 10, 1),
         textureCreator(scene, '../textures/building/texture4.jpg', 10, 1) 
     ]    
-    console.log(textureCollection)
     return textureCollection
 }
 

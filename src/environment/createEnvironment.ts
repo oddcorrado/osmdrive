@@ -22,6 +22,8 @@ const createCountry = (zone: Vector3[], scene: Scene, groundMat: StandardMateria
     }
 }
 
+let offsetWalk = 5;
+
 const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: StandardMaterial[]) => {
     let floor: Vector3[] = []
     let top:Vector3[] = []
@@ -30,7 +32,6 @@ const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: 
     let maxX: number = null
     let maxZ: number = null
     let max = points.length
-    let offsetWalk = 5;
 
     for (let i = 0; i < max; i++){positions.push(i)}
     for (let i = 0; i < 4; i++){
@@ -47,9 +48,12 @@ const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: 
             return true;
         }
     })
-
-    let building = MeshBuilder.CreateRibbon('newbuilding', {pathArray: [floor, top], closePath: true}, scene)
-    building.material = collection[Math.random() * collection.length | 0]
+    if ((floor[0].z === floor[1].z  && floor[2].z === floor[3].z && floor[3].z === floor[0].z) || (floor[0].x === floor[1].x && floor[2].x === floor[3].x && floor[3].x === floor[0].x)){
+        console.log('WRONG BUILDING',points, maxX, maxZ, floor)
+    } else {
+        let building = MeshBuilder.CreateRibbon('newbuilding', {pathArray: [floor, top], closePath: true}, scene)
+        building.material = collection[Math.random() * collection.length | 0]
+    }
 }
 
 const spawnBuilding = (from: Vector3, to: Vector3, scene: Scene) => {

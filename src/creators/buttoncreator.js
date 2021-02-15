@@ -170,7 +170,7 @@ export function tapButtonCreator(){
             display: flex;
             flex-direction: row-reverse;">
             <div style='width: 15vw'>
-                <img draggable=false id='up' style="height: 30vh; opacity:0.9" src='../../images/accel.svg'></img>
+                <img draggable=false id='up' style="height: 30vh; width: 14vh; opacity:0.9" src='../../images/accel.svg'></img>
             </div>
             <div style='width: 15vw'>
                 <img draggable=false id='down' style="height: 15vh; width: 14vw; margin-top: 15vh; opacity:0.9" src='../../images/brake.svg'></img> 
@@ -185,10 +185,10 @@ export function viewZoneCreator(){
     var div =
     `<div id='view' style='position: absolute; z-index:10;bottom: 45vh; left: 4vh; width: 30vw; height: 20vh; text-align: center'>
         <div style='margin-top: 5vh'>
-            <img draggable=false style='height: 12vh; width: 25vw; text-align:center;' src='../images/zone.svg'></img>
+            <img draggable=false style='height: 12vh; width: 25vw; text-align:center;' src='../images/arrowlook.svg'></img>
         </div>
-        <div id='look-eye' style='position:relative; left: 0vh;bottom: 11.7vh;'>
-            <img draggable=false style='height: 10.2vh; width: 6vw' src='../images/interneye.svg'></img>
+        <div id='look-eye' style='position:relative; left: 0vh;bottom: 14vh;'>
+            <img draggable=false style='height: 14.5vh; width: 7vw' src='../images/eye.svg'></img>
         </div>
     </div>`
     return div;
@@ -196,8 +196,8 @@ export function viewZoneCreator(){
 
 export function wheelCreator(){
     var div =
-    `<div id='wheelzone' style='position: absolute; z-index: 10;bottom: 7vh; left: 0; height:40vh; width: 35vw; text-align: center;'>
-        <img draggable=false id='wheelimg' src='../images/steerwheel.svg' style='height: 45vh; margin-left: auto; margin-right: auto; opacity: 0.8'></img>
+    `<div id='wheelzone' style='position: absolute; z-index: 10;bottom: 5vh; left: 0; height:45vh; width: 35vw; text-align: center;'>
+        <img draggable=false id='wheelimg' src='../images/steerwheel.svg' style='height: 45vh; width: 35vw; transform-origin: 17.5vw 23vh; opacity: 0.8;'></img>
     </div>`
      return div;
 }
@@ -205,7 +205,7 @@ export function wheelCreator(){
 export function wheelLockedCreator(){
     var div =
         `<div>
-            <img draggable=false id='wheellocked' src='../images/lock.svg' style='display: none; z-index: 12;position: absolute; bottom: 7vh; left: 9vw;height: 33vh; width: 22vw; opacity: 0.8'></img>
+            <img draggable=false id='wheellocked' src='../images/lock.svg' style='display: none; z-index: 12;position: absolute; bottom: 9.5vh; left: 9vw;height: 33.5vh; width: 23.5vw; opacity: 0.8'></img>
         </div>`
      return div;
 }

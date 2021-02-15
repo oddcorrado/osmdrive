@@ -113,7 +113,7 @@ export default function spawnStop(container, scene, x, y, ori) {
    line.isVisible = false
    showLine.position = showLinePos
    showLine.rotation = lineRot
-   return new SceneLoader.ImportMeshAsync('', "../mesh/Stop/", "StopSign.obj", scene).then(function(newMesh) {
+   return new SceneLoader.ImportMeshAsync('', "../mesh/Stop/", "stop.obj", scene).then(function(newMesh) {
       const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true)
       sign.name = 'stop'
       sign.scalingDeterminant = 0.8
