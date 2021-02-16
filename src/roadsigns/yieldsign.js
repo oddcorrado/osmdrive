@@ -50,13 +50,13 @@ export default function spawnYield(container, scene, x, y, ori) {
    let line = [MeshBuilder.CreateBox('line1', {width:1, height:1, depth: 0.3}, scene),
                MeshBuilder.CreateBox('line2', {width:1, height:1, depth: 0.3}, scene),
                MeshBuilder.CreateBox('line3', {width:1, height:1, depth: 0.3}, scene)]
-   let trig = MeshBuilder.CreateBox('box', {width:1, height:1.5, depth: 0.3}, scene)
+   let trig = MeshBuilder.CreateBox('box', {width:1, height:1, depth: 0.3}, scene)
    //const rotSign = new Vector3(0, -Math.PI/2, 0)
    const rotSign = new Vector3(0, ori, 0)
    const posSign = new Vector3(x, 0, y)
-   const lineRot = new Vector3(Math.PI/2, ori/10* 2.3, y)
+   const lineRot = new Vector3(Math.PI/2, ori/10*2.3, y)
    const linePos = new Vector3(x - 1.8, -0.01, y + 1)
-   const trigPos = new Vector3(x, 1, y+3)
+   const trigPos = new Vector3(x - 3, 1, y)
 
    mat.diffuseColor = new Color3(1, 1, 1)
    mat.emissiveColor = new Color3(1, 1, 1)
@@ -69,7 +69,7 @@ export default function spawnYield(container, scene, x, y, ori) {
    })
    trig.position = trigPos
    trig.rotation = lineRot
-   trig.isVisible = false
+   trig.isVisible = true
    
    return new SceneLoader.ImportMeshAsync('', "../mesh/Panels/Yield/", "signYield.obj", scene).then(function(newMesh) {
       const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true)

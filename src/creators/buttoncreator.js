@@ -84,6 +84,7 @@ export function menuOptions(){
     <div style='position: absolute; top: 15vh; right: 1vw'>
         <img id='sound' src='../../images/nosound.svg' style='height: 7vh; width: 5vw; z-index: 12'></img>
         <img id='changecam' src='../../images/cam.svg' style='height: 7vh; width: 5vw; z-index: 12'></img>
+        <img id='control' src='../../images/keyboard.svg' style='height: 7vh; width: 5vw; z-index: 12'></img>
     </div>`
     document.body.insertAdjacentHTML('afterbegin', div)
     
@@ -150,8 +151,8 @@ export function dashboardCreator(){
             <div style='margin-top: 3vh' id='next-turn'>
                 <img id='gps' style='height: 7vh; width: 6vw' src='../../images/straight.svg'></img>
             </div>
-            <div id='speeddiv' style='text-align:center; background-color: none; height: 40%; width: 50%; border-radius: 2vh; margin-left: 25%; margin-top: 5%'>
-                <div id='speed' style='text-align:center;width: 7vw; display: inline-block ;height: 7vh;font-size: 8vh; font-weight: 400' id='speed'>0</div>    
+            <div id='speeddiv' style='text-align:center; background-color: red; height: 40%; max-width:66%; margin-left: 17%; border-radius: 2vh; margin-top: 5%'>
+                <div id='speed' style='text-align: center; display: inline-block ;height: 7vh;font-size: 8vh; font-weight: 400' id='speed'>100</div>    
                 <div style='font-size: 3vh;color: white; margin-top: 0.5vh;font-weight: normal; opacity: 0.4;'>KM/H</div>
             </div> 
         </div>`

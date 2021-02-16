@@ -13,6 +13,7 @@ import { Quaternion } from '@babylonjs/core/Maths/math.vector'
 import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/geosegment'
 import { gpsCheck } from '../gps/plan'
 import { vectorIntesection } from '../maths/geometry'
+import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera';
 
 let sideTilt = 0
 let accel = 0
@@ -235,7 +236,8 @@ function resetWheel () {
  function setupControls (scene){
     let touchZone = document.getElementById('view');
     let soundtoggle = document.getElementById('sound');
-    let changecam = document.getElementById('setcam');
+    let control = document.getElementById('control')
+    let changecam = document.getElementById('changecam');
     up = document.getElementById('up');
     down = document.getElementById('down');
     left = document.getElementById('left');
@@ -351,6 +353,16 @@ function resetWheel () {
         toggleSound()
     }
 
+
+    const controlSwitch = () => {
+        keymode = keymode === 2 ? 1 : keymode+1
+    }
+
+    let lock = false
+    const lockControls = () => {
+        lock = scene.activeCamera.id === 'free_camera' ? true : false
+    }
+
     window.addEventListener('mouseup', e => {
         switch(mouseAction) {
             case 'accelerator':
@@ -370,32 +382,76 @@ function resetWheel () {
     })
 
     const kbView = (delta) => {
-        viewX = 300
+        if (delta === 0) {return}
+        viewX = delta > 0 ? 300 : -300
         if(viewInter != null) { clearInterval(viewInter) }
-        viewInter = setInterval( () =>  { viewX = Math.max(0, Math.min(600, viewX + delta)); viewCheck(viewX) }, 16)
+        viewInter = setInterval( () =>  { viewX = Math.max(0, Math.min(delta > 0 ? 600 : -600, delta > 0 ? viewX + delta : viewX - delta)); viewCheck(viewX) }, 16)
+    }
+    
+    let keyTab = [false, false, false]//space, left, right
+    let keymode = 1
+
+    const keyLookTurn = (elem) => {
+        keyTab[elem] = true
+        if (keyTab[0] === true){
+            kbView(keyTab[1] === true ? -2 : keyTab[2] === true ? 2 : 0)
+        } else {
+            wheelMove(keyTab[1] ? -300 : keyTab[2] ? 300 : 0)
+        }
+    }
+
+    const keyLookTurnEnd = (elem) => {
+        keyTab[elem] = false
+        wheelMoveEnd()
+        if (!keyTab[0]) {if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); }}
     }
 
     document.addEventListener('keydown', (event) => {
+        if (lock) {return}
        switch(event.key) {
-           case 'z' : acceleratorPedal(); break
-           case 's' : brakePedal(); break
-           case 'q' : wheelMove(-300); break
-           case 'd' : wheelMove(300); break
-           case 'x' : resetWheel(); break
-           case 'k' : kbView(-2); break
-           case 'l' : kbView(2); break
+           case 'ArrowUp' : acceleratorPedal(); break
+           case 'ArrowDown' : brakePedal(); break
+           
+       }
+       if (keymode === 1){
+            switch(event.key) {
+            case 'ArrowLeft' : wheelMove(-300); break
+            case 'ArrowRight' : wheelMove(300); break
+            case ' ': resetWheel(); break
+            case 'Control' : kbView(-2); break
+            case 'Alt' : kbView(2); break
+            }
+       } else if (keymode === 2){
+        switch(event.key) {
+            case ' ': keyLookTurn(0); break
+            case 'ArrowLeft' : keyLookTurn(1); break
+            case 'ArrowRight' : keyLookTurn(2); break
+            case 'Escape' : resetWheel(); break
+            }   
        }
     })
     
 
     document.addEventListener('keyup', (event) => {
+        if (lock) {return}
         switch(event.key) {
-            case 'z' : acceleratorPedalEnd(); break
-            case 's' : brakePedalEnd(); break
-            case 'q' : wheelMoveEnd(); break
-            case 'd' : wheelMoveEnd(); break
-            case 'k' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
-            case 'l' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
+            case 'ArrowUp' : acceleratorPedalEnd(); break
+            case 'ArrowDown' : brakePedalEnd(); break
+         
+        }
+        if (keymode === 1) {
+            switch(event.key) {
+                case 'ArrowLeft' : wheelMoveEnd(); break
+                case 'ArrowRight' : wheelMoveEnd(); break
+                case 'Control' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
+                case 'Alt' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
+            }
+        } else if (keymode === 2){
+            switch (event.key){
+                case 'ArrowLeft' : keyLookTurnEnd(1); break
+                case 'ArrowRight' : keyLookTurnEnd(2); break
+                case ' ': keyLookTurnEnd(0); break
+            }
         }
      })
 
@@ -434,8 +490,8 @@ function resetWheel () {
         mouseAction = 'wheel'
         wheelMove(e.clientX )
     })
-    wheelzone.addEventListener('mousemove', e => { if(mouseAction === 'wheel') { wheelMove(e.clientX) } })
 
+    wheelzone.addEventListener('mousemove', e => { if(mouseAction === 'wheel') { wheelMove(e.clientX) } })
     wheelzone.addEventListener('touchend', () => wheelMoveEnd())
 
     locked.addEventListener('touchmove', () => resetWheel())
@@ -443,6 +499,12 @@ function resetWheel () {
 
     soundtoggle.addEventListener('touchmove', () => soundSwitch())
     soundtoggle.addEventListener('click', () => soundSwitch())
+    
+    control.addEventListener('touchmove', () => controlSwitch())
+    control.addEventListener('click', () => controlSwitch())
+
+    changecam.addEventListener('touchmove', () => lockControls())
+    changecam.addEventListener('click', () => lockControls())
 }
 
   export default {
