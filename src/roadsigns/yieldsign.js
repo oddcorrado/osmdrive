@@ -69,7 +69,7 @@ export default function spawnYield(container, scene, x, y, ori) {
    })
    trig.position = trigPos
    trig.rotation = lineRot
-   trig.isVisible = true
+   trig.isVisible = false
    
    return new SceneLoader.ImportMeshAsync('', "../mesh/Panels/Yield/", "signYield.obj", scene).then(function(newMesh) {
       const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true)

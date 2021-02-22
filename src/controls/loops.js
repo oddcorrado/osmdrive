@@ -107,7 +107,6 @@ let selection = null // 'R' or 'L' or null
 
 var nextJuction = null;
 var oldjunct;
-var approach;
 var currentRot = 0;
 var isTurning = false;
 var speeding = false;
@@ -149,17 +148,18 @@ function mustangLoopTap (car, scene, gps) {
 
     oldjunct = oldjunct ? oldjunct : nodes[0];
      if (nodes[1].type === 'junction' && oldjunct && oldjunct.junctionIndex != nodes[1].junctionIndex){
-        nextJuction = nodes[1];
-        oldjunct = nodes[1];
+        nextJuction = nodes[1]
+        oldjunct = nodes[1]
     } else if (nodes[0].type === 'junction'){
-        nextJuction = null;
+        nextJuction = null
     }
     approach = nextJuction ? Math.sqrt(Math.pow(car.position.x - nextJuction.point.x, 2) + Math.pow(car.position.z - nextJuction.point.z, 2)) : null
 
     if(startupDone == false && nodes != null) {
         car.position = nodes[0].point
         startupDone = true
-    }  
+    }
+
     if (nextdir.up === true){
         speed = Math.min(2, speed + 0.002)
         fakeAcceleration = Math.max(-fakeAccelerationMax, fakeAcceleration - fakeAccelerationStep)
@@ -167,7 +167,7 @@ function mustangLoopTap (car, scene, gps) {
 
     if (nextdir.down === true) {
         speed = Math.max(0, speed - 0.004)
-        fakeAcceleration =  Math.min(fakeAccelerationMax, fakeAcceleration + fakeAccelerationStep);
+        fakeAcceleration =  Math.min(fakeAccelerationMax, fakeAcceleration + fakeAccelerationStep)
     }
 
     if(nextdir.down === false && nextdir.up === false) {

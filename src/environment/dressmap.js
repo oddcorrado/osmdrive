@@ -11,23 +11,14 @@ import spawnNoEntry  from '../roadsigns/noentrysign'
 import spawnSpeedSign from '../roadsigns/speedlimit'
 import spawnYield from '../roadsigns/yieldsign'
 import { spawnTrafficLight } from '../roadsigns/trafficlight'
+import { loadTrafficLight, addInstanceOfTrafficLight } from '../roadsigns/loadTrafficLight.ts'
 import { ActionManager } from '@babylonjs/core/Actions'
-import botshandler from '../bots'
 import {setSounds} from '../sounds/carsound'
 import {setStatus} from '../index'
-
+import spawnProp from '../roadsigns/loadProp'
+import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
 let propsContainer
 let pavements
-
-var duplicate = function(container, x, y) {
-    let entries = container.instantiateModelsToScene()
-
-    for (var node of entries.rootNodes) {
-        node.position.x += x
-        node.position.z += y
-    }
-    entries.rootNodes.forEach(mesh => mesh.isVisible = true)
-}
 
 function getInterPos(curr, next){
     var xD = next.x - curr.x
@@ -51,21 +42,18 @@ function getInterPos(curr, next){
     //}
 }
 
-function createTrees(scene, propsContainer) {
-    new SceneLoader.LoadAssetContainer("../mesh/Tree/", "Tree.obj", scene, function(container){
-    container.addAllToScene()
-    container.meshes.forEach(mesh => mesh.isVisible = false)
-
+function createTrees(scene) {
+    new SceneLoader.ImportMeshAsync('', "../mesh/Treebis/", "Tree.obj", scene).then(function (newMesh){
+    let tree = Mesh.MergeMeshes(newMesh['meshes'], true, true, undefined, false, true)
     ways.forEach(way => {
-
         for (var i = 1; i < way.points.length-1; i++){
             var posTab = getInterPos(way.points[i], way.points[i+1])
-            duplicate(container, posTab['xL'], posTab['yL'])
-            duplicate(container, posTab['xR'], posTab['yR'])
+            addInstance(tree, posTab['xL'], posTab['yL'])
+            addInstance(tree, posTab['xR'], posTab['yR'])
         }
      })
+     tree.isVisible = false
      setStatus('trees')
-     propsContainer = container
    })
 }
 
@@ -73,10 +61,15 @@ export function disableTrees(){
     console.log(propsContainer)
 }
 
+function addInstance(mesh, x , y){
+    let newmesh = mesh.createInstance('newmesh')
+    newmesh.position = new Vector3(x, 0.1, y)
+}
+
 export default function dressMap(scene, container){
     scene.actionManager = new ActionManager(scene)
     setSounds(scene)
-    createTrees(scene, propsContainer)
+    createTrees(scene);
 
    // botshandler.createBots(scene, container)
     //AVAILABLE:
@@ -86,11 +79,20 @@ export default function dressMap(scene, container){
     // spawnNoEntry(container, scene, 304, 105)
     // spawnSpeedSign(container, scene, '30', 15, -5)//'50', '100'
     //
+    //spawnProp(scene, 0, 0)
+    // (async () => {
+    //     let traffic = await loadTrafficLight(scene)
+    //   //  for (let i = 0 ; i < 10; i++){
+    //     addInstanceOfTrafficLight(traffic, container, scene, -195, -205, Math.PI)
+    //     //}
+    // })()
+    // 
     spawnTrafficLight(container, scene, -195, -205, Math.PI, 'green')
     spawnTrafficLight(container, scene, -195, -105, Math.PI, 'red')
     spawnTrafficLight(container, scene, -105, -105, -Math.PI/2, 'red')
     spawnTrafficLight(container, scene, -5, -105, -Math.PI/2, 'red')
     spawnTrafficLight(container, scene, 5, -5, Math.PI, 'green')
+
     spawnStop(container, scene, 95, -5, Math.PI)
     spawnStop(container, scene, 195, -5, Math.PI)
     spawnYield(container, scene, 205, 95, Math.PI)

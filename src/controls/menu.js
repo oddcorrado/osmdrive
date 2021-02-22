@@ -25,7 +25,7 @@ function changeColorAndText(divs, text = ['Enable', 'Disable'], colors = ['red',
     })
 }
 
-function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
+function setMainMenu(scene, camera, internalCamera, freecamera){
     let {sound, changecam} = menuOptions();
     let top = 22
     // var test = divCreator('top:0; left: 0;height: 100vh; width: 50vw; border: solid 2px black', {id: 'test', text:'middle debug'})
@@ -35,22 +35,22 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
     var btnSwCam = buttonCreator(`top: ${top+4}vh; right: 0;background-color: black; display: none`,{text: 'Camera Switch'});
     var btnJ = buttonCreator(`top: ${top+8}vh; right: 0;background-color:green; display: none`,{text: 'Disable Joysticks'});
     var btnBots = buttonCreator(`top: ${top+12}vh; right: 0;background-color:red; display: none`,{text: 'Enable Bots'});
-    var btnGrids = buttonCreator(`top: ${top+16}vh; right: 0;background-color:red; display: none`,{text: 'Enable Grids'});
-    var btnEsp = buttonCreator(`top: ${top+20}vh; right: 0;background-color:green; display: none`,{text: 'Disable ESP'});
-    var btnCamOri = buttonCreator(`top: ${top+24}vh; right: 0;background-color:red; display: none`,{text: 'Enable Orientation Pos'});
-    var btnTrees = buttonCreator(`top: ${top+28}vh; right: 0;background-color:red; display: none`,{text: 'Enable Trees'});
-    var btnBar = buttonCreator(`top: ${top+32}vh; right: 0;background-color:black; display: none`,{text: 'Hide TopBar'});
-    var btnWays = buttonCreator(`top: ${top+36}vh; right: 0;background-color:black; display: none`,{text: 'Show Ways'});
-
+    var btnCamOri = buttonCreator(`top: ${top+16}vh; right: 0;background-color:red; display: none`,{text: 'Enable Orientation Pos'});
+    var btnTrees = buttonCreator(`top: ${top+20}vh; right: 0;background-color:red; display: none`,{text: 'Enable Trees'});
+    var btnBar = buttonCreator(`top: ${top+24}vh; right: 0;background-color:black; display: none`,{text: 'Hide TopBar'});
+    var btnWays = buttonCreator(`top: ${top+28}vh; right: 0;background-color:black; display: none`,{text: 'Show Ways'});
+    var btnEsp = buttonCreator(`top: ${top}vh; right: 0;background-color:green; display: none`,{text: 'Disable ESP'});
+    var btnGrids = buttonCreator(`top: ${top}vh; right: 0;background-color:red; display: none`,{text: 'Enable Grids'});
+    
     var accelWitness = accelerationWitness();
-    var camFresh = divCreator('top: 0; right: 0; height: 1rem;font-size:0.7rem; display: none', {text: '', id:'position'});
+    var camFresh = divCreator('top: 0; right: 40%; height: 1rem;font-size:0.7rem; display: block', {text: '', id:'position'});
     var camOriFresh = divCreator('top: 0; left: 0; width: 40vw; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'camerapos'});
     var carPosFresh = divCreator('top: 0; left: 0; width: 40vw; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'carpos'});
     var speedFresh = divCreator('font-family: aldrich ; text-align:center; bottom: -7vh; right: 35vw; height: 25vh; width: 29vw; display: none; color: #56CCF2;font-size: 5vw;', {text: '00', id: 'speedold'});
     var scoreFresh = scoreDivCreator();
     var falseStick = falseStickCreator();
     
-    var btnDivArrayMenu = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, btnGrids, btnEsp, btnCamOri, carPosFresh, btnBar];
+    var btnDivArrayMenu = [btnMenu, btnCam, btnSwCam, btnJ, btnBots, btnWays, /*btnGrids, btnEsp,*/ btnCamOri, carPosFresh, btnBar];
     var divArray = [speedFresh, camFresh, camOriFresh];
     var insertArray =  [scoreFresh, falseStick, accelWitness];
 
@@ -166,14 +166,14 @@ function setMainMenu(scene, camera, internalCamera, freecamera, bots, grids){
         camOriFresh.style.display = camOriFresh.style.display == 'block' ? 'none' : 'block';
     }
 
-    btnGrids.onclick = () => {
-        changeColorAndText([btnGrids]);
-        if (btnGrids.innerText == 'Disable Grids'){
-            grids.forEach(grid => grid.visibility = 0);
-        } else {
-            grids.forEach(grid => grid.visibility = 1);
-        }
-    }
+    // btnGrids.onclick = () => {
+    //     changeColorAndText([btnGrids]);
+    //     if (btnGrids.innerText == 'Disable Grids'){
+    //         grids.forEach(grid => grid.visibility = 0);
+    //     } else {
+    //         grids.forEach(grid => grid.visibility = 1);
+    //     }
+    // }
 
     btnWays.onclick = () => {
         toggleDebugWays()
@@ -289,7 +289,7 @@ function setControlMenu(scene){
 
 }
 
-export default function createMenu(scene, camera, freecamera, bots, grids){
-    setMainMenu(scene,camera,freecamera,bots,grids);
+export default function createMenu(scene, camera, internalCamera, freecamera){
+    setMainMenu(scene,camera,internalCamera, freecamera);
     setControlMenu(scene);
 }

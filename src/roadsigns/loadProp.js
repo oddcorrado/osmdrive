@@ -11,13 +11,14 @@ import { getSpeed } from '../controls/loops'
 
 
 
-export default function spawnStop(scene, x, y) {
+export default function spawnProp(scene, x, y) {
    return new SceneLoader.ImportMeshAsync('', "../mesh/Props Tests/Buildings/", "Building01.obj", scene).then(function(newMesh) {
       // // const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true)
       // // sign.name = 'stop'
       // // sign.scalingDeterminant = 0.8
       // sign.position = posSign
       // sign.rotation = rotSign
-      return sign
+      //return sign
+      console.log(newMesh['meshes'][0].position)
    })
 }
