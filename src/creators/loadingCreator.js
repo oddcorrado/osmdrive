@@ -1,6 +1,6 @@
 
 export function createStartScreen(){
-    let div = `<div id='startscreen'  style='width: 100%; height: 100%; background-color: white; z-index: 10;  position: fixed; font-weight: 800; top: 0; left: 0; font-size: 12vh; font-family: Asap Condensed; color: black; display: block; align-items: center; justify-content: center; text-align: center;'>
+    let div = `<div id='startscreen'  style='width: 100%; height: 100%; background-color: white; z-index: 100;  position: fixed; font-weight: 800; top: 0; left: 0; font-size: 12vh; font-family: Asap Condensed; color: black; display: block; align-items: center; justify-content: center; text-align: center;'>
             <img src='../../images/carloading.svg' style='width: 10%; display: block; margin-top: 17%; margin-left: 45% '></img>
             <div id='startdiv'>
                 Ubiquity
@@ -14,7 +14,7 @@ export function createStartScreen(){
 }
 
 export function createLoading(){
-    let div = `<div id='customLoadingScreenDiv' style='width: 100%; height: 100%; z-index: 1000; background-color: white; z-index: 10;  position: fixed; font-weight: 800; top: 0; left: 0; font-size: 12vh; font-family: Asap Condensed; color: black; display: block; align-items: center; justify-content: center; text-align: center;'>
+    let div = `<div id='customLoadingScreenDiv' style='width: 100%; height: 100%; background-color: white; z-index: 100;  position: fixed; font-weight: 800; top: 0; left: 0; font-size: 12vh; font-family: Asap Condensed; color: black; display: block; align-items: center; justify-content: center; text-align: center;'>
             <img src='../../images/carloading.svg' style='width: 6%; display: block; margin-top: 19%; margin-left: 47% '></img>
             <div id='loadtext' style='font-size: 3.5vh; width: 30%; margin-left: 35%; margin-top: 1%'>
                 Chargement ...

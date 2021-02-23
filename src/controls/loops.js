@@ -14,6 +14,8 @@ import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/ge
 import { gpsCheck } from '../gps/plan'
 import { vectorIntesection } from '../maths/geometry'
 import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera';
+import { scoreDivCreator } from '../creators/buttoncreator';
+import score from '../scoring/scoring'
 
 let sideTilt = 0
 let accel = 0
@@ -31,12 +33,24 @@ let camTilt = 0;
 let nextdir = {up: false, down: false, right: false, left: false};
 var currentCar = 'ford';
 var switchCam = 'ford';
+let blink = null
 
 export function toggleEsp(){
     esp = !esp;
 }
 
 function setupJoystick(){
+}
+
+function checkBlinker(){
+    //useless blinker
+    if (blink === selection){
+        score.newScore('GOOD_BLINKER', 50)
+    } else {
+        score.newScore('WRONG_BLINKER', -50)
+    }
+    lStopBlink()
+    rStopBlink()
 }
 
 function cameraOrientationSetup(camera){
@@ -59,8 +73,6 @@ function cameraOrientationSetup(camera){
     });   
 }
 var speedDiv;
-var speedDivBg;
-var interSpeed;
 
 
 function setSound(speed){
@@ -99,32 +111,19 @@ function getCurrentTurn(){
     return turn
 }
 
-let recenter = false
-let recenterStep = 'lift'
-let projection = null
 let nodes = null
 let selection = null // 'R' or 'L' or null
-
-var nextJuction = null;
-var oldjunct;
-var currentRot = 0;
-var isTurning = false;
-var speeding = false;
-var breaking = false;
-var hardcoreRail = true;
-
-var approach;
-let acceleration = 0
+let nextJuction = null;
+let oldjunct;
+let approach;
 let speed = 0
 let startupDone = false
 let prevAngle = 0
 let prevTarget = new Vector3(0, 0, 0)
-
-var previousDebug = null
-var fakeAcceleration = 0
+let fakeAcceleration = 0
 const fakeAccelerationStep = 0.001
 const fakeAccelerationMax = 0.03
-var fakeYaw = 0
+let fakeYaw = 0
 const fakeYawStep = 0.001
 const fakeYawMax = 0.05
 
@@ -143,7 +142,7 @@ function mustangLoopTap (car, scene, gps) {
     nodes = builtNodes
     const {target , normalProjection, nodes: newNodes, slice } = driverGetSmootherTarget(car.position, prevTarget, nodes, 4 + 6 * speed)
     prevTarget = target
-    if(slice && selectionIndex === 0) { resetWheel() }
+    if(slice && selectionIndex === 0) { resetWheel(); checkBlinker()}
     nodes = newNodes // FIXME   
 
     oldjunct = oldjunct ? oldjunct : nodes[0];
@@ -212,15 +211,25 @@ var wheel;
 var center;
 let touch;
 let locked;
+let lblinkerimg 
+let rblinkerimg 
+let interBlink = null  
 
-// function resetWheel(){
-//     wheel.style.transform = 'rotateZ(0deg)';
-//     nextdir.left = false;
-//     nextdir.right = false;
-//     approach = null;
-//     center.style.display = 'none';
-// }
+const lStopBlink = () => {
+    clearInterval(interBlink)
+    interBlink = null
+    lblinkerimg.style.display = 'block'
+    lblinkerimg.src = '../../images/blinkdef.svg'
+    blink = null
+}
 
+const rStopBlink = () => {
+    clearInterval(interBlink)
+    interBlink = null
+    rblinkerimg.style.display = 'block'
+    rblinkerimg.src = '../../images/blinkdef.svg'
+    blink = null
+}
 
 function resetWheel () {
     wheelimg.style.transform = 'rotateZ(0deg)'
@@ -248,21 +257,22 @@ function resetWheel () {
     center = document.getElementById('center');
     let wheelzone = document.getElementById('wheelzone');
     let eye = document.getElementById('look-eye');
+    let lblinker = document.getElementById('lblink');
+    let rblinker = document.getElementById('rblink');
+    lblinkerimg = document.getElementById('lblinkimg');
+    rblinkerimg = document.getElementById('rblinkimg');
     var inter;
     let viewInter = null
     let viewX = 300
 
     const acceleratorPedal = () => {
         nextdir.up = true
-        up.style.opacity = 1
-       // up.style.transform = 'rotateX(45deg)'
-       up.src = '../../images/accelpressed.svg'
+        up.src = '../../images/accelpress.svg'
         playAccel(true)
     }
 
     const acceleratorPedalEnd = () => {
         nextdir.up = false
-        up.style.opacity = unselectedOpacity
         up.src = '../../images/accel.svg'
         playAccel(false)
     }
@@ -271,14 +281,12 @@ function resetWheel () {
         if (speed > 0) {
             nextdir.down = true
             down.style.opacity = 1
-            down.src = '../../images/brakepressed.svg'
+            down.src = '../../images/brakepress.svg'
         }
     }
 
     const brakePedalEnd = () => {
         nextdir.down = false
-        down.style.opacity = unselectedOpacity
-        down.style.transform = 'rotateX(0deg)'
         down.src = '../../images/brake.svg'
     }
 
@@ -329,15 +337,15 @@ function resetWheel () {
             nextdir.left = false
             wheelimg.style.display = 'none'
             locked.style.display = 'block'
-            locked.style.transform = 'rotateY(0deg)'
-            locked.style.left = '7vw'
+            locked.style.transform = 'rotateY(180deg)'
+            locked.style.left = '4.5vw'
         } else if (touch === -40){
             nextdir.right = false
             nextdir.left = true
             wheelimg.style.display = 'none'
             locked.style.display = 'block'
-            locked.style.transform = 'rotateY(180deg)'
-            locked.style.left = '4vw'
+            locked.style.transform = 'rotateY(0deg)'
+            locked.style.left = '4.5vw'
         } else {
             locked.style.display = 'none'
         }
@@ -361,6 +369,44 @@ function resetWheel () {
     let lock = false
     const lockControls = () => {
         lock = scene.activeCamera.id === 'free_camera' ? true : false
+    }
+
+
+    const lToggleBlinking = () => {
+        if (blink === 'L') {
+           lStopBlink()
+        } else if (blink === 'R' || !blink){
+            if (blink){
+                clearInterval(interBlink)
+                interBlink = null
+                rblinkerimg.style.display = 'block'
+                rblinkerimg.src = '../../images/blinkdef.svg'
+            }
+            lblinkerimg.style.display = 'none'
+            lblinkerimg.src = '../../images/blink.svg'
+            interBlink = setInterval(() => {
+                lblinkerimg.style.display = lblinkerimg.style.display === 'none' ? 'block' : 'none'
+            }, 300)
+            blink = 'L'
+        }
+    }
+
+    const rToggleBlinking = () => {
+        if (blink === 'R') {
+           rStopBlink()
+        } else if (blink === 'L' || !blink){
+            clearInterval(interBlink)
+            interBlink = null
+            lblinkerimg.style.display = 'block'
+            lblinkerimg.src = '../../images/blinkdef.svg'
+
+            rblinkerimg.style.display = 'none'
+            rblinkerimg.src = '../../images/blink.svg'
+            interBlink = setInterval(() => {
+                rblinkerimg.style.display = rblinkerimg.style.display === 'none' ? 'block' : 'none'
+            }, 300)
+            blink = 'R'
+        }
     }
 
     window.addEventListener('mouseup', e => {
@@ -505,6 +551,14 @@ function resetWheel () {
 
     changecam.addEventListener('touchmove', () => lockControls())
     changecam.addEventListener('click', () => lockControls())
+
+    lblinker.addEventListener('touchmove', () => lToggleBlinking())
+    lblinker.addEventListener('click', () => lToggleBlinking())
+    
+    rblinker.addEventListener('touchmove', () => rToggleBlinking())
+    rblinker.addEventListener('click', () => rToggleBlinking())
+    
+
 }
 
   export default {

@@ -52,25 +52,33 @@ class CarBot {
     //     return rand === 1 ? 'L' : 'R'
     // }
 
-    getAvailableTurns = (next: Object): Object => {
-        let available: Object
+    getAvailableTurns = (next): Object[] => {
+        let available: Object[]
 
-        console.log(next)
+       console.log(next.point.subtract(next.nexts[0].point))
+       if (next.nexts[0].x === next.point.x){console.log('x same')}
+       if (next.nexts[0].z === next.point.z){console.log('z same')}
+
         return available
+    }
+
+    easyTurn = (): string =>{
+        let val = Math.random() * 100
+
+        return val > 50 ? 'L' : 'R'
     }
 
     randomTurn = (): boolean | string => {
         if (this.nextJuction == null) {return null}
-       // let availableTurns = this.getAvailableTurns(this.nextJuction)
-       // let availableTurns: number = this.nextJuction.nexts.length
-        let nextAction = Math.random() * 100
+            let availableTurns = this.getAvailableTurns(this.nextJuction)
+       
         this.choiceMade = true
 
         // if (availableTurns <= 1){
         //     return this.limitedTurn()
         // }
-        console.log('all turns')
-        return nextAction < this.turnChancePercentage / 2 ? 'L' : nextAction < this.turnChancePercentage ?  'R' : null
+       // return availableTurns[Math.random() * availableTurns.length() | 0]
+       return this.easyTurn()
     }
 
     carBotsLoop = () => {
@@ -125,7 +133,7 @@ class CarBot {
 }
 
 let botPos: Vector3[] = [
-    new Vector3(-230 , 0.1, 101),
+    //new Vector3(-230 , 0.1, 101),
     new Vector3(300 , 0.1, 220),
     new Vector3(-295 , 0.1, 5),
     new Vector3(-190 , 0.1, -2),
@@ -148,14 +156,13 @@ const loadBotModel = (scene: Scene): Promise<Mesh> => {
         let msh = newMesh['meshes'] as Mesh[]
         let bot = Mesh.MergeMeshes(msh, true, false, undefined, false, true)
         bot.name = 'bot'
-        bot.scalingDeterminant = 0.6
         return bot
     }) 
 
 }
 
 export const createCarBots = (scene: Scene, nb: number) => {
-    nb = 5
+    nb = 1
     let mesh: Mesh
 
     (async () => {
