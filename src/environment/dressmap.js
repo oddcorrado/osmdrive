@@ -43,7 +43,7 @@ function getInterPos(curr, next){
 }
 
 function createTrees(scene) {
-    new SceneLoader.ImportMeshAsync('', "../mesh/Tree/", "Tree.obj", scene).then(function (newMesh){
+    new SceneLoader.ImportMeshAsync('', "../mesh/Treebis/", "Tree.obj", scene).then(function (newMesh){
     let tree = Mesh.MergeMeshes(newMesh['meshes'], true, true, undefined, false, true)
     ways.forEach(way => {
         for (var i = 1; i < way.points.length-1; i++){
@@ -69,7 +69,7 @@ function addInstance(mesh, x , y){
 export default function dressMap(scene, container){
     scene.actionManager = new ActionManager(scene)
     setSounds(scene)
-    createTrees(scene);
+   // createTrees(scene);
 
    // botshandler.createBots(scene, container)
     //AVAILABLE:
