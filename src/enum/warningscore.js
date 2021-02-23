@@ -13,7 +13,7 @@ const warningScore = {
     WRONG_TURN: 'Mauvais virage',
     YIELD: 'Cédez-le-passage',
     GOOD_BLINKER: 'Clignotant',
-    WRONG_BLINKER: 'CLignotant'
+    WRONG_BLINKER: 'Clignotant'
 }
 
 export default warningScore;
