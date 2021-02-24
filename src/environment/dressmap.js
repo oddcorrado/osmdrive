@@ -69,7 +69,7 @@ function addInstance(mesh, x , y){
 export default function dressMap(scene, container){
     scene.actionManager = new ActionManager(scene)
     setSounds(scene)
-   // createTrees(scene);
+    createTrees(scene);
 
    // botshandler.createBots(scene, container)
     //AVAILABLE:
