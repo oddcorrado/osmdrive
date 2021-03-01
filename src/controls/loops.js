@@ -337,15 +337,15 @@ function resetWheel () {
             nextdir.left = false
             wheelimg.style.display = 'none'
             locked.style.display = 'block'
-            locked.style.transform = 'rotateY(180deg)'
-            locked.style.left = '4.5vw'
+            locked.style.transform = 'rotateY(0deg)'
+            locked.style.left = '1vw'
         } else if (touch === -40){
             nextdir.right = false
             nextdir.left = true
             wheelimg.style.display = 'none'
             locked.style.display = 'block'
-            locked.style.transform = 'rotateY(0deg)'
-            locked.style.left = '4.5vw'
+            locked.style.transform = 'rotateY(180deg)'
+            locked.style.left = '1vw'
         } else {
             locked.style.display = 'none'
         }
@@ -572,3 +572,5 @@ function resetWheel () {
   export const getApproach = () => approach
   export const getLook = () => currentLook
   export const getCurrentSegment = () => nodes
+  export const getAngle = () => prevAngle
+  export const getSelection = () => selection

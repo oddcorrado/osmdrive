@@ -3,6 +3,8 @@ import { Vector3 } from '@babylonjs/core/Maths/math.vector'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { scene as globalScene } from '../../index'
 import { vectorIntersection } from '../../maths/geometry'
+import {getArrow, createInstanceArrow} from '../../props/arrow'
+import {getAngle, getSelection, getApproach} from '../../controls/loops'
 
 // let nodes = []
 
@@ -105,23 +107,37 @@ export const driverPathBuild = (position, nodes, junctionSelection) => {
     return { nodes, selectionIndex }
 }
 
-const boxes = []
+let boxes = []
+let arrows = []
 const boxCount = 200
 const boxSpacing = 2
-
+let arrow = null
 const createBoxes = () => {
     for (let i = 0; i < boxCount; i++) {
         const b = MeshBuilder.CreateBox("box", {size: 0.5}, globalScene)
-        //b.isVisible = false;
-        b.position = new Vector3(0 , 0.2 , 0)
+       b.isVisible = false;
         boxes.push(b)
     }
 }
 
+const createArrows = () => {
+    arrow = arrow ? arrow : getArrow()
+    if (arrow){
+        for (let i = 0; i < boxCount; i++) {
+            const b = createInstanceArrow(0, 0)
+            b.rotation = new Vector3(0, Math.PI, 0)
+            arrows.push(b)
+        }
+    }
+}
+let i = 0
 export const driverPathDisplay = (nodes) => {
+    //actually drawing depending on distance from car
+    //draw depending on distance with node
     if(nodes == null || nodes.length < 2) { return }
     if(boxes.length < boxCount) { createBoxes () }
-
+    if (arrows.length < boxCount){ createArrows() }
+    else {boxes = arrows}
     let boxIndex = 0
     let nodeIndex = 1
 
@@ -129,8 +145,12 @@ export const driverPathDisplay = (nodes) => {
     let node = nodes[nodeIndex]
 
     while(node != null && boxIndex < boxes.length) {
-        boxes[boxIndex++].position = new Vector3(node.point.x, 0.2, node.point.z)
-
+        const angle = getAngle()
+        const selection = getSelection()
+        const approach = getApproach()
+        const offsetAngle = selection ? selection === 'L' ?  -Math.PI/2 : Math.PI/2 : 0
+        //boxes[boxIndex++].position = new Vector3(node.point.x, 0.2, node.point.z)
+        //boxes[boxIndex].rotation = boxIndex < 50 ? new Vector3(0, angle, 0) : new Vector3(0, angle, 0)
         const dir = node.point.subtract(prevNode.point).normalize().scale(boxSpacing)
         // console.log(dir)
         let point = prevNode.point
@@ -138,6 +158,8 @@ export const driverPathDisplay = (nodes) => {
             // console.log(point)
             point = point.add(dir)
             boxes[boxIndex++].position = new Vector3(point.x, 0.2, point.z)
+            boxes[boxIndex].rotation = (boxIndex < 45 || approach > 10) ? new Vector3(0, angle, 0) : new Vector3(0, angle + offsetAngle, 0)
+          //  console.log(boxIndex, boxes.length)
         }
         nodeIndex++
         prevNode = node
@@ -224,3 +246,34 @@ export const driverGetSmootherTarget = (point, prevTarget, nodes, distance) => {
 
     return { nodes, target, normalProjection, slice }
 }
+
+// export const driverPathDisplay = (nodes) => {
+//     if(nodes == null || nodes.length < 2) { return }
+//     if(boxes.length < boxCount) { createBoxes () }
+
+//     let boxIndex = 0
+//     let nodeIndex = 1
+
+//     let prevNode = nodes[0]
+//     let node = nodes[nodeIndex]
+
+//     while(node != null && boxIndex < boxes.length) {
+//         boxes[boxIndex++].position = new Vector3(node.point.x, 0.2, node.point.z)
+
+//         const dir = node.point.subtract(prevNode.point).normalize().scale(boxSpacing)
+//         // console.log(dir)
+//         let point = prevNode.point
+//         while(boxIndex < boxes.length && node.point.subtract(point).length() > boxSpacing) {
+//             // console.log(point)
+//             point = point.add(dir)
+//             boxes[boxIndex++].position = new Vector3(point.x, 0.2, point.z)
+//         }
+//         nodeIndex++
+//         prevNode = node
+//         node = nodes[nodeIndex]
+//     }
+
+//     while(boxIndex < boxes.length) {
+//         boxes[boxIndex++].position = new Vector3(1000, 1000, 1000)
+//     }
+// }

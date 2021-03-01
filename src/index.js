@@ -20,7 +20,7 @@ import { SineEase } from '@babylonjs/core/Animations/easing'
 import {setupGps} from './gps/plan'
 import { DefaultLoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
 import {createLoading} from './creators/loadingCreator'
-import {createCarBots, carBotsLoop} from './npcs/carbots.ts'
+import {carBotsLoop} from './npcs/carbots.ts'
 
 let loadingStatus = {assets: false, car: false, randomgen: false, trees: false, walk: false, ground: false, count: 0}
 let loadingInter
@@ -96,7 +96,6 @@ const boot = () => {
     createDefaultCar(scene, camera, internalCamera, container);
     createWays(scene, planes)
     dressMap(scene, container)
-    createCarBots(scene, 10) 
 
     //Create all menus and UI Elements
     createMenu(scene, camera, internalCamera, freecamera);
@@ -116,10 +115,11 @@ const boot = () => {
                 waitcar = false;
                 score.setupScore(mustang);
         } else if (!waitcar){
-            loop.loopSelector(scene, null, null, null, mustang, gps)
-            // scene.activeCamera = freecamera//DEBUG, TO COMMENT
             score.loop()
+            //scene.activeCamera = freecamera//DEBUG, TO COMMENT
             carBotsLoop()
+            loop.loopSelector(scene, null, null, null, mustang, gps)
+
         }
     })
 }

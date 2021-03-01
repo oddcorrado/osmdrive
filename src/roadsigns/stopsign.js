@@ -14,10 +14,31 @@ function clearSceneActionManager(scene){
       scene.actionManager.actions = []
 }
 
-async function createAction(scene, line, trig, container){
+async function createAction(scene, bots, line, trig, container){
    var stopped = false
    line.actionManager = new ActionManager(scene)
    trig.actionManager = new ActionManager(scene)
+   let inter
+
+   bots.forEach(classbot => {
+      line.actionManager.registerAction(
+         new ExecuteCodeAction(
+           {
+               trigger: ActionManager.OnIntersectionEnterTrigger,
+               parameter: {
+                  mesh: classbot.bot
+               }
+           },
+             function (){
+               classbot.detected = ['stop']
+               inter = setTimeout(() => {
+                  console.log('done')
+                     classbot.detected = null
+               }, 2000);
+            })
+         )   
+   })
+
    return await new Promise (function(resolve) {
       const interval = setInterval(container =>  {
          if (container && container['meshes'].find(car => car.name == 'detailedcar')){
@@ -89,7 +110,7 @@ async function createAction(scene, line, trig, container){
    })
 }
 
-export default function spawnStop(container, scene, x, y, ori) {
+export default function spawnStop(container, bots, scene, x, y, ori) {
    var mat = new StandardMaterial("matstop", scene)
    var line = MeshBuilder.CreateBox('box', {width:1, height:3.8, depth: 0.3}, scene)      
    var trig = line.clone()
@@ -119,7 +140,7 @@ export default function spawnStop(container, scene, x, y, ori) {
       sign.scalingDeterminant = 0.8
       sign.position = posSign
       sign.rotation = rotSign
-      createAction(scene, line, trig, container)
+      createAction(scene, bots, line, trig, container)
       return sign
    })
 }

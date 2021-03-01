@@ -16,7 +16,10 @@ import { ActionManager } from '@babylonjs/core/Actions'
 import {setSounds} from '../sounds/carsound'
 import {setStatus} from '../index'
 import spawnProp from '../roadsigns/loadProp'
+import loadArrow from '../props/arrow'
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
+import {createCarBots} from '../npcs/carbots'
+
 let propsContainer
 let pavements
 
@@ -71,7 +74,22 @@ export default function dressMap(scene, container){
     setSounds(scene)
     createTrees(scene);
 
-   // botshandler.createBots(scene, container)
+    (async () => {
+        let bots = await createCarBots(scene, 10) 
+
+        spawnTrafficLight(container, bots, scene, -195, -205, Math.PI, 'green')
+        spawnTrafficLight(container, bots, scene, -195, -105, Math.PI, 'red')
+        spawnTrafficLight(container, bots, scene, -105, -105, -Math.PI/2, 'red')
+        spawnTrafficLight(container, bots, scene, -5, -105, -Math.PI/2, 'red')
+        spawnTrafficLight(container, bots, scene, 5, -5, Math.PI, 'green')
+
+        spawnStop(container, bots, scene, 95, -5, Math.PI)
+        spawnStop(container, scene, 195, -5, Math.PI)
+        spawnYield(container, scene, 205, 95, Math.PI)
+        spawnNoEntry(container, scene, 203, 207)
+    })()
+    
+   //botshandler.createBots(scene, container)
     //AVAILABLE:
     // spawnTrafficLight(container, scene, 295, -105)
     // spawnYield(container, scene, 95, -5)
@@ -80,6 +98,7 @@ export default function dressMap(scene, container){
     // spawnSpeedSign(container, scene, '30', 15, -5)//'50', '100'
     //
     //spawnProp(scene, 0, 0)
+    loadArrow(scene)
     // (async () => {
     //     let traffic = await loadTrafficLight(scene)
     //   //  for (let i = 0 ; i < 10; i++){
@@ -87,16 +106,7 @@ export default function dressMap(scene, container){
     //     //}
     // })()
     // 
-    spawnTrafficLight(container, scene, -195, -205, Math.PI, 'green')
-    spawnTrafficLight(container, scene, -195, -105, Math.PI, 'red')
-    spawnTrafficLight(container, scene, -105, -105, -Math.PI/2, 'red')
-    spawnTrafficLight(container, scene, -5, -105, -Math.PI/2, 'red')
-    spawnTrafficLight(container, scene, 5, -5, Math.PI, 'green')
-
-    spawnStop(container, scene, 95, -5, Math.PI)
-    spawnStop(container, scene, 195, -5, Math.PI)
-    spawnYield(container, scene, 205, 95, Math.PI)
-    spawnNoEntry(container, scene, 203, 207)
+   
     spawnSpeedSign(container, scene, '30', -195, -280, Math.PI)
     setStatus('assets')
 }

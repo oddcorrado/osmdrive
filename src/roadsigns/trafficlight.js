@@ -11,8 +11,31 @@ import score from '../scoring/scoring'
 let status = []
 let id = 0
 
-async function createAction(scene, line, container, idx){
+async function createAction(scene, bots, line, container, idx){
+   let inter
    line.actionManager = new ActionManager(scene);
+
+   bots.forEach(classbot => {
+      line.actionManager.registerAction(
+         new ExecuteCodeAction(
+           {
+               trigger: ActionManager.OnIntersectionEnterTrigger,
+               parameter: {
+                  mesh: classbot.bot
+               }
+           },
+             function (){
+               classbot.detected = ['traffic', status[idx]]
+               inter = setInterval(() => {
+                  if (status[idx] === 'green'){
+                     classbot.detected = null
+                     clearInterval(inter)
+                  }
+               }, 1000);
+            })
+         )   
+   })
+   
    return await new Promise (function(resolve) {
       const interval = setInterval(container =>  {
          if (container && container['meshes'].find(car => car.name == 'detailedcar')){
@@ -38,7 +61,7 @@ async function createAction(scene, line, container, idx){
                   score.newScore('TRAFFIC_LIGHT_GOOD', 50);
             })
       )
-   })
+   })   
 }
 
 function setColors(colors, newcolor){
@@ -59,19 +82,19 @@ function createLightRotation(colors, type, idx){
    setInterval(() => {
       if (status[idx] === 'green'){
          setColors(colors, [cols['none'], cols['orange'], cols['none']]);
-         status[idx] = 'orange';
+         status[idx] = 'orange'
          setTimeout(() => {
             setColors(colors, [cols['none'], cols['none'], cols['red']]);
-            status[idx] = 'red';
+            status[idx] = 'red'
          }, 2000)
       } else if (status[idx] === 'red'){
          setColors(colors, [cols['green'], cols['none'], cols['none']])
-         status[idx] = 'green';
+         status[idx] = 'green'
       }
    }, 15000)
 }
 
-export function spawnTrafficLight(container, scene, x, y, ori, type) {
+export function spawnTrafficLight(container, bots, scene, x, y, ori, type) {
    status.push(type)
    let idx = id++
    let line = MeshBuilder.CreateBox('box', {width:1.5, height:1.5, depth: 0.3}, scene);     
@@ -105,7 +128,7 @@ export function spawnTrafficLight(container, scene, x, y, ori, type) {
       traffic.position = posSign
       traffic.rotation = rotSign
       createLightRotation(colors, type, idx)
-      createAction(scene, line, container, idx)
+      createAction(scene, bots, line, container, idx)
       return traffic;
    })
 }

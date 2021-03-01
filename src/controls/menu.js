@@ -3,7 +3,8 @@ import { toggleDebugWays } from './../ways/logic/roads'
 import {disableTrees} from '../environment/dressmap'
 import {toggleEsp} from './loops'
 import { Vector3 } from '@babylonjs/core/Maths/math';
-import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness, falseStickCreator, scoreDivCreator, menuOptions} from '../creators/buttoncreator.js';
+import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness, falseStickCreator, menuOptions} from '../creators/buttoncreator.js';
+import {scoreDivCreator} from '../creators/UIElementsCreator.js';
 import type from '../enum/buttontype';
 
 var camPosInterval;
