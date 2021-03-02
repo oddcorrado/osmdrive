@@ -12,7 +12,7 @@ import textPanel from '../../textPanel'
 import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
 import { scene as globalScene } from '../../index'
 import { vectorIntersection } from '../../maths/geometry'
-
+import { DynamicTexture } from '@babylonjs/core/Materials/Textures/dynamicTexture'
 let enableDebug = false
 
 
@@ -262,7 +262,8 @@ function extendSegment(n1, n2, scale) {
         point: newPoint,
         nodeId: 556,
         junctionIndex: -1,
-        type: 'normal:extension'
+        type: 'normal:extension',
+        upwise: n1.upwise
     })
 }
 
@@ -522,9 +523,18 @@ export function toggleDebugWays() {
                     m.position = node.point
                 } */
                 /* if(node.type === "junction")*/ {
+                    const textureResolution = 512
+                    const textureGround = new DynamicTexture("dynamic texture", {width:512, height:256}, globalScene)   
+                    const textureContext = textureGround.getContext()
+                    var materialGround = new StandardMaterial("Mat", globalScene)    				
+                    materialGround.diffuseTexture = textureGround
+                    
+                    var font = "bold 100px monospace"
+                    textureGround.drawText(`${node.roadIndex}/${node.laneIndex}/${node.nodeIndex}`, 75, 135, font, "white", "blue", true, true)
+
                     const m = MeshBuilder.CreateBox("box", {size: 0.4}, globalScene)
                     m.position = node.point
-
+                    m.material = materialGround
                     /* if(j > 0) {
                         const n = lane[j - 1]
                         const mm = MeshBuilder.CreateBox("box", {size: 0.1}, globalScene)
@@ -534,11 +544,12 @@ export function toggleDebugWays() {
                     } */
                     
                     node.nexts.forEach((n) => {
-                        console.log(node, n)
+                        // console.log(node, n)
                         const mm = MeshBuilder.CreateBox("box", {size: 0.1}, globalScene)
                         const v = n.point.subtract(node.point).normalize()
                         mm.position = node.point.add(v)
                         mm.position.y = 0.2
+                        
                     }) 
                 }
                 /* if(node.type === "junction:temp") {
@@ -559,69 +570,3 @@ export function toggleDebugWays() {
         //m.position = intersection.point
     })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*
-ABCAABAACAAAAAA
-AACAACABAACAAAA
-AAAACAACAACAABA
-AACAAZZZAABABAA
-ACAANZZZNNACAAA
-ABAANZZZZZNACAA
-AANNZZZZZZNACAA
-AAZZZZZZZZZZABA
-AAZZZZZZZZZZAAA
-AAZZZZZNNZZZAAA
-AAAZZZNAAAAAAAA
-ACACAANAACACAAA
-AAAACAACAAAAAAA
-AACAAACAAACAAAA
-*/
