@@ -54,6 +54,7 @@ export const driverPathBuild = (position, nodes, junctionSelection) => {
         const dir = node.point.subtract(prevNode.point)
 
         let selectedNode = null
+        let fallbackNode = null
         // console.log('*************')
         node.nexts.forEach(n => {
             const newDir = n.point.subtract(node.point)
@@ -76,11 +77,29 @@ export const driverPathBuild = (position, nodes, junctionSelection) => {
                             selectionIndex = index
                         }
                         break
+                    default:
+                        fallbackNode = n
+                        break;
                 }
                 if(Math.abs(angle) < 1 && selectedNode == null) { selectedNode = n }
             } else {
                 if(Math.abs(angle) < 1 && selectedNode == null) {
                     selectedNode = n
+                }
+                switch(junctionSelection) {
+                    case 'L':
+                        if(angle > 1) { 
+                            fallbackNode = n 
+                        }
+                        break
+                    case 'R':
+                        if(angle < -1) { 
+                            fallbackNode = n 
+                        }
+                        break
+                    default:
+                        fallbackNode = n
+                        break;
                 }
             }
             // console.log(dir, newDir, selectionDone, angle)
@@ -94,7 +113,7 @@ export const driverPathBuild = (position, nodes, junctionSelection) => {
             nodes.push(selectedNode)
             node = selectedNode
         } else {
-            node = null
+            node = fallbackNode
         }
         index++
     }
