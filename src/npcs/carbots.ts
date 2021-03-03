@@ -1,13 +1,16 @@
 import { Scene } from "@babylonjs/core/scene"
 import { Mesh } from "@babylonjs/core/Meshes/mesh"
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader"
-import { Vector3 } from "@babylonjs/core/Maths/math"
+import { Vector3, Color3 } from "@babylonjs/core/Maths/math"
 import { InstancedMesh } from "@babylonjs/core/Meshes/instancedMesh"
 import { driverPathBuild, driverGetSmootherTarget } from '../ways/logic/driver'
 import { Quaternion } from '@babylonjs/core/Maths/math.vector'
 import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/geosegment'
 import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder"
 import { StandardMaterial } from "@babylonjs/core/Materials/standardMaterial"
+import { RollingAverage } from "@babylonjs/core/Misc/performanceMonitor"
+
+//MERGE IT AFTER CLONING
 
 export class CarBot {
     bot: InstancedMesh
@@ -28,13 +31,14 @@ export class CarBot {
     fakeYaw:number = 0
     fakeYawStep:number = 0.001
     fakeYawMax:number = 0.05
-    turnChancePercentage:number = 100
+    turnChancePercentage:number = Math.random() * 50 + 40
     choiceMade:boolean = false
     detected: string[]
     //detector: Mesh
 
     constructor(mesh: InstancedMesh){
         this.bot = mesh
+        console.log(mesh)
         this.id = mesh.name        // this.detector = MeshBuilder.CreateBox('detector', {width: 1.5, height: 1, depth: 1.5})
     }
 
@@ -61,31 +65,34 @@ export class CarBot {
         }
     }
 
-    trafficHandler = () => {
-        if (this.detected[1] === 'red'){
-            
+    trafficLightHandler = () => {
+        if (this.detected[1] === 'red'){ 
             this.stop()
         } else {
             this.accelerate()
             this.detected = null
         }
     }
-    urgentstop = () => {
-        this.speed = 0;
+
+    faststop = () => {
+        //this.speed = 0;
+        if (this.speed > 0){
+            this.speed = Math.max(0, this.speed - 0.01)
+            this.fakeAcceleration = Math.min(this.fakeAccelerationMax, this.fakeAcceleration + this.fakeAccelerationStep)
+        }
     }
+
     contactHandler = () => {
-        console.log('urgent stop')
-        this.urgentstop()
+        this.faststop()
     }
 
     detectorHandler = () => {
-        console.log(this.detected[0], this.id)
         switch(this.detected[0]){
             case 'contact':
                 this.contactHandler()
                 break
             case 'traffic':
-                this.trafficHandler()
+                this.trafficLightHandler()
                 break
             case 'stop':
                 this.stop()
@@ -122,8 +129,7 @@ export class CarBot {
 
     easyTurn = (): string =>{
         let val = Math.random() * 100
-
-        return val > 50 ? 'L' : 'R'
+        return val < this.turnChancePercentage/2 ? 'L' : val < this.turnChancePercentage ? 'R' : null
     }
 
     randomTurn = (): boolean | string => {
@@ -190,8 +196,17 @@ export class CarBot {
 }
 
 let botPos: Vector3[] = [
-    new Vector3(-60 , 0.1, -102),
+    new Vector3(-60 , 0.1, -102),//trafficlight
+    new Vector3(-76, 0.1, -102),//trafficlight
     new Vector3(-86, 0.1, -102),//trafficlight
+    new Vector3(-50, 0.1, -102),//trafficlight
+    new Vector3(-96, 0.1, -102),//trafficlight
+
+    new Vector3(56, 0.1, -96),//rev traffic
+    new Vector3(76, 0.1, -96),//rev traffic
+    new Vector3(86, 0.1, -96),//rev traffic
+
+
     new Vector3(20, 0.1, -1),//stop
     new Vector3(102, 0.1, 62),
     new Vector3(100 , 0.1, 250),
@@ -202,25 +217,46 @@ let botPos: Vector3[] = [
 ]
 
 
-const addBotInstanceClass = (mesh: Mesh, i: number): CarBot => {
+const addBotInstanceClass = (mesh: Mesh, i: number): CarBot => {//
     let newmesh = mesh.createInstance('carbot' + i)
+//    let newmesh = mesh.clone()
     newmesh.position = botPos[i]
     newmesh.scalingDeterminant = 0.6
     return new CarBot(newmesh)
 }
 
 const loadBotModel = (scene: Scene): Promise<Mesh> => {
-    return SceneLoader.ImportMeshAsync('', "../mesh/BotCar/", "cliobot.obj", scene).then(function(newMesh) {
+    // return SceneLoader.ImportMeshAsync('', "../mesh/BotCar/", "cliobot.obj", scene).then(function(newMesh) {
+    return SceneLoader.ImportMeshAsync('', "../mesh/BotCarNew/", "botcar.obj", scene).then(function(newMesh) {
         let msh = newMesh['meshes'] as Mesh[]
+        console.log(msh)
+
+        let RLig = new StandardMaterial('blinkon', scene)
+        let LLig = new StandardMaterial('blinkoff', scene)
+        let on = new Color3(1,1,1)
+        let off = new Color3(0,0,0)
+        let Rl = msh.filter(m => m.name.includes('RLight'))
+        let Ll = msh.filter(m => m.name.includes('LLight'))
+        Rl[0].material = RLig
+        Ll[0].material = LLig
+        setInterval(() => {
+             RLig.emissiveColor = RLig.emissiveColor === on ? off : on
+             LLig.emissiveColor = LLig.emissiveColor === on ? off : on
+           
+        }, 500)
+
+
+
         let box = MeshBuilder.CreateBox('detector', {width: 1, height: 1, depth: 1})
         let mat = new StandardMaterial('mat', scene)
         box.position = new Vector3(0, 0, 10)
-        // mat.alpha = 0;
-        // box.material = mat
+        mat.alpha = 0;
+        box.material = mat
 
         msh.push(box)
         let bot = Mesh.MergeMeshes(msh, true, false, undefined, false, true)
-        bot.isVisible = false
+        //bot.isVisible = false
+        bot.position = new Vector3(0, -10, -10)
         bot.name = 'bot'
         return bot
     }) 
@@ -230,7 +266,7 @@ const loadBotModel = (scene: Scene): Promise<Mesh> => {
 let bots: CarBot[] = []
 
 export const createCarBots = (scene: Scene, nb: number): Promise<{bots: CarBot[] ,mesh: Mesh}>  => {
-    nb = 2
+    nb = 12
     let mesh: Mesh
 
    return (async () => {

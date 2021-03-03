@@ -116,9 +116,9 @@ const boot = () => {
                 score.setupScore(mustang);
         } else if (!waitcar){
             score.loop()
-            scene.activeCamera = freecamera//DEBUG, TO COMMENT
+            //scene.activeCamera = freecamera//DEBUG, TO COMMENT
             carBotsLoop()
-            //loop.loopSelector(scene, null, null, null, mustang, gps)
+            loop.loopSelector(scene, null, null, null, mustang, gps)
 
         }
     })

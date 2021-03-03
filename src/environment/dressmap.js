@@ -10,8 +10,7 @@ import spawnStop from '../roadsigns/stopsign'
 import spawnNoEntry  from '../roadsigns/noentrysign'
 import spawnSpeedSign from '../roadsigns/speedlimit'
 import spawnYield from '../roadsigns/yieldsign'
-import { spawnTrafficLight } from '../roadsigns/trafficlight'
-import { loadTrafficLight, addInstanceOfTrafficLight } from '../roadsigns/loadTrafficLight.ts'
+import { spawnTrafficLight } from '../roadsigns/trafficlight.js'
 import { ActionManager } from '@babylonjs/core/Actions'
 import {setSounds} from '../sounds/carsound'
 import {setStatus} from '../index'
@@ -77,7 +76,6 @@ export default function dressMap(scene, container){
     (async () => {
         let {bots, mesh} = await createCarBots(scene, 10) 
        
-        spawnTrafficLight(container, bots, scene, -195, -205, Math.PI, 'green')
         spawnTrafficLight(container, bots, scene, -195, -105, Math.PI, 'red')
         spawnTrafficLight(container, bots, scene, -105, -105, -Math.PI/2, 'red')
         spawnTrafficLight(container, bots, scene, -5, -105, -Math.PI/2, 'red')

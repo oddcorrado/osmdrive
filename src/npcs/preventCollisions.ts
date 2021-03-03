@@ -23,35 +23,61 @@ export default function preventCollisions(scene: Scene, container: AssetContaine
         let car = await mainCarLoaded(container)
         bots.forEach(botclass => {
             botclass.bot.actionManager = new ActionManager(scene)
-            botclass.bot.actionManager.registerAction(
-                new ExecuteCodeAction(
-                    {
-                        trigger: ActionManager.OnIntersectionEnterTrigger,
-                        parameter: {
-                        mesh: bots[0].bot
-                    }
-                },
-                function(){
-                    console.log('bot contact', botclass.id)
-                    
-                    botclass.detected = ['contact']
-                })
-            )
-            // botclass.bot.actionManager.registerAction(
-            //     new ExecuteCodeAction(
-            //         {
-            //             trigger: ActionManager.OnIntersectionExitTrigger,
-            //             parameter: {
-            //             mesh: botmesh
-            //         }
-            //     },
-            //     function(){
-            //         console.log('bot contact end', botclass.id)
-            //         botclass.detected = null
-            //     })
-            // )
-            //check if we can add an action manager on a whole array
-            //check if we can add action manager on type of object
+            bots.forEach(botdiff => {
+
+                botclass.bot.actionManager.registerAction(
+                    new ExecuteCodeAction(
+                        {
+                            trigger: ActionManager.OnIntersectionEnterTrigger,
+                            parameter: {
+                            mesh: car
+                        }
+                    },
+                    function(){                            
+                        botclass.detected = ['contact']
+                    })
+                )
+                botclass.bot.actionManager.registerAction(
+                    new ExecuteCodeAction(
+                        {
+                            trigger: ActionManager.OnIntersectionExitTrigger,
+                            parameter: {
+                            mesh: car
+                        }
+                    },
+                    function(){       
+                        setTimeout(() => {botclass.detected = null}, 200)
+                    })
+                )
+
+                if (botdiff.id != botclass.id){
+                    botclass.bot.actionManager.registerAction(
+                        new ExecuteCodeAction(
+                            {
+                                trigger: ActionManager.OnIntersectionEnterTrigger,
+                                parameter: {
+                                mesh: botdiff.bot
+                            }
+                        },
+                        function(){                            
+                            botclass.detected = ['contact']
+                        })
+                    )
+                    botclass.bot.actionManager.registerAction(
+                        new ExecuteCodeAction(
+                            {
+                                trigger: ActionManager.OnIntersectionExitTrigger,
+                                parameter: {
+                                mesh: botdiff.bot
+                            }
+                        },
+                        function(){       
+                            setTimeout(() => {botclass.detected = null}, 200)
+                        })
+                    )
+                }
+
+            })
         })
     })()
 }

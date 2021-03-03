@@ -11,12 +11,13 @@ import score from '../scoring/scoring'
 let status = []
 let id = 0
 
-async function createAction(scene, bots, line, container, idx){
+async function createAction(scene, bots, trigbot, line, container, idx){
    let inter
    line.actionManager = new ActionManager(scene);
+   trigbot.actionManager = new ActionManager(scene);
 
    bots.forEach(classbot => {
-      line.actionManager.registerAction(
+      trigbot.actionManager.registerAction(
          new ExecuteCodeAction(
            {
                trigger: ActionManager.OnIntersectionEnterTrigger,
@@ -25,7 +26,8 @@ async function createAction(scene, bots, line, container, idx){
                }
            },
              function (){
-               classbot.detected = ['traffic', status[idx]]
+
+               classbot.detected = ['traffic', status[idx]]//push it
                inter = setInterval(() => {
                   if (status[idx] === 'green'){
                      classbot.detected = null
@@ -97,17 +99,19 @@ function createLightRotation(colors, type, idx){
 export function spawnTrafficLight(container, bots, scene, x, y, ori, type) {
    status.push(type)
    let idx = id++
-   let line = MeshBuilder.CreateBox('box', {width:1.5, height:1.5, depth: 0.3}, scene);     
-   //const rotSign = new Vector3(0, -Math.PI/2, 0)
+   let line = MeshBuilder.CreateBox('box', {width:0.5, height:0.5, depth: 0.3}, scene);     
+   let trigbot = MeshBuilder.CreateBox('trig', {width:0.5, height:0.5, depth: 1}, scene);     
    const rotSign = new Vector3(0, ori, 0)
    const posSign = new Vector3(x, 0, y)
    const lineRot = new Vector3(Math.PI/2, 0, y)
-   //const linePos = new Vector3(x - 3, 1, y + 2)
-   const linePos = new Vector3(ori >= Math.PI ? x - 3 : x + 2, 1, y + 3)
-   var nb = 0
+   const trigPos = new Vector3(ori === -Math.PI/2 || ori === Math.PI ? x - 3.5 : x + 3.5, 0.5 , ori > 0 ? y - 3.5 : y + 3.5 )//ameliorer
+   const linePos = new Vector3(ori >= Math.PI ? x - 3.5: x - 3.5, 0.5 , y + 3.5)//ameliorer
+
    line.position = linePos
    line.rotation = lineRot
+   trigbot.position = trigPos
    line.isVisible = false
+   trigbot.isVisible = false
 
    return new SceneLoader.ImportMeshAsync('', "../mesh/DoubleTrafficLight/", "doubletraffic.obj", scene).then(function(newMesh) {
       var lights = [];
@@ -128,7 +132,7 @@ export function spawnTrafficLight(container, bots, scene, x, y, ori, type) {
       traffic.position = posSign
       traffic.rotation = rotSign
       createLightRotation(colors, type, idx)
-      createAction(scene, bots, line, container, idx)
+      createAction(scene, bots, trigbot, line, container, idx)
       return traffic;
    })
 }
