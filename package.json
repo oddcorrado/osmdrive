@@ -22,6 +22,7 @@
     "cannon": "^0.6.2",
     "earcut": "^2.2.2",
     "fsevents": "^2.2.1",
+    "meshwriter": "^1.2.4",
     "oimo": "^1.0.9",
     "screenfull": "^5.0.2",
     "ua-parser-js": "^0.7.22"

@@ -7,7 +7,6 @@ import createGround from './ground'
 //import control from './controls/control'
 import createMenu from './controls/menu.js'
 import createButtons from './controls/drivebuttons'
-import physics from './physics'
 import createFreeCamera from './cameras/freecamera'
 import createCamera from './cameras/camera'
 import dressMap from './environment/dressmap'
@@ -88,12 +87,14 @@ const boot = () => {
     //Creates environements and camera
     createSkybox(scene)
     createLights(scene)
-    physics.enablePhysics(scene);
     //Container to handle multiple meshes, useful to duplicate without reloading, and to access the main car loading state
     let container = new AssetContainer(scene);
     
     //Creates car, AIs, road and add assets
-    createDefaultCar(scene, camera, internalCamera, container);
+    try{
+        createDefaultCar(scene, camera, internalCamera, container);
+    } catch (e){}
+    
     createWays(scene, planes)
     dressMap(scene, container)
 
@@ -102,7 +103,6 @@ const boot = () => {
     createButtons(scene);
     loop.setupControls(scene);
 
-    //physics.setupPhysics(scene, ground, boxcar/*, bots*/)
 
     setupGps(scene, container);
     loop.cameraOrientationSetup(camera);
@@ -116,9 +116,9 @@ const boot = () => {
                 score.setupScore(mustang);
         } else if (!waitcar){
             score.loop()
-            //scene.activeCamera = freecamera//DEBUG, TO COMMENT
+            scene.activeCamera = freecamera//DEBUG, TO COMMENT
             carBotsLoop()
-            loop.loopSelector(scene, null, null, null, mustang, gps)
+            //loop.loopSelector(scene, null, null, null, mustang, gps)
 
         }
     })

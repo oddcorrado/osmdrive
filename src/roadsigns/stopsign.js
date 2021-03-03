@@ -1,10 +1,10 @@
 import  '@babylonjs/loaders/OBJ'
 import {SceneLoader} from '@babylonjs/core/Loading/sceneLoader'
-import { Vector3, Axis, Space, Color3, ToLinearSpace } from '@babylonjs/core/Maths/math'
+import { Vector3, Color3 } from '@babylonjs/core/Maths/math'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
-import { ActionManager, ExecuteCodeAction, DoNothingAction } from '@babylonjs/core/Actions'
+import { ActionManager, ExecuteCodeAction,  } from '@babylonjs/core/Actions'
 import score from '../scoring/scoring'
 import { getSpeed } from '../controls/loops'
 
@@ -111,7 +111,7 @@ async function createAction(scene, bots, line, trig, container){
 }
 
 export default function spawnStop(container, bots, scene, x, y, ori) {
-   var mat = new StandardMaterial("matstop", scene)
+   var mat = new StandardMaterial('matstop', scene)
    var line = MeshBuilder.CreateBox('box', {width:1, height:3.8, depth: 0.3}, scene)      
    var trig = line.clone()
    var showLine = line.clone()

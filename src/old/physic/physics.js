@@ -1,14 +1,14 @@
 //import { CannonJSPlugin } from '@babylonjs/core/Physics/Plugins/cannonJSPlugin'
-import {OimoJSPlugin} from '@babylonjs/core/Physics/Plugins/oimoJSPlugin'
-import { PhysicsEngineComponent } from '@babylonjs/core/Physics/physicsEngineComponent'
-import { PhysicsEngine } from '@babylonjs/core/Physics/physicsEngine'
-import { PhysicsImpostor} from '@babylonjs/core/Physics/physicsImpostor'
+// import {OimoJSPlugin} from '@babylonjs/core/Physics/Plugins/oimoJSPlugin'
+// import { PhysicsEngineComponent } from '@babylonjs/core/Physics/physicsEngineComponent'
+// import { PhysicsEngine } from '@babylonjs/core/Physics/physicsEngine'
+// import { PhysicsImpostor} from '@babylonjs/core/Physics/physicsImpostor'
 // /import OIMO from '@babylonjs/core/Physics/Plugins/oimoJSPlugin'
 import { Vector3 } from '@babylonjs/core/Maths/math'
 
 function enablePhysics(scene){
     //scene.enablePhysics(undefined, new OimoJSPlugin());
-    scene.enablePhysics(undefined, new OimoJSPlugin(200))
+    //scene.enablePhysics(undefined, new OimoJSPlugin(200))
 }
 
 

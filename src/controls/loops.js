@@ -16,6 +16,7 @@ import { vectorIntesection } from '../maths/geometry'
 import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera';
 import { scoreDivCreator } from '../creators/buttoncreator';
 import score from '../scoring/scoring'
+import { rightViewCreator } from '../creators/UIElementsCreator';
 
 let sideTilt = 0
 let accel = 0
@@ -260,7 +261,11 @@ function resetWheel () {
     let lblinker = document.getElementById('lblink');
     let rblinker = document.getElementById('rblink');
     lblinkerimg = document.getElementById('lblinkimg');
-    rblinkerimg = document.getElementById('rblinkimg');
+    rblinkerimg = document.getElementById('rblinkimg')
+    let leftView = document.getElementById('leftview')
+    let leftimg = document.getElementById('leftviewimg')
+    let rightView = document.getElementById('rightview')
+    let rightimg = document.getElementById('rightviewimg')
     var inter;
     let viewInter = null
     let viewX = 300
@@ -328,6 +333,51 @@ function resetWheel () {
         wheelimg.style.transform = `rotateZ(${touch}deg)`
         wheelimg.style.display = 'block'
         locked.style.display = 'none'
+    }
+
+    let touching = false
+    const leftLook = (x) => {
+        if (inter){clearInterval(inter); inter = null}
+        touching = true
+        touch = x - (leftView.offsetLeft + leftView.offsetWidth)
+        touch = touch < -150 ? -150 : touch > 0 ? 0 : touch
+        scene.activeCamera.lockedTarget.x = touch
+        leftimg.style.left = `${touch/20}vw`
+    }
+
+    const leftLookEnd = () => {
+        touching = false
+        inter = setInterval(() => {
+            scene.activeCamera.lockedTarget.x += 10
+            leftimg.style.left = `${parseInt(leftimg.style.left)/20 + 1}vw`        
+            if (scene.activeCamera.lockedTarget.x >= 0){
+                scene.activeCamera.lockedTarget.x = 0
+                clearInterval(inter)
+                inter = null
+            }
+        }, 20)        
+    }
+
+    const rightLook = (x) => {
+        if (inter){clearInterval(inter); inter = null}
+        touching = true
+        touch = x - (rightView.offsetLeft)
+        touch = touch > 150 ? 150 : touch < 0 ? 0 : touch
+        scene.activeCamera.lockedTarget.x = touch
+        rightimg.style.right = `${10-(touch/20)}vw`
+    }
+    
+    const rightLookEnd = () => {
+        touching = false
+        inter = setInterval(() => {
+            scene.activeCamera.lockedTarget.x -= 10
+            rightimg.style.right = `${10 - parseInt(rightimg.style.right)/20 + 1}vw`        
+            if (scene.activeCamera.lockedTarget.x <= 0){
+                scene.activeCamera.lockedTarget.x = 0
+                clearInterval(inter)
+                inter = null
+            }
+        }, 20)        
     }
 
     const wheelMoveEnd = () => {
@@ -534,7 +584,7 @@ function resetWheel () {
     wheelzone.addEventListener('touchmove', e => wheelMove(e.targetTouches[0].clientX))
     wheelzone.addEventListener('mousedown', e => { 
         mouseAction = 'wheel'
-        wheelMove(e.clientX )
+        wheelMove(e.clientX)
     })
 
     wheelzone.addEventListener('mousemove', e => { if(mouseAction === 'wheel') { wheelMove(e.clientX) } })
@@ -558,7 +608,23 @@ function resetWheel () {
     rblinker.addEventListener('touchmove', () => rToggleBlinking())
     rblinker.addEventListener('click', () => rToggleBlinking())
     
+    leftView.addEventListener('touchmove', (e) => leftLook(e.targetTouches[0].clientX))
+    leftView.addEventListener('mousedown', (e) => {
+        leftLook(e.clientX)
+    })
+    leftView.addEventListener('touchend', () => leftLookEnd())
+    leftView.addEventListener('mouseup', () => {
+        leftLookEnd()
+    })
 
+    rightView.addEventListener('touchmove', (e) => rightLook(e.targetTouches[0].clientX))
+    rightView.addEventListener('mousedown', (e) => {
+        rightLook(e.clientX)
+    })
+    rightView.addEventListener('touchend', () => rightLookEnd())
+    rightView.addEventListener('mouseup', () => {
+        rightLookEnd()
+    })
 }
 
   export default {

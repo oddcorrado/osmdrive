@@ -63,7 +63,7 @@ export function tapButtonCreator(){
 
 export function viewZoneCreator(){
     var div =
-    `<div id='view' style='position: absolute; z-index:10;bottom: 50vh; left: 6vw; width: 24vw; height: 20vh; text-align: center'>
+    `<div id='view' style='display: none;position: absolute; z-index:10;bottom: 50vh; left: 6vw; width: 24vw; height: 20vh; text-align: center'>
         <div style='margin-top: 5vh'>
             <img draggable=false style='height: 10vh; width: 24vw; text-align:center;' src='../images/arrow.svg'></img>
         </div>
@@ -74,17 +74,32 @@ export function viewZoneCreator(){
     return div;
 }
 
- export function rightViewCreator(){
-//     var div = 
-//     <div style='position: absolute; top: 20vh; left: 1vw'>
-//         <div>
-//             <img src='../images/arrowview.svg'></img>
-//         </div>
-//         <div>
-//             <img src='../images/look.svg'></img>
-//         </div>
-//     </div>
+export function leftViewCreator(){
+    var div = 
+   ` <div id='leftview' style='position: absolute; top: 31vh; left: 1vw; height: 20vh; width: 20vw; z-index: 12;'>
+        <div style='display: inline; position: relative; top: 0vh; left: 5vw;'>
+            <img src='../images/arrowview.svg' style='height: 19vh; width: 10vw; draggable=false'></img>
+        </div>
+        <div id='leftviewimg' style='display: inline; position: relative; top: -0.9vh; left: 0vw'>
+            <img src='../images/look.svg' style='height: 17vh; width: 9vw; draggable=false'></img>
+        </div>
+    </div>`
+    return div
 }
+
+export function rightViewCreator(){
+    var div = 
+   ` <div id='rightview' style='position: absolute; top: 31vh; right: 1vw; height: 20vh; width: 20vw; z-index: 11;'>
+        <div style='display: inline; position: relative; top: 0vh; left: 5vw;'>
+            <img src='../images/arrowview.svg' style='transform: rotateY(180deg); height: 19vh; width: 10vw'></img>
+        </div>
+        <div id='rightviewimg' style='display: inline; position: relative; top: -0.9vh; right: 10vw'>
+            <img src='../images/look.svg' style='transform: rotateY(180deg); height: 17vh; width: 9vw;'></img>
+        </div>
+    </div>`
+    return div
+}
+
 
 export function wheelCreator(){
     var div =
