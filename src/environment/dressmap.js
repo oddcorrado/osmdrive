@@ -17,8 +17,11 @@ import {setStatus} from '../index'
 import spawnProp from '../roadsigns/loadProp'
 import loadArrow from '../props/arrow'
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
-import {createCarBots, loadCarBots} from '../npcs/carbots'
+//import {createCarBots, loadCarBots} from '../npcs/carbots'
+import {createCarBots} from '../npcs/carbotsIndependantDetector'
+//import {createCarBots} from '../npcs/carbotsSPS'
 import preventCollision from '../npcs/preventCollisions'
+
 let propsContainer
 let pavements
 
@@ -74,8 +77,8 @@ export default function dressMap(scene, container){
     createTrees(scene);
 
     (async () => {
-        let {bots, mesh} = await createCarBots(scene, 10) 
-       
+       // let {bots, mesh} = await createCarBots(scene, 10) 
+       let bots = await createCarBots(scene, 10) 
         spawnTrafficLight(container, bots, scene, -195, -105, Math.PI, 'red')
         spawnTrafficLight(container, bots, scene, -105, -105, -Math.PI/2, 'red')
         spawnTrafficLight(container, bots, scene, -5, -105, -Math.PI/2, 'red')
@@ -86,7 +89,7 @@ export default function dressMap(scene, container){
         spawnYield(container, scene, 205, 95, Math.PI)
         spawnNoEntry(container, scene, 203, 207)
 
-        preventCollision(scene, container, mesh, bots)
+        preventCollision(scene, container, bots)
     })()
 
     

@@ -30,7 +30,7 @@ async function createAction(scene, bots, trigbot, line, container, idx){
                classbot.detected = ['traffic', status[idx]]//push it
                inter = setInterval(() => {
                   if (status[idx] === 'green'){
-                     classbot.detected = null
+                     classbot.detected = []
                      clearInterval(inter)
                   }
                }, 1000);

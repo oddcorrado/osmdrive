@@ -6,7 +6,7 @@ export default function createFreeCamera(scene, canvas){
 
     freecamera.position = new Vector3(22,20,-100);//debug traffic
     //freecamera.position = new Vector3(-200,20,-140);//debug stop
-    freecamera.rotation = new Vector3(0, 0, 0)
+    freecamera.rotation = new Vector3(0, -Math.PI/2, 0)
     //freecamera.position = new Vector3(0,10,-0);//default pos car
     freecamera.attachControl(canvas, true);   
     return freecamera;

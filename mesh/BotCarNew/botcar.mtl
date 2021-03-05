@@ -30,7 +30,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 1
-map_Kd /Users/moustaphadabo/Documents/TGD/osmdrive/mesh/BotCar/tx_Renault_Clio_light.TGA
+map_Kd ./tx_Renault_Clio_light.TGA
 
 newmtl Mirror.001
 Ns 10.000002
@@ -51,7 +51,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.500000
 d 1.000000
 illum 1
-map_Kd /Users/moustaphadabo/Documents/TGD/osmdrive/mesh/BotCar/tx_Renault_Clio_wheel.TGA
+map_Kd ./tx_Renault_Clio_wheel.TGA
 
 newmtl wire_135006006.001
 Ns 31.999996

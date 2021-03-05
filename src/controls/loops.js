@@ -244,7 +244,7 @@ function resetWheel () {
 
 
  function setupControls (scene){
-    let touchZone = document.getElementById('view');
+    //let touchZone = document.getElementById('view');
     let soundtoggle = document.getElementById('sound');
     let control = document.getElementById('control')
     let changecam = document.getElementById('changecam');
@@ -565,21 +565,47 @@ function resetWheel () {
         brakePedal()
     })
 
-    touchZone.addEventListener('touchmove', (e) => viewCheck(e.targetTouches[0].clientX))
-    touchZone.addEventListener('touchstart', (e) => viewCheck(e.targetTouches[0].clientX))
-    touchZone.addEventListener('mousedown', (e) => {
-        mouseAction = 'view'
-        viewCheck(e.clientX)
+    // touchZone.addEventListener('touchmove', (e) => viewCheck(e.targetTouches[0].clientX))
+    // touchZone.addEventListener('touchstart', (e) => viewCheck(e.targetTouches[0].clientX))
+    // touchZone.addEventListener('mousedown', (e) => {
+    //     mouseAction = 'view'
+    //     viewCheck(e.clientX)
+    // })
+    // touchZone.addEventListener('mousemove', (e) => {
+    //     if(mouseAction === 'view') { viewCheck(e.clientX) }
+    // })
+    // touchZone.addEventListener('touchend', () => viewCheckEnd())
+    
+    leftView.addEventListener('touchmove', (e) => leftLook(e.targetTouches[0].clientX))
+    leftView.addEventListener('mousedown', (e) => {
+        mouseAction = 'lview'
+        leftLook(e.clientX)
     })
-    touchZone.addEventListener('mousemove', (e) => {
-        if(mouseAction === 'view') { viewCheck(e.clientX) }
+    leftView.addEventListener('mousemove', (e) => {
+        if(mouseAction === 'lview'){leftLook(e.clientX)}
+    })
+
+    leftView.addEventListener('touchend', () => leftLookEnd())
+    leftView.addEventListener('mouseup', () => {
+        leftLookEnd()
+    })
+
+    rightView.addEventListener('touchmove', (e) => rightLook(e.targetTouches[0].clientX))
+    rightView.addEventListener('mousedown', (e) => {
+        mouseAction = 'rview'
+        rightLook(e.clientX)
+    })
+    rightView.addEventListener('mousemove', (e) => {
+        if (mouseAction === 'rview'){rightLook(e.clientX)} 
+    })
+
+    rightView.addEventListener('touchend', () => rightLookEnd())
+    rightView.addEventListener('mouseup', () => {
+        rightLookEnd()
     })
 
     up.addEventListener('touchend', () => acceleratorPedalEnd())
-
     down.addEventListener('touchend', () => brakePedalEnd())
-
-    touchZone.addEventListener('touchend', () => viewCheckEnd())
 
     wheelzone.addEventListener('touchmove', e => wheelMove(e.targetTouches[0].clientX))
     wheelzone.addEventListener('mousedown', e => { 
@@ -608,23 +634,7 @@ function resetWheel () {
     rblinker.addEventListener('touchmove', () => rToggleBlinking())
     rblinker.addEventListener('click', () => rToggleBlinking())
     
-    leftView.addEventListener('touchmove', (e) => leftLook(e.targetTouches[0].clientX))
-    leftView.addEventListener('mousedown', (e) => {
-        leftLook(e.clientX)
-    })
-    leftView.addEventListener('touchend', () => leftLookEnd())
-    leftView.addEventListener('mouseup', () => {
-        leftLookEnd()
-    })
-
-    rightView.addEventListener('touchmove', (e) => rightLook(e.targetTouches[0].clientX))
-    rightView.addEventListener('mousedown', (e) => {
-        rightLook(e.clientX)
-    })
-    rightView.addEventListener('touchend', () => rightLookEnd())
-    rightView.addEventListener('mouseup', () => {
-        rightLookEnd()
-    })
+    
 }
 
   export default {

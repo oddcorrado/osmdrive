@@ -39,7 +39,7 @@ export class CarBot {
     constructor(mesh: InstancedMesh){
         this.bot = mesh
         console.log(mesh)
-        this.id = mesh.name        // this.detector = MeshBuilder.CreateBox('detector', {width: 1.5, height: 1, depth: 1.5})
+        this.id = mesh.name
     }
 
     accelerate = () => {
@@ -229,7 +229,6 @@ const loadBotModel = (scene: Scene): Promise<Mesh> => {
     // return SceneLoader.ImportMeshAsync('', "../mesh/BotCar/", "cliobot.obj", scene).then(function(newMesh) {
     return SceneLoader.ImportMeshAsync('', "../mesh/BotCarNew/", "botcar.obj", scene).then(function(newMesh) {
         let msh = newMesh['meshes'] as Mesh[]
-        console.log(msh)
 
         let RLig = new StandardMaterial('blinkon', scene)
         let LLig = new StandardMaterial('blinkoff', scene)
@@ -242,9 +241,7 @@ const loadBotModel = (scene: Scene): Promise<Mesh> => {
         setInterval(() => {
              RLig.emissiveColor = RLig.emissiveColor === on ? off : on
              LLig.emissiveColor = LLig.emissiveColor === on ? off : on
-           
         }, 500)
-
 
 
         let box = MeshBuilder.CreateBox('detector', {width: 1, height: 1, depth: 1})
@@ -260,10 +257,7 @@ const loadBotModel = (scene: Scene): Promise<Mesh> => {
         bot.name = 'bot'
         return bot
     }) 
-
 }
-
-let bots: CarBot[] = []
 
 export const createCarBots = (scene: Scene, nb: number): Promise<{bots: CarBot[] ,mesh: Mesh}>  => {
     nb = 12
@@ -279,6 +273,9 @@ export const createCarBots = (scene: Scene, nb: number): Promise<{bots: CarBot[]
        return {bots, mesh}
    })()
 }
+
+let bots: CarBot[] = []
+
 
 //randomise color
 export const carBotsLoop = () => {

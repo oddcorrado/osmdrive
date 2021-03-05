@@ -19,7 +19,9 @@ import { SineEase } from '@babylonjs/core/Animations/easing'
 import {setupGps} from './gps/plan'
 import { DefaultLoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
 import {createLoading} from './creators/loadingCreator'
-import {carBotsLoop} from './npcs/carbots.ts'
+//import {carBotsLoop} from './npcs/carbots.ts'
+import {carBotsLoop} from './npcs/carbotsIndependantDetector'
+//import {carBotsLoop} from './npcs/carbotsSPS'
 
 let loadingStatus = {assets: false, car: false, randomgen: false, trees: false, walk: false, ground: false, count: 0}
 let loadingInter
