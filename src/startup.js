@@ -48,7 +48,7 @@ const startup = boot => {
                 screenfull.request()
             }
             document.getElementById('startscreen').remove()
-            boot()
+            boot(os)
             recenterDisplaySetup()
         }
     }

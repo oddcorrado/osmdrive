@@ -71,7 +71,7 @@ DefaultLoadingScreen.prototype.hideLoadingUI = function(){
 
 const canvas = document.getElementById('renderCanvas')
 const engine = new Engine(canvas,true,null,true)
-const boot = () => {
+const boot = (os) => {
     let gps;
     let mustang;
     let waitcar = true;
@@ -122,7 +122,7 @@ const boot = () => {
             score.loop()
             //scene.activeCamera = freecamera//DEBUG, TO COMMENT
             carBotsLoop()
-           loop.loopSelector(scene, null, null, null, mustang, gps)
+           loop.loopSelector(scene, os, mustang, gps)
 
         }
     })

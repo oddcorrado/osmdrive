@@ -4,6 +4,7 @@ import {playAccel, playEngine, toggleSound} from '../sounds/carsound';
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick';
 import { Vector3 } from '@babylonjs/core/Maths/math'
 import gamepad from './gamepad'
+import { recenterDisplay } from './recenterDisplay'
 import { driverPathBuild, driverGetSmootherTarget } from '../ways/logic/driver'
 import { Quaternion } from '@babylonjs/core/Maths/math.vector'
 import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/geosegment'
@@ -85,16 +86,20 @@ function setSpeedWitness(speed, stickY){
     setSound(speed);
 }
 
-function loopSelector(scene, joints, sjoints, clio, mustang, gps){
+function loopSelector(scene, os, mustang, gps){
    if (currentCar === 'ford'){
         if (switchCam == 'ford') {
             switchCam = 'none'
             scene.activeCamera.parent = mustang
-            scene.activeCamera.position = new Vector3(0, 3.6, 2.7)
+            scene.activeCamera.position = new Vector3(0, 3.4, 0.1)
             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
+            if (!os.name.includes('Windows') && !os.name.includes('Mac')){
+                scene.activeCamera.position = new Vector3(0, 3.6, 2.7)
+                scene.activeCamera.fov = 90
+            }
             //90
             // scene.activeCamera.position = new Vector3(0, 3.1, 0)
-            // scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)2
+            // scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
         }
         mustangLoopTap(mustang, scene, gps)
     }
