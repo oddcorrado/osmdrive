@@ -86,17 +86,13 @@ function setSpeedWitness(speed, stickY){
     setSound(speed);
 }
 
-function loopSelector(scene, os, mustang, gps){
+function loopSelector(scene, mustang, gps){
    if (currentCar === 'ford'){
         if (switchCam == 'ford') {
             switchCam = 'none'
             scene.activeCamera.parent = mustang
             scene.activeCamera.position = new Vector3(0, 3.4, 0.1)
             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
-            if (!os.name.includes('Windows') && !os.name.includes('Mac')){
-                scene.activeCamera.position = new Vector3(0, 3.6, 2.7)
-                scene.activeCamera.fov = 90
-            }
             //90
             // scene.activeCamera.position = new Vector3(0, 3.1, 0)
             // scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)

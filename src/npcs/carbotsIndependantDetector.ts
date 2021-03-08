@@ -22,7 +22,11 @@ let botPos: Vector3[] = [
     new Vector3(76, 0.1, -96),//rev traffic
     new Vector3(86, 0.1, -96),//rev traffic
 
-    new Vector3(20, 0.1, -1),//stop
+    new Vector3(112, 0.1, -2),//stop
+    new Vector3(-3, 0.1, 25),
+    new Vector3(-3, 0.1, 45),
+    new Vector3(-3, 0.1, 65),
+    new Vector3(-3, 0.1, 85),
     new Vector3(102, 0.1, 62),
     new Vector3(100 , 0.1, 250),
     new Vector3(300 , 0.1, 220),
@@ -282,7 +286,7 @@ const loadBotModel = async (scene: Scene): Promise<Mesh[]> => {
 let bots: CarBot[] = []
 
 export const createCarBots = (scene: Scene, nb: number): Promise<CarBot[]>  => {
-    nb = 8
+    nb = 5//13
     let mesh: Mesh[]
 
    return (async () => {

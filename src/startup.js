@@ -48,8 +48,8 @@ const startup = boot => {
                 screenfull.request()
             }
             document.getElementById('startscreen').remove()
-            boot(os)
-            recenterDisplaySetup()
+            boot()
+           // recenterDisplaySetup()
         }
     }
 }
