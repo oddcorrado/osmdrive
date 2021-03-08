@@ -90,11 +90,11 @@ function loopSelector(scene, joints, sjoints, clio, mustang, gps){
         if (switchCam == 'ford') {
             switchCam = 'none'
             scene.activeCamera.parent = mustang
-            scene.activeCamera.position = new Vector3(0, 3.4, 0.1)
+            scene.activeCamera.position = new Vector3(0, 3.6, 2.7)
             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
             //90
             // scene.activeCamera.position = new Vector3(0, 3.1, 0)
-            // scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
+            // scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)2
         }
         mustangLoopTap(mustang, scene, gps)
     }

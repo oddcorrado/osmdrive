@@ -17,7 +17,7 @@ export default function createButtons (scene){
     document.body.insertAdjacentHTML('afterbegin', dashboardCreator());
     document.body.insertAdjacentHTML('afterbegin', rightViewCreator());
     document.body.insertAdjacentHTML('afterbegin', leftViewCreator());
-    document.body.insertAdjacentHTML('afterbegin', centralMirrorCreator());
+    // document.body.insertAdjacentHTML('afterbegin', centralMirrorCreator());
 
     var speedDiv = document.getElementById('speeddiv');
 
