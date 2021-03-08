@@ -3,17 +3,12 @@ import e_ori from '../enum/orientation';
 import {playAccel, playEngine, toggleSound} from '../sounds/carsound';
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick';
 import { Vector3 } from '@babylonjs/core/Maths/math'
-import {toggleCustomModes} from './menu'
-import { roadCheckerExit } from '../checkers/roadChecker'
 import gamepad from './gamepad'
-import { recenterDisplay } from './recenterDisplay'
-import { getWayDir } from '../ways/way'
 import { driverPathBuild, driverGetSmootherTarget } from '../ways/logic/driver'
 import { Quaternion } from '@babylonjs/core/Maths/math.vector'
 import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/geosegment'
 import { gpsCheck } from '../gps/plan'
 import { vectorIntesection } from '../maths/geometry'
-import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera';
 import { scoreDivCreator } from '../creators/buttoncreator';
 import score from '../scoring/scoring'
 import { rightViewCreator } from '../creators/UIElementsCreator';
@@ -334,13 +329,13 @@ function resetWheel () {
         wheelimg.style.display = 'block'
         locked.style.display = 'none'
     }
-
     let touching = false
     const leftLook = (x) => {
         if (inter){clearInterval(inter); inter = null}
         touching = true
         touch = x - (leftView.offsetLeft + leftView.offsetWidth)
         touch = touch < -150 ? -150 : touch > 0 ? 0 : touch
+        console.log(touch)
         scene.activeCamera.lockedTarget.x = touch
         leftimg.style.left = `${touch/20}vw`
     }
@@ -359,6 +354,7 @@ function resetWheel () {
     }
 
     const rightLook = (x) => {
+        // console.log(x)
         if (inter){clearInterval(inter); inter = null}
         touching = true
         touch = x - (rightView.offsetLeft)
@@ -514,8 +510,8 @@ function resetWheel () {
             case 'ArrowLeft' : wheelMove(-300); break
             case 'ArrowRight' : wheelMove(300); break
             case ' ': resetWheel(); break
-            case 'Control' : kbView(-2); break
-            case 'Alt' : kbView(2); break
+            case 'Control' : leftLook(-150); break
+            case 'Alt' : rightLook(150); break
             }
        } else if (keymode === 2){
         switch(event.key) {
@@ -539,8 +535,10 @@ function resetWheel () {
             switch(event.key) {
                 case 'ArrowLeft' : wheelMoveEnd(); break
                 case 'ArrowRight' : wheelMoveEnd(); break
-                case 'Control' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
-                case 'Alt' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
+                // case 'Control' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
+                // case 'Alt' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
+                case 'Control' :  leftLookEnd(); break
+                case 'Alt' : rightLookEnd(); break
             }
         } else if (keymode === 2){
             switch (event.key){

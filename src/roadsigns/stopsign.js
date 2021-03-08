@@ -32,8 +32,7 @@ async function createAction(scene, bots, line, trig, container){
              function (){
                classbot.detected = ['stop']
                inter = setTimeout(() => {
-                  console.log('done')
-                     classbot.detected = null
+                     classbot.detected = []
                }, 2000);
             })
          )   

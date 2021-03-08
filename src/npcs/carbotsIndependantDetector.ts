@@ -22,7 +22,6 @@ let botPos: Vector3[] = [
     new Vector3(76, 0.1, -96),//rev traffic
     new Vector3(86, 0.1, -96),//rev traffic
 
-
     new Vector3(20, 0.1, -1),//stop
     new Vector3(102, 0.1, 62),
     new Vector3(100 , 0.1, 250),
@@ -52,7 +51,7 @@ export class CarBot {
     fakeYaw:number = 0
     fakeYawStep:number = 0.001
     fakeYawMax:number = 0.05
-    turnChancePercentage:number = 100//Math.random() * 50 + 40
+    turnChancePercentage:number = Math.random() * 50 + 40
     choiceMade:boolean = false
     detected: string[] = []
     Rlig: StandardMaterial
@@ -71,16 +70,15 @@ export class CarBot {
         this.Llig.emissiveColor = this.off
         Rl[0].material = this.Rlig
         Ll[0].material = this.Llig
+
+        let body = meshes.filter(m => m.id.includes('mm1'))
+        let mat = new StandardMaterial('body', scene)
+        mat.diffuseColor = new Color3(Math.random()*0.6, Math.random()*0.6, Math.random()*0.6)
+        body.forEach(b => {b.material = mat})
         
         this.bot = Mesh.MergeMeshes(meshes, true, false, undefined, false, true)
         this.bot.scalingDeterminant = 0.6
         this.bot.position = botPos[i]
-
-        let mat = new StandardMaterial('mat', scene)
-        //mat.alpha = 0.1
-        //this.bot.material = mat
-
-
         this.detector = MeshBuilder.CreateBox('detector', {width: 1, height: 1, depth: 5})
         let pos = botPos[i].add(new Vector3(0,0,3))
         this.detector.position = pos
@@ -97,6 +95,8 @@ export class CarBot {
     clearBlinker = () => {
         clearInterval(this.blinkInter)
         this.blinkInter = null 
+        this.Llig.emissiveColor = this.off
+        this.Rlig.emissiveColor = this.off
     }
 
     toggleBlinker = () => {
@@ -199,7 +199,6 @@ export class CarBot {
 
     easyTurn = (): string => {
         let val = Math.random() * 100
-        return 'L'
         return val < this.turnChancePercentage/2 ? 'L' : val < this.turnChancePercentage ? 'R' : null
     }
 
@@ -274,7 +273,7 @@ const addBotInstanceClass = (meshes: Mesh[], i: number, scene: Scene): CarBot =>
 
 const loadBotModel = async (scene: Scene): Promise<Mesh[]> => {
     // return SceneLoader.ImportMeshAsync('', "../mesh/BotCar/", "cliobot.obj", scene).then(function(newMesh) {
-    return SceneLoader.ImportMeshAsync('', "../mesh/ClioV3/", "clio.obj", scene).then(function(newMesh) {
+    return SceneLoader.ImportMeshAsync('', "../mesh/ClioV3sign/", "clio.obj", scene).then(function(newMesh) {
         let msh = newMesh['meshes'] as Mesh[]
         return msh
     }) 
@@ -295,8 +294,6 @@ export const createCarBots = (scene: Scene, nb: number): Promise<CarBot[]>  => {
        return bots
    })()
 }
-
-
 
 //randomise color
 export const carBotsLoop = () => {

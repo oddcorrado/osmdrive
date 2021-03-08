@@ -84,7 +84,6 @@ export default function dressMap(scene, container){
         spawnTrafficLight(container, bots, scene, -5, -105, -Math.PI/2, 'red')
         spawnTrafficLight(container, bots, scene, 5, -5, Math.PI, 'green')
 
-        spawnStop(container, bots, scene, 95, -5, Math.PI)
         spawnStop(container, bots, scene, 195, -5, Math.PI)
         spawnYield(container, scene, 205, 95, Math.PI)
         spawnNoEntry(container, scene, 203, 207)

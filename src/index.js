@@ -17,6 +17,7 @@ import startup from './startup'
 import score from './scoring/scoring'
 import { SineEase } from '@babylonjs/core/Animations/easing'
 import {setupGps} from './gps/plan'
+import {setupMirror} from './mirror/centralmirror.ts'
 import { DefaultLoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
 import {createLoading} from './creators/loadingCreator'
 //import {carBotsLoop} from './npcs/carbots.ts'
@@ -69,8 +70,7 @@ DefaultLoadingScreen.prototype.hideLoadingUI = function(){
 }
 
 const canvas = document.getElementById('renderCanvas')
-const engine = new Engine(canvas)
-
+const engine = new Engine(canvas,true,null,true)
 const boot = () => {
     let gps;
     let mustang;
@@ -105,8 +105,8 @@ const boot = () => {
     createButtons(scene);
     loop.setupControls(scene);
 
-
     setupGps(scene, container);
+    setupMirror(engine, freecamera)
     loop.cameraOrientationSetup(camera);
     scene.activeCamera = internalCamera;
     // Render every frame
@@ -120,7 +120,7 @@ const boot = () => {
             score.loop()
             //scene.activeCamera = freecamera//DEBUG, TO COMMENT
             carBotsLoop()
-            loop.loopSelector(scene, null, null, null, mustang, gps)
+           loop.loopSelector(scene, null, null, null, mustang, gps)
 
         }
     })
