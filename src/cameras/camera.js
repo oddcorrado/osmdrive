@@ -11,7 +11,7 @@ export default function createCamera(scene, canvas, mode = 0) {
    } else { //Internal
         camera = new DeviceOrientationCamera("DevOr_internalcamera", new Vector3(0, 2.2, -1.7), scene)
         camera.lockedTarget =  new Vector3(0, -7, 50) 
-        //camera.fov = 90
+        camera.fov = 90
    }
   
     return camera

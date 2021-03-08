@@ -109,7 +109,7 @@ const boot = () => {
     setupMirror(engine, freecamera)
     loop.cameraOrientationSetup(camera);
     scene.activeCamera = internalCamera;
-    document.body.insertAdjacentHTML('afterbegin', `<div style='position: absolute; top: 10vh; left: 50vh;'>FOV: ${scene.activeCamera.fov}</div>`)
+//    document.body.insertAdjacentHTML('afterbegin', `<div style='position: absolute; top: 10vh; left: 50vh;'>FOV: ${scene.activeCamera.fov}</div>`)
 
     // Render every frame
     engine.runRenderLoop(() => {
