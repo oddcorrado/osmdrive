@@ -22,8 +22,8 @@ let carbotsId = [
     [4,5],
     [6],
     [7],
-    [8],
-    [9]
+    [8]
+    //[9]
 ]
 
 const addActionTrig = (scene: Scene, car: Mesh, bots: CarBot[], trig: Mesh, i: number) => {

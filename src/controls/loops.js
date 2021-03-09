@@ -373,7 +373,9 @@ function resetWheel () {
     }
 
     const wheelMoveEnd = () => {
-        touch = touch > 35 ? 40 : touch < -35 ? -40 : 0
+        console.log(touch)
+        touch = touch > 30 ? 40 : touch < -30 ? -40 : 0
+        
         if (touch === 40){
             nextdir.right = true
             nextdir.left = false

@@ -70,7 +70,7 @@ DefaultLoadingScreen.prototype.hideLoadingUI = function(){
 }
 
 const canvas = document.getElementById('renderCanvas')
-const engine = new Engine(canvas,true,null,true)
+const engine = new Engine(canvas,false,null,false)
 const boot = () => {
     let gps;
     let mustang;
@@ -111,7 +111,11 @@ const boot = () => {
     scene.activeCamera = internalCamera;
 //    document.body.insertAdjacentHTML('afterbegin', `<div style='position: absolute; top: 10vh; left: 50vh;'>FOV: ${scene.activeCamera.fov}</div>`)
 
-    // Render every frame
+    //optimization
+    scene.autoClear = false // Color buffer
+    scene.autoClearDepthAndStencil = false//looks OK
+    scene.blockMaterialDirtyMechanism = true//material clearing
+    //
     engine.runRenderLoop(() => {
         //planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
         scene.render()
