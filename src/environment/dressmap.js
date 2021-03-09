@@ -89,7 +89,7 @@ export default function dressMap(scene, container){
         spawnNoEntry(container, scene, 203, 207)
         createScriptTriggers(scene, container, bots)
         preventCollision(scene, container, bots)
-        createScriptTriggers(scene,container,bots,2)
+        createScriptTriggers(scene,container,bots,6)
         setStatus('assets')
     })()
    //botshandler.createBots(scene, container)

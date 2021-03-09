@@ -59,6 +59,7 @@ function checkBlinker(){
     }
     lStopBlink()
     rStopBlink()
+    toggleBlinkerSound(false)
 }
 
 function cameraOrientationSetup(camera){
@@ -379,18 +380,16 @@ function resetWheel () {
             wheelimg.style.display = 'none'
             locked.style.display = 'block'
             locked.style.transform = 'rotateY(0deg)'
-            locked.style.left = '1vw'
         } else if (touch === -40){
             nextdir.right = false
             nextdir.left = true
             wheelimg.style.display = 'none'
             locked.style.display = 'block'
             locked.style.transform = 'rotateY(180deg)'
-            locked.style.left = '1vw'
         } else {
             locked.style.display = 'none'
         }
-        wheelimg.style.transform = `rotateZ(${touch}deg)`
+        wheelimg.style.transform = `rotateZ(0deg)`
     }
 
     const soundSwitch = () => {
@@ -423,11 +422,10 @@ function resetWheel () {
             interBlink = null
             rblinkerimg.style.display = 'block'
             rblinkerimg.src = '../../images/blinkdef.svg'
-            lblinkerimg.style.display = 'none'
             lblinkerimg.src = '../../images/blink.svg'
             interBlink = setInterval(() => {
                 lblinkerimg.style.display = lblinkerimg.style.display === 'none' ? 'block' : 'none'
-            }, 300)
+            }, 340)
             blink = 'L'
         }
     }
@@ -447,7 +445,7 @@ function resetWheel () {
             rblinkerimg.src = '../../images/blink.svg'
             interBlink = setInterval(() => {
                 rblinkerimg.style.display = rblinkerimg.style.display === 'none' ? 'block' : 'none'
-            }, 300)
+            }, 340)
             blink = 'R'
         }
     }

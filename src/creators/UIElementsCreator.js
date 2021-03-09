@@ -112,7 +112,7 @@ export function wheelCreator(){
 export function wheelLockedCreator(){
     var div =
         `<div style='text-align: center'>
-            <img draggable=false id='wheellocked' src='../images/wheellocked.svg' style='display: none; z-index: 11;position: absolute; bottom: -1vh; left: 0vw; height: 55vh; width: 35vw; opacity: 0.8'></img>
+            <img draggable=false id='wheellocked' src='../images/wheellocked.svg' style='display: none; z-index: 11;position: absolute; bottom: -1vh; left: 1vw; height: 55vh; width: 35vw; opacity: 0.8'></img>
         </div>`
      return div
 }

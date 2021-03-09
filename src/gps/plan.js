@@ -33,11 +33,12 @@ function checkJunctionGps(current, prev){
             score.newScore('RIGHT_TURN', 20)
         else 
             score.newScore('WRONG_TURN', -20)
-    } else if (plan[idx] ==='E'){
-        setTimeout(() => {setGameState('end'); createEndOfLevel()}, 1000)
-    }
+    } 
     idx = plan[idx] === 'E' ? idx : idx+1;
     arrow.src = imageSources[plan[idx]];
+    if (plan[idx] ==='E'){
+        setTimeout(() => {setGameState('end'); createEndOfLevel()}, 2000)
+    }
 }
 
 export function setupGps(scene, container){
