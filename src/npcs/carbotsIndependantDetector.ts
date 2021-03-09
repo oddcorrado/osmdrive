@@ -35,9 +35,19 @@ let botPos: Vector3[] = [
     new Vector3(1, 0.1, 110)
 ]
 
+let trigBotPos: Vector3[] = [
+    new Vector3(-120,0,-98),
+    new Vector3(-260,0,-102),
+    new Vector3(-101,0,-60),
+    new Vector3(-97,0,-160)
+]
+
+
 export class CarBot {
     id: string
+    idx: number
     bot: Mesh
+    go: boolean
     detector: Mesh
     nodes = null
     selection: string | boolean = null // 'R' or 'L' or null
@@ -64,8 +74,9 @@ export class CarBot {
     on = new Color3(1,1,1)
     off = new Color3(0,0,0)
 
-    constructor(meshes: Mesh[], i: number, scene: Scene){
+    constructor(meshes: Mesh[], i: number, scene: Scene, scripted: boolean){
         this.id = `bot ${i}`
+        this.go = !scripted
         this.Rlig = new StandardMaterial('blinkR', scene)
         this.Llig = new StandardMaterial('blinkL', scene)
         let Rl = meshes.filter(m => m.id.includes('RLight'))
@@ -82,18 +93,13 @@ export class CarBot {
         
         this.bot = Mesh.MergeMeshes(meshes, true, false, undefined, false, true)
         this.bot.scalingDeterminant = 0.6
-        this.bot.position = botPos[i]
+        this.bot.position = trigBotPos[i]//botPos[i]
         this.detector = MeshBuilder.CreateBox('detector', {width: 1, height: 1, depth: 5})
-        let pos = botPos[i].add(new Vector3(0,0,3))
+        let pos = trigBotPos[i].add(new Vector3(0,0,3))
         this.detector.position = pos
         this.detector.isVisible = false
-        var pivotTranslate = pos.subtract(botPos[i]);
-        this.detector.setPivotMatrix(Matrix.Translation(pivotTranslate.x, pivotTranslate.y, pivotTranslate.z), false);
-        //triggerDetector(scene, this.detector)
-        // this.detector.position = botPos[i].add(new Vector3(0,0,10))
-        // var pivot = new TransformNode("root");
-        // pivot.position = botPos[i]
-        // this.detector.parent = pivot
+        var pivotTranslate = pos.subtract(trigBotPos[i]);
+        this.detector.setPivotMatrix(Matrix.Translation(pivotTranslate.x, pivotTranslate.y, pivotTranslate.z), false)
     }
 
     clearBlinker = () => {
@@ -259,20 +265,19 @@ export class CarBot {
                 this.fakeYaw *= 0.95
                 this.bot.rotationQuaternion = Quaternion.FromEulerAngles(this.fakeAcceleration, this.prevAngle, this.fakeYaw)
             }
-        //this.detector.setPivotPoint(this.bot.position)
         this.detector.position = this.bot.position
         this.detector.rotationQuaternion = this.bot.rotationQuaternion
     }
 }
 
-const addBotInstanceClass = (meshes: Mesh[], i: number, scene: Scene): CarBot => {//
+const addBotInstanceClass = (meshes: Mesh[], i: number, scene: Scene, scripted: boolean): CarBot => {//
     
     let newmesh: Mesh[] = []
     meshes.forEach(msh => {
         let x = msh.clone()
         newmesh.push(x)
     })
-    return new CarBot(newmesh, i, scene)
+    return new CarBot(newmesh, i, scene, scripted)
 }
 
 const loadBotModel = async (scene: Scene): Promise<Mesh[]> => {
@@ -286,13 +291,13 @@ const loadBotModel = async (scene: Scene): Promise<Mesh[]> => {
 let bots: CarBot[] = []
 
 export const createCarBots = (scene: Scene, nb: number): Promise<CarBot[]>  => {
-    nb = 5//13
+    nb = 4
     let mesh: Mesh[]
 
    return (async () => {
      mesh = await loadBotModel(scene)
        for (let i = 0; i < nb; i++){
-          bots.push(addBotInstanceClass(mesh, i, scene))
+          bots.push(addBotInstanceClass(mesh, i, scene, true))//scripted always true
        }
        mesh.forEach(msh => {msh.dispose()})
        return bots
@@ -302,6 +307,8 @@ export const createCarBots = (scene: Scene, nb: number): Promise<CarBot[]>  => {
 //randomise color
 export const carBotsLoop = () => {
     bots.forEach(bot => {
-        bot.carBotsLoop()
+        if (bot.go === true){
+            bot.carBotsLoop()
+        }
     })
 }

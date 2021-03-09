@@ -10,7 +10,7 @@ import createButtons from './controls/drivebuttons'
 import createFreeCamera from './cameras/freecamera'
 import createCamera from './cameras/camera'
 import dressMap from './environment/dressmap'
-import createDefaultCar from './detailedcar'
+import createDefaultCar from './car/detailedcar'
 import loop from './controls/loops'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
 import startup from './startup'
@@ -122,8 +122,7 @@ const boot = () => {
             score.loop()
             //scene.activeCamera = freecamera//DEBUG, TO COMMENT
             carBotsLoop()
-           loop.loopSelector(scene, mustang, gps)
-
+            loop.loopSelector(scene, mustang, gps)
         }
     })
 }

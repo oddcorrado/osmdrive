@@ -8,7 +8,7 @@ import { ActionManager, ExecuteCodeAction} from '@babylonjs/core/Actions';
 import { feedbackDivCreator } from '../creators/buttoncreator';
 import score from '../scoring/scoring'
 import { Scene } from '@babylonjs/core/scene';
-import { CarBot } from '../npcs/carbots';
+//import { CarBot } from '../npcs/carbotsIndependantDetector';
 import { AssetContainer } from '@babylonjs/core/assetContainer';
 
 

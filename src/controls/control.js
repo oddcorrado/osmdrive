@@ -70,16 +70,16 @@ function setupControls (scene){
     
     document.getElementById('ori').addEventListener('touchstart', function(){
 
-        orientation = (orientation == enumOri.LEFT ? enumOri.RIGHT : enumOri.LEFT);//func called in loop
+        orientation = (orientation == enumOri.LEFT ? enumOri.RIGHT : enumOri.LEFT);
         ori.style.transform = ori.style.transform === 'rotateZ(180deg)' ? 'rotateZ(0)' : 'rotateZ(180deg)';
     })
 
     document.getElementById('setori').addEventListener('touchstart', function(){
-        frontMidAngle = Math.abs(frontTilt);//func called in loop
+        frontMidAngle = Math.abs(frontTilt);
     })
 
     document.getElementById('setcam').addEventListener('touchstart', function(){
-         cameraOffset = currAlpha;//func called in loop
+         cameraOffset = currAlpha;
     })
 
     sideSensiDiv.innerHTML = sideSensi;
@@ -88,22 +88,22 @@ function setupControls (scene){
     document.getElementById('frontinc').addEventListener('touchstart', function (){
         if (frontSensi <= 20)
             frontSensi = ++frontSensi;
-        frontSensiDiv.innerHTML = frontSensi;//func called in loop
+        frontSensiDiv.innerHTML = frontSensi;
     })
     document.getElementById('frontdec').addEventListener('touchstart', function (){
         if (frontSensi >= 1)
             frontSensi = --frontSensi;
-        frontSensiDiv.innerHTML = frontSensi;//func called in loop
+        frontSensiDiv.innerHTML = frontSensi;
     })
     document.getElementById('sideinc').addEventListener('touchstart', function (){
         if (sideSensi <= 20)
             sideSensi = ++sideSensi;
-        sideSensiDiv.innerHTML = sideSensi;//func called in loop
+        sideSensiDiv.innerHTML = sideSensi;
     })
     document.getElementById('sidedec').addEventListener('touchstart', function (){
         if (sideSensi >= 1)
             sideSensi = --sideSensi;
-        sideSensiDiv.innerHTML = sideSensi;//func called in loop
+        sideSensiDiv.innerHTML = sideSensi;
     })
   
 
@@ -169,7 +169,7 @@ function setupControls (scene){
             mode.dir = 'tilt';
         } else {
             mode.dir = 'slide';
-        }//func called in loop
+        }
     })
 
 
@@ -193,7 +193,7 @@ function setupControls (scene){
         if (mode.spd != 'button'){
             acc.style.display = 'none';
             brake.style.display = 'none'; 
-        }//func called in loop
+        }
     })
 
     lk.addEventListener('click', function (){
@@ -213,7 +213,7 @@ function setupControls (scene){
         }
         if (mode.lk != 'slide') {
             touchZone.style.display = 'none';
-        }//func called in loop
+        }
     })
     
     acc.addEventListener('touchstart', function(){
@@ -226,14 +226,14 @@ function setupControls (scene){
         interAccel = setInterval(() => {
             btnAccel = btnAccel + 0.03;
         }, 500)
-    })//func called in loop
+    })
 
     acc.addEventListener('touchend', function(){
         acc.style.transform = 'rotate3d(1, 0, 0, 0deg)';
         clearInterval(interAccel);
 
         btnAccel = -0.005;
-    })//func called in loop
+    })
 
     brake.addEventListener('touchstart', function(){
         brake.style.transform = 'rotate3d(1, 0, 0, 45deg)';
@@ -241,12 +241,12 @@ function setupControls (scene){
         interBrake = setInterval(() => {
             btnAccel = (btnAccel <= -1 ? -1 : btnAccel - 0.05);
         }, 500)
-    })//func called in loop
+    })
 
     brake.addEventListener('touchend', function(){
         brake.style.transform = 'rotate3d(1, 0, 0, 0deg)';
         clearInterval(interBrake);
-    })//func called in loop
+    })
 
 }
 
