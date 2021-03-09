@@ -272,6 +272,45 @@ const reducePolys = (polys: PavRoad[]) : Vector3[][] => {
     return reds
 }
 
+const cutCornerPoly = (poly: Vector3[]) : Vector3[] => {
+    const cutPoly : Vector3[] = []
+console.log('\n********', poly)
+    poly.forEach((p: Vector3, i: number) => {
+        const prev = i > 0 ? poly[i - 1] : poly[poly.length - 1]
+        const next = i < poly.length - 1 ? poly[i + 1] : poly[0]
+
+        const angle = Vector3.GetAngleBetweenVectors(next.subtract(p), prev.subtract(p), Vector3.Up())
+
+        if((Math.abs(angle) > Math.PI * 0.1 && Math.abs(angle) < Math.PI * 0.9)
+            || (Math.abs(angle) > Math.PI * 1.1 && Math.abs(angle) < Math.PI * 1.9))
+        {
+            console.log('GO')
+            cutPoly.push(p.add(prev.subtract(p).normalize().scale(5)))
+            cutPoly.push(p.add(next.subtract(p).normalize().scale(5)))
+        }
+        else
+        {
+            console.log(i, p, prev, next, angle)
+            cutPoly.push(p)
+        }
+
+        //
+        
+    })
+
+    return cutPoly
+}
+
+const cutCornerPolys = (polys: Vector3[][]) : Vector3[][] => {
+    const cuts : Vector3[][] = []
+
+    polys.forEach((poly: Vector3[]) => {
+        cuts.push(cutCornerPoly(poly))
+    })
+
+    return cuts
+}
+
 const buildPavements = () : Vector3[][] => {
     // we first isolate the junctions from the ways
     junctions = createJunctions(ways) // FIXME: no global variables
@@ -287,14 +326,17 @@ const buildPavements = () : Vector3[][] => {
     const reds = reducePolys(polys)
     console.log('reds', reds)
 
-    reds.forEach((poly, i) => {
+    const cuts = cutCornerPolys(reds)
+    console.log('cuts', cuts)
+
+    cuts.forEach((poly, i) => {
         const closedPoly = poly.concat(poly, [poly[0]])
         let li = Mesh.CreateLines('li', closedPoly, globalScene)
         li.position.y = li.position.y + 0.1
         li.color = Color3.White()
     })
 
-    return reds
+    return cuts
 }
 
 export default buildPavements
