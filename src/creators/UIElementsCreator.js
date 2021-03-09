@@ -63,7 +63,7 @@ export function tapButtonCreator(){
 
 export function viewZoneCreator(){
     var div =
-    `<div id='view' style='display: none;position: absolute; z-index:10;bottom: 50vh; left: 6vw; width: 24vw; height: 20vh; text-align: center'>
+    `<div id='view' style=';position: absolute; z-index:10;bottom: 50vh; left: 6vw; width: 24vw; height: 20vh; text-align: center'>
         <div style='margin-top: 5vh'>
             <img draggable=false style='height: 10vh; width: 24vw; text-align:center;' src='../images/arrow.svg'></img>
         </div>

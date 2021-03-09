@@ -13,6 +13,7 @@ import { vectorIntesection } from '../maths/geometry'
 import { scoreDivCreator } from '../creators/buttoncreator';
 import score from '../scoring/scoring'
 import { rightViewCreator } from '../creators/UIElementsCreator';
+import {toggleBlinkerSound} from '../sounds/carsound'
 
 let sideTilt = 0
 let accel = 0
@@ -28,15 +29,25 @@ let currAlpha;
 let camTilt = 0;
 
 let nextdir = {up: false, down: false, right: false, left: false};
-var currentCar = 'ford';
+var gameState = 'loop';
 var switchCam = 'ford';
 let blink = null
 
-export function toggleEsp(){
-    esp = !esp;
+
+function loopSelector(scene, mustang, gps){
+    if (gameState === 'loop'){
+         if (switchCam == 'ford') {
+             switchCam = 'none'
+             scene.activeCamera.parent = mustang
+             scene.activeCamera.position = new Vector3(0, 3.4, 0.1)
+             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
+         }
+         mustangLoopTap(mustang, scene, gps)
+     }
 }
 
-function setupJoystick(){
+export function toggleEsp(){
+    esp = !esp;
 }
 
 function checkBlinker(){
@@ -85,22 +96,6 @@ function setSpeedWitness(speed, stickY){
     speedDiv.innerText = `${(speed).toFixed()}`;
     setSound(speed);
 }
-
-function loopSelector(scene, mustang, gps){
-   if (currentCar === 'ford'){
-        if (switchCam == 'ford') {
-            switchCam = 'none'
-            scene.activeCamera.parent = mustang
-            scene.activeCamera.position = new Vector3(0, 3.4, 0.1)
-            scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
-            //90
-            // scene.activeCamera.position = new Vector3(0, 3.1, 0)
-            // scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
-        }
-        mustangLoopTap(mustang, scene, gps)
-    }
-}
-
 
 function getCurrentTurn(){
     var turn = turn = nextdir.right ? 'R' : nextdir.left ? 'L' : null;
@@ -240,7 +235,7 @@ function resetWheel () {
 
 
  function setupControls (scene){
-    //let touchZone = document.getElementById('view');
+    let touchZone = document.getElementById('view');
     let soundtoggle = document.getElementById('sound');
     let control = document.getElementById('control')
     let changecam = document.getElementById('changecam');
@@ -331,12 +326,12 @@ function resetWheel () {
         locked.style.display = 'none'
     }
     let touching = false
+
     const leftLook = (x) => {
         if (inter){clearInterval(inter); inter = null}
         touching = true
         touch = x - (leftView.offsetLeft + leftView.offsetWidth)
         touch = touch < -150 ? -150 : touch > 0 ? 0 : touch
-        console.log(touch)
         scene.activeCamera.lockedTarget.x = touch
         leftimg.style.left = `${touch/20}vw`
     }
@@ -355,7 +350,6 @@ function resetWheel () {
     }
 
     const rightLook = (x) => {
-        // console.log(x)
         if (inter){clearInterval(inter); inter = null}
         touching = true
         touch = x - (rightView.offsetLeft)
@@ -421,14 +415,14 @@ function resetWheel () {
 
     const lToggleBlinking = () => {
         if (blink === 'L') {
+            toggleBlinkerSound(false)
            lStopBlink()
         } else if (blink === 'R' || !blink){
-            if (blink){
-                clearInterval(interBlink)
-                interBlink = null
-                rblinkerimg.style.display = 'block'
-                rblinkerimg.src = '../../images/blinkdef.svg'
-            }
+            if (!blink){toggleBlinkerSound(true)}
+            clearInterval(interBlink)
+            interBlink = null
+            rblinkerimg.style.display = 'block'
+            rblinkerimg.src = '../../images/blinkdef.svg'
             lblinkerimg.style.display = 'none'
             lblinkerimg.src = '../../images/blink.svg'
             interBlink = setInterval(() => {
@@ -441,7 +435,9 @@ function resetWheel () {
     const rToggleBlinking = () => {
         if (blink === 'R') {
            rStopBlink()
+           toggleBlinkerSound(false)
         } else if (blink === 'L' || !blink){
+           if (!blink){toggleBlinkerSound(true)}
             clearInterval(interBlink)
             interBlink = null
             lblinkerimg.style.display = 'block'
@@ -511,8 +507,8 @@ function resetWheel () {
             case 'ArrowLeft' : wheelMove(-300); break
             case 'ArrowRight' : wheelMove(300); break
             case ' ': resetWheel(); break
-            case 'Control' : leftLook(-150); break
-            case 'Alt' : rightLook(150); break
+            case 'Control' : kbView(-2); break
+            case 'Alt' : kbView(2); break
             }
        } else if (keymode === 2){
         switch(event.key) {
@@ -536,10 +532,8 @@ function resetWheel () {
             switch(event.key) {
                 case 'ArrowLeft' : wheelMoveEnd(); break
                 case 'ArrowRight' : wheelMoveEnd(); break
-                // case 'Control' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
-                // case 'Alt' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
-                case 'Control' :  leftLookEnd(); break
-                case 'Alt' : rightLookEnd(); break
+                case 'Control' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
+                case 'Alt' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
             }
         } else if (keymode === 2){
             switch (event.key){
@@ -564,44 +558,44 @@ function resetWheel () {
         brakePedal()
     })
 
-    // touchZone.addEventListener('touchmove', (e) => viewCheck(e.targetTouches[0].clientX))
-    // touchZone.addEventListener('touchstart', (e) => viewCheck(e.targetTouches[0].clientX))
-    // touchZone.addEventListener('mousedown', (e) => {
-    //     mouseAction = 'view'
-    //     viewCheck(e.clientX)
-    // })
-    // touchZone.addEventListener('mousemove', (e) => {
-    //     if(mouseAction === 'view') { viewCheck(e.clientX) }
-    // })
-    // touchZone.addEventListener('touchend', () => viewCheckEnd())
+    touchZone.addEventListener('touchmove', (e) => viewCheck(e.targetTouches[0].clientX))
+    touchZone.addEventListener('touchstart', (e) => viewCheck(e.targetTouches[0].clientX))
+    touchZone.addEventListener('mousedown', (e) => {
+        mouseAction = 'view'
+        viewCheck(e.clientX)
+    })
+    touchZone.addEventListener('mousemove', (e) => {
+        if(mouseAction === 'view') { viewCheck(e.clientX) }
+    })
+    touchZone.addEventListener('touchend', () => viewCheckEnd())
     
-    leftView.addEventListener('touchmove', (e) => leftLook(e.targetTouches[0].clientX))
-    leftView.addEventListener('mousedown', (e) => {
-        mouseAction = 'lview'
-        leftLook(e.clientX)
-    })
-    leftView.addEventListener('mousemove', (e) => {
-        if(mouseAction === 'lview'){leftLook(e.clientX)}
-    })
+    // leftView.addEventListener('touchmove', (e) => leftLook(e.targetTouches[0].clientX))
+    // leftView.addEventListener('mousedown', (e) => {
+    //     mouseAction = 'lview'
+    //     leftLook(e.clientX)
+    // })
+    // leftView.addEventListener('mousemove', (e) => {
+    //     if(mouseAction === 'lview'){leftLook(e.clientX)}
+    // })
 
-    leftView.addEventListener('touchend', () => leftLookEnd())
-    leftView.addEventListener('mouseup', () => {
-        leftLookEnd()
-    })
+    // leftView.addEventListener('touchend', () => leftLookEnd())
+    // leftView.addEventListener('mouseup', () => {
+    //     leftLookEnd()
+    // })
 
-    rightView.addEventListener('touchmove', (e) => rightLook(e.targetTouches[0].clientX))
-    rightView.addEventListener('mousedown', (e) => {
-        mouseAction = 'rview'
-        rightLook(e.clientX)
-    })
-    rightView.addEventListener('mousemove', (e) => {
-        if (mouseAction === 'rview'){rightLook(e.clientX)} 
-    })
+    // rightView.addEventListener('touchmove', (e) => rightLook(e.targetTouches[0].clientX))
+    // rightView.addEventListener('mousedown', (e) => {
+    //     mouseAction = 'rview'
+    //     rightLook(e.clientX)
+    // })
+    // rightView.addEventListener('mousemove', (e) => {
+    //     if (mouseAction === 'rview'){rightLook(e.clientX)} 
+    // })
 
-    rightView.addEventListener('touchend', () => rightLookEnd())
-    rightView.addEventListener('mouseup', () => {
-        rightLookEnd()
-    })
+    // rightView.addEventListener('touchend', () => rightLookEnd())
+    // rightView.addEventListener('mouseup', () => {
+    //     rightLookEnd()
+    // })
 
     up.addEventListener('touchend', () => acceleratorPedalEnd())
     down.addEventListener('touchend', () => brakePedalEnd())
@@ -649,3 +643,4 @@ function resetWheel () {
   export const getCurrentSegment = () => nodes
   export const getAngle = () => prevAngle
   export const getSelection = () => selection
+  export const setGameState = (state) => {gameState = state}

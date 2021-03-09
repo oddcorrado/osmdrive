@@ -11,6 +11,7 @@ var togSound = false
 let oldName = _.NONE;
 let oldVol = -1;
 let accelSound = false;
+let blink
 function addSound (){
     soundnb++
 }
@@ -30,12 +31,13 @@ export function setSounds(scene){
     var low = new Sound('low', '../music/low.wav', scene,  addSound, {loop: true}) 
     var medium = new Sound('med', '../music/medium.wav', scene, addSound, {loop: true})
     var high = new Sound('high', '../music/high.wav', scene, addSound, {loop: true})
-    
+    blink = new Sound('high', '../music/blinker.wav', scene, addSound, {loop: true})
+
     speedSound.push(idle)
     speedSound.push(low)
     speedSound.push(medium)
     speedSound.push(high)
-    speedSound[_.MEDIUM].setVolume(0.6)
+    speedSound[_.MEDIUM].setVolume(0.3)
 }
 
 export function playAccel(isAccel){
@@ -61,6 +63,14 @@ export function playEngine(name, vol){
 
         oldVol = vol;
         oldName = name;
+    }
+}
+
+export function toggleBlinkerSound(play){
+    if (play === false){
+        blink.stop()
+    } else if (play === true){
+        blink.play()
     }
 }
 

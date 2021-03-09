@@ -3,21 +3,7 @@ import {CarBot} from './carbotsIndependantDetector'
 import { ActionManager, ExecuteCodeAction} from '@babylonjs/core/Actions';
 import { Scene } from "@babylonjs/core/scene";
 import { AssetContainer } from "@babylonjs/core/assetContainer";
-
-
-async function mainCarLoaded(container: AssetContainer): Promise<Mesh> {
-    return await new Promise (function(resolve) {
-        const interval = setInterval(container =>  {
-           if (container && container['meshes'].find(car => car.name == 'detailedcar')){
-              resolve(container['meshes'].find(car => car.name == 'detailedcar'));
-              clearInterval(interval);
-           }
-        }, 100, container)
-     }).then((car: Mesh) => {
-         return car
-     })    
-}
-
+import mainCarLoaded from '../car/carloaded'
 
 export default function preventCollisions(scene: Scene, container: AssetContainer, bots: CarBot[]){
     (async () => {

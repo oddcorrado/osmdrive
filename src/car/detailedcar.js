@@ -2,9 +2,7 @@ import  '@babylonjs/loaders/OBJ'
 import {SceneLoader} from '@babylonjs/core/Loading/sceneLoader'
 import { Vector3, Axis, Space, Quaternion } from '@babylonjs/core/Maths/math';
 import { Mesh } from '@babylonjs/core/Meshes/mesh';
-import {setStatus} from './index'
-
-
+import {setStatus} from '../index'
 
 export default function createMainCar (scene, camera, internalCamera, container) {
     new SceneLoader.ImportMeshAsync('', "../mesh/Cliofixed/", "test270deg.obj", scene).then(function(newMesh) {

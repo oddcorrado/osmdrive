@@ -1,13 +1,9 @@
 import arrowCreator from '../creators/gpsCreator'
 import score from '../scoring/scoring'
-import { Vector3 } from '@babylonjs/core/Maths/math';
-import { Quaternion } from 'cannon';
-import {createEndOfLevel} from '../creators/loadingCreator';
-
-let prev
-let rotations = [{S: -Math.PI/10, L: 0, R: 0, E: 0},
-                {S: 0, L: -Math.PI/2, R: Math.PI/2, E: 0},
-                {S: 0, L: Math.PI/10, R: -Math.PI/10, E: 0}]
+import { Vector3 } from '@babylonjs/core/Maths/math'
+import { Quaternion } from 'cannon'
+import {createEndOfLevel} from '../creators/loadingCreator'
+import {setGameState} from '../controls/loops'
 
 let imageSources = {
     S: '../../images/straight.svg',
@@ -38,7 +34,7 @@ function checkJunctionGps(current, prev){
         else 
             score.newScore('WRONG_TURN', -20)
     } else if (plan[idx] ==='E'){
-        setTimeout(() => {createEndOfLevel()}, 1000)
+        setTimeout(() => {setGameState('end'); createEndOfLevel()}, 1000)
     }
     idx = plan[idx] === 'E' ? idx : idx+1;
     arrow.src = imageSources[plan[idx]];
@@ -52,13 +48,13 @@ export function setupGps(scene, container){
 let prevNormal;
 
 export function gpsCheck(current, car, dir, gps, angle){
-    prevNormal = prevNormal ? prevNormal : current[1];
+    prevNormal = prevNormal ? prevNormal : current[1]
 
     // gps.position = new Vector3(car.position.x + (dir.x > 0 ? 4 : dir.x < 0 ? -4 : 0), -0.2, car.position.z + (dir.z > 0 ? 4 : dir.z < 0 ? -4 : 0))
     // gps.rotation = new Vector3(rotations[0][plan[idx]], angle+rotations[1][plan[idx]], rotations[2][plan[idx]]);
     if (current[1].type == 'normal' && prevNormal != current[1]){
         checkJunctionGps(current, prevNormal)
-        prevNormal = current[1];
+        prevNormal = current[1]
     }
 }
 

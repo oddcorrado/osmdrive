@@ -21,6 +21,7 @@ import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
 import {createCarBots} from '../npcs/carbotsIndependantDetector'
 //import {createCarBots} from '../npcs/carbotsSPS'
 import preventCollision from '../npcs/preventCollisions'
+import {createScriptTriggers} from '../npcs/scriptTrigger'
 
 let propsContainer
 let pavements
@@ -77,7 +78,6 @@ export default function dressMap(scene, container){
     createTrees(scene);
 
     (async () => {
-       // let {bots, mesh} = await createCarBots(scene, 10) 
        let bots = await createCarBots(scene, 10) 
         spawnTrafficLight(container, bots, scene, -195, -105, Math.PI, 'red')
         spawnTrafficLight(container, bots, scene, -105, -105, -Math.PI/2, 'red')
@@ -87,11 +87,11 @@ export default function dressMap(scene, container){
         spawnStop(container, bots, scene, 195, -5, Math.PI)
         spawnYield(container, scene, 205, 95, Math.PI)
         spawnNoEntry(container, scene, 203, 207)
-
+        createScriptTriggers(scene, container, bots)
         preventCollision(scene, container, bots)
+        createScriptTriggers(scene,container,bots,2)
+        setStatus('assets')
     })()
-
-    
    //botshandler.createBots(scene, container)
     //AVAILABLE:
     // spawnTrafficLight(container, scene, 295, -105)
@@ -100,17 +100,8 @@ export default function dressMap(scene, container){
     // spawnNoEntry(container, scene, 304, 105)
     // spawnSpeedSign(container, scene, '30', 15, -5)//'50', '100'
     //
-    //spawnProp(scene, 0, 0)
     loadArrow(scene)
-    // (async () => {
-    //     let traffic = await loadTrafficLight(scene)
-    //   //  for (let i = 0 ; i < 10; i++){
-    //     addInstanceOfTrafficLight(traffic, container, scene, -195, -205, Math.PI)
-    //     //}
-    // })()
-    // 
-   
     spawnSpeedSign(container, scene, '30', -195, -280, Math.PI)
-    setStatus('assets')
+    //spawnProp(scene, 0, 0)
 }
 
