@@ -8,11 +8,12 @@ import { AssetContainer } from "@babylonjs/core/assetContainer"
 import mainCarLoaded from "../car/carloaded"
 
 let scriptPos: Vector3[] = [
-    new Vector3(-198,0.1,-113),//light 1
-    new Vector3(-115,0.1,-102),//light 2
-    new Vector3(-13,0,-102),//light 3
+   // new Vector3(-198,0.1,-113),//light 1
+   new Vector3(-198,0.1,-130),//light 1
+    new Vector3(-148,0.1,-102),//light 2
+    new Vector3(-46,0,-102),//light 3
     new Vector3(2,0,-50),//light 4
-    new Vector3(173,0,-2),//stop 1
+    new Vector3(160,0,-2),//stop 1
     new Vector3(201,0,12),// yield 1
 ]
 
@@ -23,7 +24,6 @@ let carbotsId = [
     [6],
     [7],
     [8]
-    //[9]
 ]
 
 const addActionTrig = (scene: Scene, car: Mesh, bots: CarBot[], trig: Mesh, i: number) => {

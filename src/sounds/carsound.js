@@ -38,6 +38,7 @@ export function setSounds(scene){
     speedSound.push(medium)
     speedSound.push(high)
     speedSound[_.MEDIUM].setVolume(0.3)
+    blink.setVolume(0.3)
 }
 
 export function playAccel(isAccel){

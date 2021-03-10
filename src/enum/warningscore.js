@@ -9,8 +9,8 @@ const warningScore = {
     SIGNALING_STOP: 'Stop',
     TRAFFIC_LIGHT_GOOD: 'Feu vert',
     TRAFFIC_LIGHT_BAD: 'Feu rouge',
-    RIGHT_TURN: 'Bon virage',
-    WRONG_TURN: 'Mauvais virage',
+    RIGHT_TURN: 'Bonne direction',
+    WRONG_TURN: 'Mauvaise direction',
     YIELD: 'Cédez-le-passage',
     GOOD_BLINKER: 'Clignotant',
     WRONG_BLINKER: 'Clignotant'

@@ -43,6 +43,8 @@ const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: 
         if (keep.includes(i)){
             let x = point.x < maxX ? point.x + offsetWalk : point.x - offsetWalk
             let z = point.z < maxZ ? point.z + offsetWalk : point.z - offsetWalk
+            //  x = point.x != maxX ? x : point.x
+            //  z = point.z != maxZ ? z : point.z
             //let x = point.x < maxX ? point.x + offsetWalk : point.x - offsetWalk
             // let z = point.z < maxZ ? point.z + offsetWalk : point.z - offsetWalk
             floor.push(new Vector3(x, point.y, z))
