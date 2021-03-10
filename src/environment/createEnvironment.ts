@@ -23,7 +23,7 @@ const createCountry = (zone: Vector3[], scene: Scene, groundMat: StandardMateria
 }
 
 let offsetWalk = 5;
-
+let i = 0
 const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: StandardMaterial[]) => {
     let floor: Vector3[] = []
     let top:Vector3[] = []
@@ -34,6 +34,14 @@ const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: 
     let max = points.length
 
     for (let i = 0; i < max; i++){positions.push(i)}
+    if (i++ === 0){
+        console.log(i, points)
+        points.forEach(x => {
+            let t = Mesh.CreateCylinder('s', 5, 1,  1,  5, scene)
+            t.position = x
+        })
+    }
+
     for (let i = 0; i < 4; i++){
         keep.push(positions.splice(Math.random() * (max-i) | 0, 1).pop()) 
         maxX = maxX ? points[keep[i]].x > maxX ? points[keep[i]].x : maxX : points[keep[i]].x
@@ -43,6 +51,7 @@ const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: 
         if (keep.includes(i)){
             let x = point.x < maxX ? point.x + offsetWalk : point.x - offsetWalk
             let z = point.z < maxZ ? point.z + offsetWalk : point.z - offsetWalk
+            //x = 
             //  x = point.x != maxX ? x : point.x
             //  z = point.z != maxZ ? z : point.z
             //let x = point.x < maxX ? point.x + offsetWalk : point.x - offsetWalk

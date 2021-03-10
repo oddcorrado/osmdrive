@@ -274,7 +274,7 @@ const reducePolys = (polys: PavRoad[]) : Vector3[][] => {
 
 const cutCornerPoly = (poly: Vector3[]) : Vector3[] => {
     const cutPoly : Vector3[] = []
-console.log('\n********', poly)
+//console.log('\n********', poly)
     poly.forEach((p: Vector3, i: number) => {
         const prev = i > 0 ? poly[i - 1] : poly[poly.length - 1]
         const next = i < poly.length - 1 ? poly[i + 1] : poly[0]
@@ -284,13 +284,13 @@ console.log('\n********', poly)
         if((Math.abs(angle) > Math.PI * 0.1 && Math.abs(angle) < Math.PI * 0.9)
             || (Math.abs(angle) > Math.PI * 1.1 && Math.abs(angle) < Math.PI * 1.9))
         {
-            console.log('GO')
+           // console.log('GO')
             cutPoly.push(p.add(prev.subtract(p).normalize().scale(5)))
             cutPoly.push(p.add(next.subtract(p).normalize().scale(5)))
         }
         else
         {
-            console.log(i, p, prev, next, angle)
+        //    console.log(i, p, prev, next, angle)
             cutPoly.push(p)
         }
 
@@ -318,16 +318,16 @@ const buildPavements = () : Vector3[][] => {
 
     const roads = createRoads(paths)
 
-    console.log('buildRoads', roads)
+  //  console.log('buildRoads', roads)
 
     const polys = buildPolys(roads)
-    console.log('polys', polys)
+   // console.log('polys', polys)
 
     const reds = reducePolys(polys)
-    console.log('reds', reds)
+   // console.log('reds', reds)
 
     const cuts = cutCornerPolys(reds)
-    console.log('cuts', cuts)
+   // console.log('cuts', cuts)
 
     cuts.forEach((poly, i) => {
         const closedPoly = poly.concat(poly, [poly[0]])
