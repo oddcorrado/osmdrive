@@ -1,6 +1,6 @@
 import { FreeCamera } from '@babylonjs/core/Cameras/freeCamera'
 import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientationCamera'
-import { Vector3 } from '@babylonjs/core/Maths/math'
+import { Vector3, Viewport } from '@babylonjs/core/Maths/math'
 
 export default function createCamera(scene, canvas, mode = 0) {
     let camera;
@@ -14,4 +14,26 @@ export default function createCamera(scene, canvas, mode = 0) {
    }
   
     return camera
+}
+
+// export function createCameras(scene, canvas){
+//     let camera1 = new FreeCamera("cam1", new Vector3(0, 3.4,0.1), scene)
+//     let camera2 = new FreeCamera("cam2", new Vector3(0, 6,0.1), scene)
+
+//     camera1.viewport = new Viewport(0,0, 1, 1)
+//     camera2.viewport = new Viewport(0.372, 0.852, 0.255, 0.13)
+//     camera2.rotation.x = Math.PI
+//     scene.activeCameras.push(camera1)
+//     scene.activeCameras.push(camera2)
+// }
+
+export function createCameras(scene, canvas){
+    let camera1 = new FreeCamera("cam1", new Vector3(0, 3.4,0.1), scene)
+    let camera2 = new FreeCamera("cam2", new Vector3(0, 3.4,-2), scene)
+    
+    camera1.viewport = new Viewport(0,0, 1, 1)
+    camera2.viewport = new Viewport(0.372, 0.855, 0.255, 0.13)
+    camera2.rotation.x = Math.PI
+    scene.activeCameras.push(camera1)
+    scene.activeCameras.push(camera2)
 }

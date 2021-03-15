@@ -1,19 +1,19 @@
     import e_sound from '../enum/soundenum';
 import e_ori from '../enum/orientation';
 import {playAccel, playEngine, toggleSound} from '../sounds/carsound';
-import { Vector3, Viewport } from '@babylonjs/core/Maths/math'
+import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick';
+import { Vector3 } from '@babylonjs/core/Maths/math'
 import gamepad from './gamepad'
 import { recenterDisplay } from './recenterDisplay'
 import { driverPathBuild, driverGetSmootherTarget } from '../ways/logic/driver'
 import { Quaternion } from '@babylonjs/core/Maths/math.vector'
 import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/geosegment'
-import { gpsCheck, getNextTurn } from '../gps/plan'
+import { gpsCheck } from '../gps/plan'
 import { vectorIntesection } from '../maths/geometry'
 import { scoreDivCreator } from '../creators/buttoncreator';
 import score from '../scoring/scoring'
 import { rightViewCreator } from '../creators/UIElementsCreator';
 import {toggleBlinkerSound} from '../sounds/carsound'
-import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientationCamera';
 
 let sideTilt = 0
 let accel = 0
@@ -34,13 +34,13 @@ var switchCam = 'ford';
 let blink = null
 
 
-export function loopSelector(scene, mustang, gps){
+function loopSelector(scene, mustang, gps){
     if (gameState === 'loop'){
          if (switchCam == 'ford') {
              switchCam = 'none'
-            // scene.activeCamera.parent = mustang
-            // scene.activeCamera[0].position = new Vector3(0, 3.4, 0.1)
-             scene.activeCameras[0].lockedTarget = new Vector3(0, -7, 50)
+             scene.activeCamera.parent = mustang
+             scene.activeCamera.position = new Vector3(0, 3.4, 0.1)
+             scene.activeCamera.lockedTarget = new Vector3(0, -7, 50)
          }
          mustangLoopTap(mustang, scene, gps)
      }
@@ -62,6 +62,25 @@ function checkBlinker(){
     toggleBlinkerSound(false)
 }
 
+function cameraOrientationSetup(camera){
+    var pos = document.getElementById('camerapos');
+    let hostWindow = camera.getScene().getEngine().getHostWindow();
+    hostWindow.addEventListener("deviceorientation", function (evt){
+        currAlpha = evt.alpha;
+        if (cameraOffset === null) {
+            cameraOffset = evt.alpha;
+        }
+        var alpha = evt.alpha - cameraOffset + 180;
+        if (alpha<0){
+            alpha += 360;
+        }else if (alpha> 360)
+            alpha -= 360;
+        camTilt = evt.gamma > 0 ? alpha - 180 : alpha;
+        sideTilt = evt.beta;
+        frontTilt = evt.gamma > 0 ? -90 : evt.gamma;
+       pos.innerText = `Alpha ${evt.alpha.toFixed(2)}, Beta ${evt.beta.toFixed(2)}, Gamma ${evt.gamma.toFixed(2)} ACCEL: ${accel.toFixed(2)}, ORIENTATION: ${camTilt}`;
+    });   
+}
 var speedDiv;
 
 
@@ -102,34 +121,30 @@ const fakeAccelerationMax = 0.03
 let fakeYaw = 0
 const fakeYawStep = 0.001
 const fakeYawMax = 0.05
-let isTurning = false
-//CURRENT LOOP HERE
-let Tnodes = null
 
-export function mustangLoopTap (car, scene, gps) {
+//CURRENT LOOP HERE
+function mustangLoopTap (car, scene, gps) {
     //  var steerWheel = document.getElementById('wheel');
-   // selection = isTurning ? selection : getNextTurn()
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
     setSpeedWitness(speed*150);
     // *********************
     // CALCUL DU PATH
     // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
     // si nodes est repassé on fait une conduit rail (c'est mieux) sinon on détermine le rail en focntion de la position
-   //getCurrentTurn()
-    
-    const {nodes: builtNodes, selectionIndex} = driverPathBuild(car.position, Tnodes, selection) 
+    selection = getCurrentTurn()
+    const {nodes: builtNodes, selectionIndex} = driverPathBuild(car.position, nodes, selection) 
     if(builtNodes == null || builtNodes.length == 0) { return }
-    Tnodes = builtNodes
-    const {target , normalProjection, nodes: newNodes, slice } = driverGetSmootherTarget(car.position, prevTarget, Tnodes, 4 + 6 * speed)
+    nodes = builtNodes
+    const {target , normalProjection, nodes: newNodes, slice } = driverGetSmootherTarget(car.position, prevTarget, nodes, 4 + 6 * speed)
     prevTarget = target
     if(slice && selectionIndex === 0) { resetWheel(); checkBlinker()}
-    Tnodes = newNodes // FIXME   
-    oldjunct = oldjunct ? oldjunct : Tnodes[0]
-     if (Tnodes[1].type === 'junction' && oldjunct && oldjunct.junctionIndex != Tnodes[1].junctionIndex){
-        nextJuction = Tnodes[1]
-        oldjunct = Tnodes[1]
-        selection = getNextTurn()
-    } else if (Tnodes[0].type === 'junction'){
+    nodes = newNodes // FIXME   
+
+    oldjunct = oldjunct ? oldjunct : nodes[0];
+     if (nodes[1].type === 'junction' && oldjunct && oldjunct.junctionIndex != nodes[1].junctionIndex){
+        nextJuction = nodes[1]
+        oldjunct = nodes[1]
+    } else if (nodes[0].type === 'junction'){
         nextJuction = null
     }
     approach = nextJuction ? Math.sqrt(Math.pow(car.position.x - nextJuction.point.x, 2) + Math.pow(car.position.z - nextJuction.point.z, 2)) : null
@@ -157,6 +172,7 @@ export function mustangLoopTap (car, scene, gps) {
         // const proj = geoSegmentGetProjection(car.position, nodes[0].point, nodes[1].point)
         // car.position = proj.add(dir)
         car.position = car.position.add(dir)
+
         const to = -Math.atan2(dir.z, dir.x) + Math.PI/2
         const bestTo = geoAngleForInterpolation(prevAngle, to)
         const angle = prevAngle * 0.9 + bestTo * 0.1
@@ -166,11 +182,12 @@ export function mustangLoopTap (car, scene, gps) {
         } else {
             fakeYaw *= 0.95
         }
-        gpsCheck(Tnodes, car, dir, gps, angle)
+        gpsCheck(nodes, car, dir, gps, angle);
         prevAngle = angle
         car.rotationQuaternion = Quaternion.FromEulerAngles(fakeAcceleration, angle, fakeYaw)
     } else {
         fakeYaw *= 0.95
+        //fakeAcceleration *= 0.5
         car.rotationQuaternion = Quaternion.FromEulerAngles(fakeAcceleration, prevAngle, fakeYaw)
     }
 
@@ -179,6 +196,11 @@ export function mustangLoopTap (car, scene, gps) {
     return
 }
 
+var up;
+var down;
+var left;
+var right;
+var wheel;
 var center;
 let touch;
 let locked;
@@ -207,17 +229,31 @@ const rStopBlink = () => {
 }
 
 function resetWheel () {
+    wheelimg.style.transform = 'rotateZ(0deg)'
+    nextdir.left = false
+    nextdir.right = false
     approach = null
     touch = 0
-    selection = null
+    wheelimg.style.display = 'block'
+    locked.style.display= 'none'
 }
 
 
- export function setupControls (scene){
+ function setupControls (scene){
+    let touchZone = document.getElementById('view');
     let soundtoggle = document.getElementById('sound');
     let control = document.getElementById('control')
     let changecam = document.getElementById('changecam');
+    up = document.getElementById('up');
+    down = document.getElementById('down');
+    left = document.getElementById('left');
+    right = document.getElementById('right');
+    wheel = document.getElementById('wheel');
+    let wheelimg = document.getElementById('wheelimg');
+    locked = document.getElementById('wheellocked');
     center = document.getElementById('center');
+    let wheelzone = document.getElementById('wheelzone');
+    let eye = document.getElementById('look-eye');
     let lblinker = document.getElementById('lblink');
     let rblinker = document.getElementById('rblink');
     lblinkerimg = document.getElementById('lblinkimg');
@@ -226,55 +262,77 @@ function resetWheel () {
     let viewInter = null
     let viewX = 300
 
+
     let aslide = document.getElementById('accelslide')
     let bslide = document.getElementById('brakeslide')
     let adiv = document.getElementById('acceldiv')
     let bdiv = document.getElementById('brakediv')
+
+
     let viewdiv = document.getElementById('viewdiv')
     let viewdrag = document.getElementById('viewdrag')
 
     //let oW = viewdiv.offsetWidth/2//useful ?
-
-
     const viewHandler = (x) => {
-        if (touchV && scene.activeCameras[0]){
+        if (touchV){
             if (inter) { clearInterval(inter) }
             let oW = viewdiv.offsetWidth/2
             let touch = x - (viewdiv.offsetLeft + oW)
             currentLook = (touch > oW ? oW : touch < -oW ? -oW : touch)/oW * 100
-            scene.activeCameras[0].lockedTarget.x = currentLook
+            scene.activeCamera.lockedTarget.x = currentLook
             viewdrag.style.marginLeft = `${85 + currentLook}%`
-            if (80 < currentLook || currentLook < -80) {
-                viewdiv.style.background = `linear-gradient(${currentLook < 0 ? 90 : 270}deg , #F3CC30 0%, #F3CC30 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%)`
-            } else {
-                viewdiv.style.background = `linear-gradient(${currentLook < 0 ? 90 : 270}deg , #F3CC30 0%, rgba(243, 204, 48, 0) ${Math.abs(currentLook)/2}%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%)` 
-            }
-            
         }
     }
 
     const viewHandlerEnd = () => {
-        if (currentLook){
-            if (inter) { clearInterval(inter) }
-            viewdiv.style.background = 'none'
-            inter = setInterval(() => {
+        if (inter) { clearInterval(inter) }
+        inter = setInterval(() => {
             if (-11 < currentLook && currentLook < 11 ){
                 clearInterval(inter)
-                scene.activeCameras[0].lockedTarget.x = currentLook = 0
+                scene.activeCamera.lockedTarget.x = currentLook = 0
                 viewdrag.style.marginLeft = '85%'
             } else if (currentLook > 0){ currentLook -=10 }
               else {currentLook += 10}
-                scene.activeCameras[0].lockedTarget.x = currentLook
+                scene.activeCamera.lockedTarget.x = currentLook
                 viewdrag.style.marginLeft = `${85 + currentLook}%`
             }, 20)
-        }
     }
 
     const toggleTouchV = (touch) => {
         touchV = touchV != touch ? touch : touchV
     }//all toggle on same func
 
-    
+    const viewCheckEnd = () =>  {
+        inter = setInterval( () =>  {
+            scene.activeCamera.lockedTarget.x = currentLook
+            if (-11 < currentLook && currentLook < 11) {
+                scene.activeCamera.lockedTarget.x = 0
+                clearInterval(inter)
+                currentLook = 0
+                eye.style.left = '0vw'
+            } else if (currentLook > 0) {
+                currentLook -= 10
+            } else {
+                currentLook += 10
+            }
+            let eyePos = (parseInt(eye.style.left) + currentLook)/12
+            eye.style.left = `${eyePos > 9 ? 9 : eyePos < -9 ? -9 : eyePos}vw`
+        }, 16)
+    }
+
+    const viewCheck = (x) => {
+        if (inter) { clearInterval(inter) }
+                
+        const pos = touchZone.offsetLeft + (touchZone.offsetWidth / 2)
+        currentLook = x - pos > 300
+                ? 300
+                : (x - pos < -300 ? -300 : x - pos)
+        
+        scene.activeCamera.lockedTarget.x = currentLook
+        
+        let eyePos = (parseInt(eye.style.left) + currentLook)/12
+        eye.style.left = `${eyePos > 9 ? 9 : eyePos < -9 ? -9 : eyePos}vw`
+    }
 
     const toggleTouchA = (touch) => {
         touchA = touchA != touch ? touch : touchA
@@ -305,10 +363,65 @@ function resetWheel () {
             bdiv.style.background = perc < 15 ? `linear-gradient(0deg , rgba(255, 0, 0, 0) 0%, #FF0000 15%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 100%)` : perc > 85 ? `rgba(255, 0, 0, 0.6)` : `linear-gradient(0deg ,rgba(255, 0, 0, 0) 0%,  #FF0000 ${perc}%, rgba(0,0,0,0) ${perc}%, rgba(0,0,0,0) ${100 - perc}%)`
         }
     }
+
+    const acceleratorPedal = () => {
+        nextdir.up = true
+        up.src = '../../images/accelpress.svg'
+        playAccel(true)
+    }
+
+    const acceleratorPedalEnd = () => {
+        nextdir.up = false
+        up.src = '../../images/accel.svg'
+        playAccel(false)
+    }
+
+    const brakePedal = () => {
+        if (speed > 0) {
+            nextdir.down = true
+            down.style.opacity = 1
+            down.src = '../../images/brakepress.svg'
+        }
+    }
+
+    const brakePedalEnd = () => {
+        nextdir.down = false
+        down.src = '../../images/brake.svg'
+    }
+
    
+
+    const wheelMove = (x) => {
+        touch = x - (wheelzone.offsetLeft + wheelzone.offsetWidth / 2)
+        touch = touch > 35 ? 40 : touch < -35 ? -40 : touch
+        wheelimg.style.transform = `rotateZ(${touch}deg)`
+        wheelimg.style.display = 'block'
+        locked.style.display = 'none'
+    }
+
     let touching = false
 
-    
+    const wheelMoveEnd = () => {
+        touch = touch > 30 ? 40 : touch < -30 ? -40 : 0
+        
+        if (touch === 40){
+            nextdir.right = true
+            nextdir.left = false
+            wheelimg.style.display = 'none'
+            locked.style.display = 'block'
+            locked.style.transform = 'rotateY(0deg)'
+        } else if (touch === -40){
+            nextdir.right = false
+            nextdir.left = true
+            wheelimg.style.display = 'none'
+            locked.style.display = 'block'
+            locked.style.transform = 'rotateY(180deg)'
+        } else {
+            locked.style.display = 'none'
+        }
+        wheelimg.style.transform = `rotateZ(0deg)`
+    }
+
     const soundSwitch = () => {
         if (soundtoggle.src.includes('no')) {
             soundtoggle.src = '../../images/sound.svg'
@@ -325,7 +438,7 @@ function resetWheel () {
 
     let lock = false
     const lockControls = () => {
-        lock = scene.activeCamera[0].id === 'free_camera' ? true : false
+        lock = scene.activeCamera.id === 'free_camera' ? true : false
     }
 
 
@@ -445,10 +558,10 @@ function resetWheel () {
         }
         if (keymode === 1) {
             switch(event.key) {
-                case 'ArrowLeft' : lToggleBlinking(); break
-                case 'ArrowRight' : rToggleBlinking(); break
-                case 'Control' : if(viewInter != null) {viewHandlerEnd() } break
-                case 'Alt' : if(viewInter != null) { viewHandlerEnd()} break
+                case 'ArrowLeft' : wheelMoveEnd(); break
+                case 'ArrowRight' : wheelMoveEnd(); break
+                case 'Control' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
+                case 'Alt' : if(viewInter != null) { clearInterval(viewInter); viewCheckEnd(); } break
             }
         } else if (keymode === 2){
             switch (event.key){
@@ -486,6 +599,74 @@ function resetWheel () {
     bdiv.addEventListener('mouseleave', () => {toggleTouchB(false)})
     bdiv.addEventListener('mousemove', (e) => {brakeHandler(e.clientY)})
 
+    up.addEventListener('touchmove', () => acceleratorPedal())
+    up.addEventListener('touchstart', () => acceleratorPedal())
+    up.addEventListener('mousedown', () => {
+        mouseAction = 'accelerator'
+        acceleratorPedal() 
+    })
+
+    down.addEventListener('touchmove', () => brakePedal())
+    down.addEventListener('touchstart', () => brakePedal())
+    down.addEventListener('mousedown', () => { 
+        mouseAction = 'brake'
+        brakePedal()
+    })
+
+    touchZone.addEventListener('touchmove', (e) => viewCheck(e.targetTouches[0].clientX))
+    touchZone.addEventListener('touchstart', (e) => viewCheck(e.targetTouches[0].clientX))
+    touchZone.addEventListener('mousedown', (e) => {
+        mouseAction = 'view'
+        viewCheck(e.clientX)
+    })
+    touchZone.addEventListener('mousemove', (e) => {
+        if(mouseAction === 'view') { viewCheck(e.clientX) }
+    })
+    touchZone.addEventListener('touchend', () => viewCheckEnd())
+    
+    // leftView.addEventListener('touchmove', (e) => leftLook(e.targetTouches[0].clientX))
+    // leftView.addEventListener('mousedown', (e) => {
+    //     mouseAction = 'lview'
+    //     leftLook(e.clientX)
+    // })
+    // leftView.addEventListener('mousemove', (e) => {
+    //     if(mouseAction === 'lview'){leftLook(e.clientX)}
+    // })
+
+    // leftView.addEventListener('touchend', () => leftLookEnd())
+    // leftView.addEventListener('mouseup', () => {
+    //     leftLookEnd()
+    // })
+
+    // rightView.addEventListener('touchmove', (e) => rightLook(e.targetTouches[0].clientX))
+    // rightView.addEventListener('mousedown', (e) => {
+    //     mouseAction = 'rview'
+    //     rightLook(e.clientX)
+    // })
+    // rightView.addEventListener('mousemove', (e) => {
+    //     if (mouseAction === 'rview'){rightLook(e.clientX)} 
+    // })
+
+    // rightView.addEventListener('touchend', () => rightLookEnd())
+    // rightView.addEventListener('mouseup', () => {
+    //     rightLookEnd()
+    // })
+
+    up.addEventListener('touchend', () => acceleratorPedalEnd())
+    down.addEventListener('touchend', () => brakePedalEnd())
+
+    wheelzone.addEventListener('touchmove', e => wheelMove(e.targetTouches[0].clientX))
+    wheelzone.addEventListener('mousedown', e => { 
+        mouseAction = 'wheel'
+        wheelMove(e.clientX)
+    })
+
+    wheelzone.addEventListener('mousemove', e => { if(mouseAction === 'wheel') { wheelMove(e.clientX) } })
+    wheelzone.addEventListener('touchend', () => wheelMoveEnd())
+
+    locked.addEventListener('touchmove', () => resetWheel())
+    locked.addEventListener('click', () => resetWheel())
+
     soundtoggle.addEventListener('touchmove', () => soundSwitch())
     soundtoggle.addEventListener('click', () => soundSwitch())
     
@@ -503,6 +684,13 @@ function resetWheel () {
     
     
 }
+
+  export default {
+    cameraOrientationSetup: camera => cameraOrientationSetup(camera),
+    setupJoystick: () => setupJoystick(),
+    setupControls: scene => setupControls(scene),
+    loopSelector: (scene, joints, sjoints, clio, mustang, gps) =>  loopSelector(scene, joints, sjoints, clio, mustang,gps),
+  }
 
   export const getSpeed = () => speed
   export const getApproach = () => approach

@@ -34,14 +34,6 @@ const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: 
     let max = points.length
 
     for (let i = 0; i < max; i++){positions.push(i)}
-    if (i++ === 0){
-        console.log(i, points)
-        points.forEach(x => {
-            let t = Mesh.CreateCylinder('s', 5, 1,  1,  5, scene)
-            t.position = x
-        })
-    }
-
     for (let i = 0; i < 4; i++){
         keep.push(positions.splice(Math.random() * (max-i) | 0, 1).pop()) 
         maxX = maxX ? points[keep[i]].x > maxX ? points[keep[i]].x : maxX : points[keep[i]].x
