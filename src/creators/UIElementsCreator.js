@@ -126,7 +126,7 @@ export function blinkerCreator(){
 
 export function centralMirrorCreator(){
     var div =`
-    <div style='position: absolute; top: 1vh; left: 36.817%; height: 12.5vh; width: 25%; z-index: 11; border-radius: 0.2vh; border: black solid 1vh;'>
+    <div style='position: absolute; top: 0vh; left: 30%; height: 24vh; width: 39%; z-index: 11; border-radius: 0.2vh; border: black solid 1vh;'>
         <canvas id='centralmirror'></canvas>
     </div>
    `

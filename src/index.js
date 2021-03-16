@@ -21,7 +21,6 @@ import {setupGps} from './gps/plan'
 import {setupMirror} from './mirror/centralmirror.ts'
 import { DefaultLoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
 import {createLoading} from './creators/loadingCreator'
-//import {carBotsLoop} from './npcs/carbots.ts'
 import {carBotsLoop} from './npcs/carbotsIndependantDetector'
 //import {carBotsLoop} from './npcs/carbotsSPS'
 
@@ -123,7 +122,7 @@ const boot = () => {
                 score.setupScore(mustang);
         } else if (!waitcar){
             score.loop()
-     //       carBotsLoop()
+            carBotsLoop()
           loopSelector(scene, mustang, gps)
         }
     })

@@ -40,7 +40,7 @@ export function loopSelector(scene, mustang, gps){
              switchCam = 'none'
             // scene.activeCamera.parent = mustang
             // scene.activeCamera[0].position = new Vector3(0, 3.4, 0.1)
-             scene.activeCameras[0].lockedTarget = new Vector3(0, -7, 50)
+             scene.activeCameras[0].lockedTarget = new Vector3(0, -3, 50)
          }
          mustangLoopTap(mustang, scene, gps)
      }

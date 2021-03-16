@@ -13,6 +13,8 @@ export default function createMainCar (scene, container) {
     car.rotation = new Vector3(0,Math.PI/2,0)
     scene.activeCameras[0].parent = car
     scene.activeCameras[1].parent = car
+    scene.activeCameras[2].parent = car
+    scene.activeCameras[3].parent = car
     container.meshes.push(car)
     setStatus('car')
   })
