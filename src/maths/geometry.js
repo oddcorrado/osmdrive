@@ -52,3 +52,32 @@ export function vectorIntersection(v1, v2, u1, u2) {
 
     return new Vector3(inter.x, v1.y, inter.y) // TODO user ratio for ys
 }
+
+export function lineIntersection(x1,y1,x2,y2, x3,y3,x4,y4) {
+    var x=((x1*y2-y1*x2)*(x3-x4)-(x1-x2)*(x3*y4-y3*x4)) /
+            ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+    var y=((x1*y2-y1*x2)*(y3-y4)-(y1-y2)*(x3*y4-y3*x4)) /
+            ((x1-x2)*(y3-y4)-(y1-y2)*(x3-x4))
+    if (isNaN(x)||isNaN(y)) {
+        return false
+    } else {
+        return {x: x, y: y}
+    }
+    
+}
+
+export function vectorLineIntersection(v1, v2, u1, u2) {
+    const x1 = v1.x
+    const y1 = v1.z
+    const x2 = v2.x
+    const y2 = v2.z
+    const x3 = u1.x
+    const y3 = u1.z
+    const x4 = u2.x
+    const y4 = u2.z
+
+    const inter = lineIntersection(x1, y1, x2, y2, x3, y3, x4, y4)
+    if(!inter) { return null }
+
+    return new Vector3(inter.x, v1.y, inter.y) // TODO user ratio for ys
+}
