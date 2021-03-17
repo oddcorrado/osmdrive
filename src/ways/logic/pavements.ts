@@ -1,10 +1,10 @@
 import { ways } from '../../map'
 import { createJunctions, createPaths } from './roads'
-import { Vector3 } from '@babylonjs/core/Maths/math'
+import { Vector3, Quaternion } from '@babylonjs/core/Maths/math'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { scene as globalScene } from '../../index'
 import { Color3 } from '@babylonjs/core/Maths/math.color'
-import { vectorIntersection } from '../../maths/geometry'
+import { vectorIntersection, vectorLineIntersection } from '../../maths/geometry'
 
 let junctions = null
 let paths = null
@@ -272,6 +272,29 @@ const reducePolys = (polys: PavRoad[]) : Vector3[][] => {
     return reds
 }
 
+const rotatePlanar = (v: Vector3, angle: number): Vector3 => {
+    /* const normQuaternion = Quaternion.FromEulerAngles(0, angle, 0)
+    let rotated: Vector3 = new Vector3(1, 1, 1)
+    v.rotateByQuaternionToRef(normQuaternion, rotated) */
+    console.log(v)
+    const vAngle = v.x !== 0 ? Math.atan2(v.z, v.x) : (v.z > 0 ? Math.PI * 0.5 : -Math.PI * 0.5)
+    console.log(vAngle)
+    const rotated = new Vector3(10 * Math.cos(vAngle + angle), 0 , 10 * Math.sin(vAngle + angle))
+    return rotated
+}
+const circleFromCorner = (prev: Vector3, cur: Vector3, next: Vector3, count: number = 3) => {
+    
+    // get normals
+    const prevNorm = rotatePlanar(prev.subtract(cur), Math.PI * 0.5)
+    const nextNorm = rotatePlanar(next.subtract(cur), Math.PI * 0.5)
+
+    // find center
+    console.log(prev.subtract(cur).normalize(), prevNorm.normalize(), next.subtract(cur).normalize(), nextNorm.normalize())
+    console.log(vectorLineIntersection(prev, prev.add(prevNorm), next, next.add(nextNorm)))
+
+    // get line intersections
+}
+
 const cutCornerPoly = (poly: Vector3[]) : Vector3[] => {
     const cutPoly : Vector3[] = []
 //console.log('\n********', poly)
@@ -284,13 +307,16 @@ const cutCornerPoly = (poly: Vector3[]) : Vector3[] => {
         if((Math.abs(angle) > Math.PI * 0.1 && Math.abs(angle) < Math.PI * 0.9)
             || (Math.abs(angle) > Math.PI * 1.1 && Math.abs(angle) < Math.PI * 1.9))
         {
-           // console.log('GO')
-            cutPoly.push(p.add(prev.subtract(p).normalize().scale(5)))
-            cutPoly.push(p.add(next.subtract(p).normalize().scale(5)))
+            console.log('GO')
+            const prevVec = prev.subtract(p).normalize().scale(5)
+            const nextVec = next.subtract(p).normalize().scale(5)
+            cutPoly.push(p.add(prevVec))
+            cutPoly.push(p.add(nextVec))
+            circleFromCorner(prevVec, p, nextVec)
         }
         else
         {
-        //    console.log(i, p, prev, next, angle)
+            // console.log(i, p, prev, next, angle)
             cutPoly.push(p)
         }
 

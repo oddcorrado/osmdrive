@@ -1,27 +1,71 @@
 
 import { ways } from '../../map'
-import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import { Vector3 } from '@babylonjs/core/Maths/math'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { Color3 } from '@babylonjs/core/Maths/math.color'
-import { Texture } from '@babylonjs/core/Materials/Textures/texture'
-import { Path3D } from '@babylonjs/core/Maths/math.path'
-import textPanel from '../../textPanel'
-import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
 import { scene as globalScene } from '../../index'
 import { vectorIntersection } from '../../maths/geometry'
 import { DynamicTexture } from '@babylonjs/core/Materials/Textures/dynamicTexture'
 let enableDebug = false
 
+// The node type we use in many structures
+interface node {
+    point: Vector3 // position
+    junctionIndex: number // junction index/id if any
+    roadIndex?: number // the road index in the mega roads struct
+    laneIndex?: number // the lane index in the road in the mega roads struct
+    nodeIndex?: number // the nod eindex in ane index in the road in the mega roads struct
+    nodeId?: number // a unique node id
+    upwise: boolean // driving direction, upwise => drive from 0 to N
+    type?: string // used for intermediate nodes
+    nexts?: node[] // where to go from this node
+    connections?: node[] // connected nodes
+}
 
-const junctions = []
-let paths = []
-export let roads = []
+// a simple node structure used at the beginning of the computaiton
+interface pathNode {
+    point: Vector3
+    junctionIndex: number
+}
+
+// a simple path used at the beginning of the computaiton
+type path = pathNode[]
+
+interface road {
+    lanes: lane[]
+}
+
+type lane = node[]
+
+// FIXME: bad TS
+// TODO: an insertion point ... cannot remember what it is for
+interface insertionPoint {
+    insertionSegments?: insertionSegment[]
+    point?: Vector3
+    junctionIndex: number
+    junction?: junction
+    nodes?: node[]
+}
+
+// TODO: an insertion segment ... cannot remember what it is for
+interface insertionSegment {
+    roadIndex: number
+    laneIndex: number
+    connections: node[]
+    nodeIndexPrev: number
+    nodeIndexNext: number
+}
+
+const junctions: Vector3[] = []
+let paths: path[] = []
+export let roads: road[] = []
 // these are mostly node references inside the roads that help connect everything together in the end
-const unqualifiedIntersections = []
-const qualifiedIntersections = []
+const unqualifiedIntersections: insertionPoint[] = []
+const qualifiedIntersections: insertionPoint[] = []
+
+
 
 export default function buildRoads() {
     // We start with ways, a way is built on nodes and indicates the number of lanes
@@ -150,8 +194,12 @@ export default function buildRoads() {
     connectIntersectionNodes()
 }
 
+interface way {
+    points: Vector3 []
+}
+
 // Creates an array of root junctions based on point distance
-export function createJunctions(ways) {
+export function createJunctions(ways: way[]) {
     const points = []
     // gather all points
     ways.forEach(way => {
@@ -174,9 +222,9 @@ export function createJunctions(ways) {
 
 // create the paths with junctions marked
 // junction index is a junction id based on index inthe junction array
-export function createPaths(ways) {
-    const localPaths = ways.map(way => {
-        const nodes = way.points.map(point => ({
+export function createPaths(ways: way[]) {
+    const localPaths: path[] = ways.map((way: way) => {
+        const nodes: pathNode[] = way.points.map((point: Vector3) => ({
             point: new Vector3(point.x, 0.1, point.y),
             junctionIndex: junctions.findIndex(junction => junction.subtract(new Vector3(point.x, 0.1, point.y)).length() < 0.1)
         }))
@@ -187,8 +235,13 @@ export function createPaths(ways) {
     return paths
 }
 
-function unqualifiedIntersectionInsert(node) {
-    let junction = unqualifiedIntersections.find(j => j.junctionIndex === node.junctionIndex)
+interface junction {
+    junction: number
+    nodes: node[]
+}
+
+function unqualifiedIntersectionInsert(node: node) {
+    let junction  = unqualifiedIntersections.find(j => j.junctionIndex === node.junctionIndex)
     if( junction == null) {
         const junction = {
             junctionIndex: node.junctionIndex,
@@ -201,18 +254,18 @@ function unqualifiedIntersectionInsert(node) {
  }
 
 // create the root lanes based on the paths
-function createRoadsAndUnqualifiedIntersections(paths) {
+function createRoadsAndUnqualifiedIntersections(paths: path[]) {
     const up = new Vector3(0, 1, 0)
     const down = new Vector3(0, -1, 0)
     let nodeId = 0;
 
-    roads = paths.map((path, roadIndex) => {
-        const left = path.map((node, nodeIndex) => {
+    roads = paths.map((path: path, roadIndex: number) => {
+        const left: node[] = path.map((node: pathNode, nodeIndex: number): node => {
             const index = Math.max(nodeIndex, 1)
             const current = new Vector3(path[index].point.x, path[index].point.y, path[index].point.z)
             const prev = new Vector3(path[index - 1].point.x, path[index - 1].point.y, path[index - 1].point.z)
             const point = node.point.add(current.subtract(prev).cross(up).normalize().scale(2))
-            const newNode = {
+            const newNode: node = {
                 roadIndex,
                 laneIndex: 0,
                 point,
@@ -228,12 +281,12 @@ function createRoadsAndUnqualifiedIntersections(paths) {
             return newNode
         })
         nodeId++
-        const right = path.map((node, nodeIndex) => {
+        const right = path.map((node: pathNode, nodeIndex: number): node => {
             const index = Math.max(nodeIndex, 1)
             const current = new Vector3(path[index].point.x, path[index].point.y, path[index].point.z)
             const prev = new Vector3(path[index - 1].point.x, path[index - 1].point.y, path[index - 1].point.z)
             const point = node.point.add(current.subtract(prev).cross(down).normalize().scale(2))
-            const newNode = {
+            const newNode: node = {
                 roadIndex,
                 laneIndex: 1,
                 point,
@@ -254,7 +307,7 @@ function createRoadsAndUnqualifiedIntersections(paths) {
 
 // extend a road segment (two nodes) by scale
 // retruns a new node
-function extendSegment(n1, n2, scale) {
+function extendSegment(n1: node, n2: node, scale: number): node{
     const v = new Vector3(n2.point.x - n1.point.x, n2.point.y - n1.point.y, n2.point.z - n1.point.z)
     const newPoint = new Vector3(n2.point.x, n2.point.y, n2.point.z).add(v.normalize().scale(scale))
 
@@ -268,7 +321,7 @@ function extendSegment(n1, n2, scale) {
 }
 
 // extends a lane on  
-function extendLane(lane) {
+function extendLane(lane: lane): lane {
     let node0 = extendSegment(lane[1], lane[0], 4)
     let nodeN = extendSegment(lane[lane.length - 2], lane[lane.length - 1], 4)
 
@@ -278,6 +331,7 @@ function extendLane(lane) {
     return lane
 }
 
+// FIXME: bad TS
 function extendRoads(lanes) {
     lanes.forEach(lane => {
         lane.lanes[0] = extendLane(lane.lanes[0])
@@ -286,14 +340,15 @@ function extendRoads(lanes) {
     roads = lanes
 }
 
-function getNodeInLane(roadIndex, laneIndex, index) {
+// FIXME: bad TS
+function getNodeInLane(roadIndex: number, laneIndex: number, index: number) {
     const road = roads[roadIndex]
 
     return road.lanes[laneIndex]
 }
 
-function laneUpdateNodeIndexes(roadIndex, laneIndex) {
-    const lane = roads[roadIndex].lanes[laneIndex]
+function laneUpdateNodeIndexes(roadIndex: number, laneIndex: number) {
+    const lane: lane = roads[roadIndex].lanes[laneIndex]
     lane.forEach((node, nodeIndex) => {
         node.nodeIndex = nodeIndex
         node.laneIndex = laneIndex
@@ -304,7 +359,7 @@ function laneUpdateNodeIndexes(roadIndex, laneIndex) {
 function updateNodeIndexes() {
     roads.forEach((road, roadIndex) => {
         road.lanes.forEach((lane, laneIndex) => {
-            lane.forEach((node, nodeIndex) => {
+            lane.forEach((node: node, nodeIndex: number) => {
                 node.nodeIndex = nodeIndex
                 node.laneIndex = laneIndex
                 node.roadIndex = roadIndex
@@ -314,7 +369,7 @@ function updateNodeIndexes() {
 }
 
 // IMPROVE ME !!!! NOT SURE THIS IS BULLET PROOF
-function bestFit (point,  roadIndex, laneIndex) {
+function bestFit (point: Vector3,  roadIndex: number, laneIndex: number): number {
     const lane = roads[roadIndex].lanes[laneIndex]
     let d = 1000000
     let closest = -1
@@ -376,7 +431,7 @@ function insertQualifiedIntersectionsInRoads() {
     })
 }
 
-function getNodeInRoad(roadIndex, laneIndex, nodeIndex) {
+function getNodeInRoad(roadIndex: number, laneIndex: number, nodeIndex: number): node {
     if(nodeIndex < 0) { return null }
     const lane = roads[roadIndex].lanes[laneIndex]
     if(nodeIndex >= lane.length) { return null }
@@ -386,13 +441,15 @@ function getNodeInRoad(roadIndex, laneIndex, nodeIndex) {
 
 // gets previous and next nodes from a given lane node
 // make sure node index are clean before using this
-function getPrevNext(node) {
+function getPrevNext(node: node): {prev: node, next: node} {
     const prev = getNodeInRoad(node.roadIndex, node.laneIndex, node.nodeIndex - 1)
     const next = getNodeInRoad(node.roadIndex, node.laneIndex, node.nodeIndex + 1)
     return {prev, next}
 }
 
-function getInsertionSegment(a1, a2, b1, b2) {
+
+
+function getInsertionSegment(a1: node, a2: node, b1: node, b2: node): insertionSegment {
     return ({
         roadIndex: a1.roadIndex,
         laneIndex: a1.laneIndex,
@@ -402,7 +459,7 @@ function getInsertionSegment(a1, a2, b1, b2) {
     })
 }
 
-function addQualifiedIntersection(a1, a2, b1, b2) {
+function addQualifiedIntersection(a1: node, a2: node, b1: node, b2: node) {
     const point = vectorIntersection(a1.point, a2.point, b1.point, b2.point)
     if(point != null) {
         qualifiedIntersections.push({
@@ -424,10 +481,10 @@ function removeDummyNodesInRoads() {
     })
 }
 
-function createQualifiedIntersectionsFromNode(node, otherNodes) {
+function createQualifiedIntersectionsFromNode(node: node, otherNodes: node[]) {
     const { prev, next } = getPrevNext(node)
 
-    if(prev == null || next == null) { console.error("bad node / prev, node, next", prev, node, ext); return }
+    if(prev == null || next == null) { console.error("bad node / prev, node, next", prev, node, next); return }
     otherNodes.forEach(other => {
         const { prev: oPrev, next: oNext } = getPrevNext(other)
         if (oPrev == null || oNext == null) { console.error("bad other / prev, other, next", oPrev, other, oNext); return }
@@ -439,7 +496,7 @@ function createQualifiedIntersectionsFromNode(node, otherNodes) {
     }) 
 }
 
-function createQualifiedIntersectionsFromUnqualifiedIntersection(unqualifiedIntersection) {
+function createQualifiedIntersectionsFromUnqualifiedIntersection(unqualifiedIntersection: insertionPoint) {
     unqualifiedIntersection.nodes.forEach(node => {
         const otherNodes = unqualifiedIntersection.nodes.filter(n => n.nodeId !== node.nodeId)
         createQualifiedIntersectionsFromNode(node, otherNodes)
@@ -452,7 +509,7 @@ function createQualifiedIntersectionNodes() {
     })
 }
 
-function getNodeIndexInLane(roadIndex, laneIndex, nodeId) {
+function getNodeIndexInLane(roadIndex: number, laneIndex: number, nodeId: number): number {
     const road = roads[roadIndex]
 
     return road.lanes[laneIndex].findIndex(n => n.nodeId === nodeId)
@@ -524,7 +581,7 @@ export function toggleDebugWays() {
                 } */
                 /* if(node.type === "junction")*/ {
                     const textureResolution = 512
-                    const textureGround = new DynamicTexture("dynamic texture", {width:512, height:256}, globalScene)   
+                    const textureGround = new DynamicTexture("dynamic texture", {width:512, height:256}, globalScene, false)   
                     const textureContext = textureGround.getContext()
                     var materialGround = new StandardMaterial("Mat", globalScene)    				
                     materialGround.diffuseTexture = textureGround
