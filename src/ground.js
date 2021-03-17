@@ -15,7 +15,7 @@ export default function createGround(scene) {
     groundMat.diffuseColor = new Color3(1, 1, 1)
     groundMat.specularColor = new Color3(0, 0, 0)
     groundMat.emissiveColor = new Color3(0.2, 0.2, 0.2)
-    const groundTexture = new Texture('./textures/ground.png', scene)
+    const groundTexture = new Texture('./textures/ground2.jpeg', scene)
     groundTexture.vScale = 100
     groundTexture.uScale = 100
     groundMat.diffuseTexture = groundTexture

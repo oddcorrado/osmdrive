@@ -22,6 +22,7 @@ import {createCarBots} from '../npcs/carbotsIndependantDetector'
 //import {createCarBots} from '../npcs/carbotsSPS'
 import preventCollision from '../npcs/preventCollisions'
 import {createScriptTriggers} from '../npcs/scriptTrigger'
+import {createParking} from './parking'
 
 let propsContainer
 let pavements
@@ -89,7 +90,8 @@ export default function dressMap(scene, container){
         spawnNoEntry(container, scene, 203, 207)
         createScriptTriggers(scene, container, bots)
         preventCollision(scene, container, bots)
-        createScriptTriggers(scene,container,bots,2)
+        createScriptTriggers(scene,container,bots,6)
+        createParking(scene)
         setStatus('assets')
     })()
    //botshandler.createBots(scene, container)

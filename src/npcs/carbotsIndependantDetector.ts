@@ -37,9 +37,24 @@ let botPos: Vector3[] = [
 
 let trigBotPos: Vector3[] = [
     new Vector3(-120,0,-98),
-    new Vector3(-260,0,-102),
+    new Vector3(-260,0,-102),//trig 1
+   
     new Vector3(-101,0,-60),
-    new Vector3(-97,0,-160)
+    new Vector3(-97,0,-160),// trig 2
+   
+    new Vector3(2,0,-179),
+    new Vector3(2,0,-189),// trig 3
+
+    new Vector3(-2,0,80),// trig 4
+
+    new Vector3(198,0,57),//trig 5
+
+    // new Vector3(265,0,101),// trig 6
+
+    new Vector3(115,0,98),// trig 7
+
+    new Vector3(-178,0,-298)// behind
+
 ]
 
 
@@ -291,13 +306,13 @@ const loadBotModel = async (scene: Scene): Promise<Mesh[]> => {
 let bots: CarBot[] = []
 
 export const createCarBots = (scene: Scene, nb: number): Promise<CarBot[]>  => {
-    nb = 4
+    nb = 10
     let mesh: Mesh[]
 
    return (async () => {
      mesh = await loadBotModel(scene)
        for (let i = 0; i < nb; i++){
-          bots.push(addBotInstanceClass(mesh, i, scene, true))//scripted always true
+          bots.push(addBotInstanceClass(mesh, i, scene, i!=11?true:false))//scripted always true
        }
        mesh.forEach(msh => {msh.dispose()})
        return bots

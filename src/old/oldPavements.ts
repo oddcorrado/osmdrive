@@ -1,10 +1,10 @@
-import { ways } from '../../map'
-import { createJunctions, createPaths } from './roads'
-import { Vector3, Quaternion } from '@babylonjs/core/Maths/math'
+import { ways } from '../map'
+import { createJunctions, createPaths } from '../ways/logic/roads'
+import { Vector3 } from '@babylonjs/core/Maths/math'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
-import { scene as globalScene } from '../../index'
+import { scene as globalScene } from '../index'
 import { Color3 } from '@babylonjs/core/Maths/math.color'
-import { vectorIntersection, vectorLineIntersection } from '../../maths/geometry'
+import { vectorIntersection } from '../maths/geometry'
 
 let junctions = null
 let paths = null
@@ -272,71 +272,6 @@ const reducePolys = (polys: PavRoad[]) : Vector3[][] => {
     return reds
 }
 
-const rotatePlanar = (v: Vector3, angle: number): Vector3 => {
-    /* const normQuaternion = Quaternion.FromEulerAngles(0, angle, 0)
-    let rotated: Vector3 = new Vector3(1, 1, 1)
-    v.rotateByQuaternionToRef(normQuaternion, rotated) */
-    console.log(v)
-    const vAngle = v.x !== 0 ? Math.atan2(v.z, v.x) : (v.z > 0 ? Math.PI * 0.5 : -Math.PI * 0.5)
-    console.log(vAngle)
-    const rotated = new Vector3(10 * Math.cos(vAngle + angle), 0 , 10 * Math.sin(vAngle + angle))
-    return rotated
-}
-const circleFromCorner = (prev: Vector3, cur: Vector3, next: Vector3, count: number = 3) => {
-    
-    // get normals
-    const prevNorm = rotatePlanar(prev.subtract(cur), Math.PI * 0.5)
-    const nextNorm = rotatePlanar(next.subtract(cur), Math.PI * 0.5)
-
-    // find center
-    console.log(prev.subtract(cur).normalize(), prevNorm.normalize(), next.subtract(cur).normalize(), nextNorm.normalize())
-    console.log(vectorLineIntersection(prev, prev.add(prevNorm), next, next.add(nextNorm)))
-
-    // get line intersections
-}
-
-const cutCornerPoly = (poly: Vector3[]) : Vector3[] => {
-    const cutPoly : Vector3[] = []
-//console.log('\n********', poly)
-    poly.forEach((p: Vector3, i: number) => {
-        const prev = i > 0 ? poly[i - 1] : poly[poly.length - 1]
-        const next = i < poly.length - 1 ? poly[i + 1] : poly[0]
-
-        const angle = Vector3.GetAngleBetweenVectors(next.subtract(p), prev.subtract(p), Vector3.Up())
-
-        if((Math.abs(angle) > Math.PI * 0.1 && Math.abs(angle) < Math.PI * 0.9)
-            || (Math.abs(angle) > Math.PI * 1.1 && Math.abs(angle) < Math.PI * 1.9))
-        {
-            console.log('GO')
-            const prevVec = prev.subtract(p).normalize().scale(5)
-            const nextVec = next.subtract(p).normalize().scale(5)
-            cutPoly.push(p.add(prevVec))
-            cutPoly.push(p.add(nextVec))
-            circleFromCorner(prevVec, p, nextVec)
-        }
-        else
-        {
-            // console.log(i, p, prev, next, angle)
-            cutPoly.push(p)
-        }
-
-        //
-        
-    })
-
-    return cutPoly
-}
-
-const cutCornerPolys = (polys: Vector3[][]) : Vector3[][] => {
-    const cuts : Vector3[][] = []
-
-    polys.forEach((poly: Vector3[]) => {
-        cuts.push(cutCornerPoly(poly))
-    })
-
-    return cuts
-}
-
 const buildPavements = () : Vector3[][] => {
     // we first isolate the junctions from the ways
     junctions = createJunctions(ways) // FIXME: no global variables
@@ -344,25 +279,22 @@ const buildPavements = () : Vector3[][] => {
 
     const roads = createRoads(paths)
 
-  //  console.log('buildRoads', roads)
+    console.log('buildRoads', roads)
 
     const polys = buildPolys(roads)
-   // console.log('polys', polys)
+    console.log('polys', polys)
 
     const reds = reducePolys(polys)
-   // console.log('reds', reds)
+    console.log('reds', reds)
 
-    const cuts = cutCornerPolys(reds)
-   // console.log('cuts', cuts)
-
-    cuts.forEach((poly, i) => {
+    reds.forEach((poly, i) => {
         const closedPoly = poly.concat(poly, [poly[0]])
         let li = Mesh.CreateLines('li', closedPoly, globalScene)
         li.position.y = li.position.y + 0.1
         li.color = Color3.White()
     })
 
-    return cuts
+    return reds
 }
 
 export default buildPavements

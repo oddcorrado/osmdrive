@@ -1,5 +1,3 @@
-
-
 export function scoreDivCreator(){
     var div = ` <div style='display: block; height: 12vh;  font-family: "Asap Condensed", sans serif; font-weight: 700; font-size: 6vh; border-bottom-left-radius: 6vh;position: absolute; top: 0; right: 0; width: 15vw; background-color: #262626; color: white;'>
          <div style='float: left; margin-left: 2vw; margin-top: 2vh'>
@@ -12,35 +10,10 @@ export function scoreDivCreator(){
      return div;
 } 
 
-export function dashboardCreator(){
-    var div = 
-       ` <div id='dashboard' style='position: absolute;
-            bottom: -8vh;
-            width: 14vw;
-            height: 35vh;
-            left: 43vw;
-            border-radius: 4vw;
-            background-color: rgba(0,0,0,0.7);
-            color: white;
-            font-family: Microbrew Soft One, sans-serif';
-            >
-            <div style='margin-top: 3vh; margin-left: 1vw; display: inline-block' id='next-turn'>
-                <img id='gps' style='height: 7vh; width: 6vw' src='../../images/straight.svg'></img>
-            </div>
-            <div style='margin-top: 3vh; display: inline-block' id='next-turn'>
-                <img id='gps' style='height: 7vh; width: 6vw' src='../../images/30.svg'></img>
-            </div>
-            <div id='speeddiv' style='text-align:center; rgba(0.25, 0.25, 0.25, 0.5); height: 40%; max-width:66%; margin-left: 17%; border-radius: 2vh; margin-top: 5%'>
-                <div id='speed' style='text-align: center; display: inline-block ;height: 7vh;font-size: 8vh; font-weight: 400' id='speed'>0</div>    
-                <div style='font-size: 3vh;color: white; margin-top: 0.5vh;font-weight: normal; opacity: 0.4;'>KM/H</div>
-            </div> 
-        </div>`
-        return div;
-}
 
 export function tapButtonCreator(){
     var div = `
-    <div>
+    <div style='display: none'>
         <div style="position: absolute;
             bottom: 4vh;
             right: 0vh;
@@ -63,7 +36,7 @@ export function tapButtonCreator(){
 
 export function viewZoneCreator(){
     var div =
-    `<div id='view' style=';position: absolute; z-index:10;bottom: 50vh; left: 6vw; width: 24vw; height: 20vh; text-align: center'>
+    `<div id='view' style='display: none;position: absolute; z-index:10;bottom: 50vh; left: 6vw; width: 24vw; height: 20vh; text-align: center'>
         <div style='margin-top: 5vh'>
             <img draggable=false style='height: 10vh; width: 24vw; text-align:center;' src='../images/arrow.svg'></img>
         </div>
@@ -112,14 +85,34 @@ export function wheelCreator(){
 export function wheelLockedCreator(){
     var div =
         `<div style='text-align: center'>
-            <img draggable=false id='wheellocked' src='../images/wheellocked.svg' style='display: none; z-index: 11;position: absolute; bottom: -1vh; left: 0vw; height: 55vh; width: 35vw; opacity: 0.8'></img>
+            <img draggable=false id='wheellocked' src='../images/wheellocked.svg' style='display: none; z-index: 11;position: absolute; bottom: -1vh; left: 1vw; height: 55vh; width: 35vw; opacity: 0.8'></img>
         </div>`
      return div
 }
 
+
+//NEW UI FROM HERE
+
+export function dashboardCreator(){
+    var div = 
+   ` <div style='position: absolute; bottom:0vh; left: 35vw; width: 30vw; height: 21vh; text-align: center; color: white; background: url("../images/dashboard.svg") no-repeat bottom; background-size:contain; font-family: Microbrew Soft One, sans-serif';'>
+            <div id='speeddiv' style=' rgba(0.25, 0.25, 0.25, 0.5); border-radius: 2vh; ;height: 40%; width: 40%; margin-top: 3%; margin-left: 30%'>
+                <div id='speed' style='text-align: center; display: inline-block ;height: 90%;font-size: 10vh; font-weight: 400' id='speed'>0</div>    
+            </div> 
+            <div style='position: relative; right: 18%; top: 5%' id='next-turn'>
+                <img id='gps' style='height: 6vh; width: auto' src='../../images/straight.svg'></img>
+            </div>
+            <div style='position: relative; left: 18%; bottom: 35%'>
+                <img id='speedlimit' style='height: 9vh; width: auto;' src='../../images/30.svg'></img>
+            </div>
+    </div>`
+        return div;
+}
+
+
 export function blinkerCreator(){
     var div =`
-    <div style='position: absolute; bottom: 5vh; left: 32.5%; width: 35%;z-index: 11; '>
+    <div style='display: block; position: absolute; bottom: 10vh; left: 32.5%; width: 35%;z-index: 11; '>
         <div id='lblink' style='float: left; display: inline-block; height: 14vh; width: 10vw;'>
             <img id='lblinkimg' src='../images/blinkdef.svg' style='height: 14vh; width: 10vw;'></img>
         </div>
@@ -131,12 +124,33 @@ export function blinkerCreator(){
    return div 
 }
 
-
 export function centralMirrorCreator(){
     var div =`
-    <div style='position: absolute; top: 1vh; left: 40%; height: 9vh; width: 25%; z-index: 11; border-radius: 1rem; border: black solid 1vh;'>
+    <div style='position: absolute; top: 0vh; left: 30%; height: 24vh; width: 39%; z-index: 11; border-radius: 0.2vh; border: black solid 1vh;'>
         <canvas id='centralmirror'></canvas>
     </div>
    `
    return div 
+}
+
+export function speedButtonCreator(){
+    let div = 
+   `<div id='acceldiv' style='position: absolute; bottom: 4vh; right:2vw; border: solid white 0.3vw; height: 50vh; width: 5vw;border-radius: 10vh; text-align: center; background: linear-gradient(0deg , rgba(86, 241, 82, 0) 0%,  #56F152 15%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 100%)'>
+        <img draggable=false id='accelslide' style='z-index: 11;position: relative; width: 55%; top: 70%;' src='../images/accelslide.svg'></img>
+    </div>
+   <div id='brakediv' style='position: absolute; bottom: 4vh; right: 9vw; border: solid white 0.3vw; height: 35vh; width: 5vw; border-radius: 10vh; text-align: center; background: linear-gradient(0deg,  rgba(255, 0, 0, 0) 0% , #FF0000 15%, rgba(0,0,0,0) 15%,  rgba(0,0,0,0) 100%)'>
+        <img draggable=false  id='brakeslide' style='position: relative; top: 70%; z-index: 11; width: 80%;' src='../images/brakeslide.svg'></img>
+    </div>`
+   
+    return div
+}
+
+export function viewCreator(){
+    const div = 
+   ` <div id='viewdiv' style='position: absolute; bottom: 20vh; left: 5vw; height: 40vh; width: 40vh; border-radius: 50%; border: solid 0.1vw #C4C4C4'>
+        <div style='width: 50%; height: 100%; border-right: 0.1vw solid #C4C4C4'>
+            <img draggable=false id='viewdrag' src='../images/Vcenter.svg' style='z-index: 11; height: 30%; width: 30%; margin-left: 85%; margin-top: 70%'></img>
+        </div>
+    </div>`
+    return div
 }

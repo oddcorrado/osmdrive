@@ -9,9 +9,10 @@ import createMenu from './controls/menu.js'
 import createButtons from './controls/drivebuttons'
 import createFreeCamera from './cameras/freecamera'
 import createCamera from './cameras/camera'
+import {createCameras} from './cameras/camera'
 import dressMap from './environment/dressmap'
 import createDefaultCar from './car/detailedcar'
-import loop from './controls/loops'
+import {setupControls, loopSelector} from './controls/loops'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
 import startup from './startup'
 import score from './scoring/scoring'
@@ -20,7 +21,6 @@ import {setupGps} from './gps/plan'
 import {setupMirror} from './mirror/centralmirror.ts'
 import { DefaultLoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
 import {createLoading} from './creators/loadingCreator'
-//import {carBotsLoop} from './npcs/carbots.ts'
 import {carBotsLoop} from './npcs/carbotsIndependantDetector'
 //import {carBotsLoop} from './npcs/carbotsSPS'
 
@@ -70,7 +70,7 @@ DefaultLoadingScreen.prototype.hideLoadingUI = function(){
 }
 
 const canvas = document.getElementById('renderCanvas')
-const engine = new Engine(canvas,true,null,true)
+const engine = new Engine(canvas,false,null,false)
 const boot = () => {
     let gps;
     let mustang;
@@ -83,9 +83,11 @@ const boot = () => {
     engine.displayLoadingUI();
 
     // Creates and sets camera 
-    const camera = createCamera(scene, canvas);//NORMAL CAMERA
-    const internalCamera = createCamera(scene, canvas, 1);
-    const freecamera = createFreeCamera(scene, canvas);
+    // const camera = createCamera(scene, canvas);//NORMAL CAMERA
+    createCameras(scene)
+    // const internalCamera = createCamera(scene, canvas, 1);//CAM TEST
+    const freecamera = createFreeCamera(scene, canvas);// CAM TEST
+    
     //Creates environements and camera
     createSkybox(scene)
     createLights(scene)
@@ -94,24 +96,24 @@ const boot = () => {
     
     //Creates car, AIs, road and add assets
     try{
-        createDefaultCar(scene, camera, internalCamera, container);
+        createDefaultCar(scene, container) 
     } catch (e){}
     
     createWays(scene, planes)
     dressMap(scene, container)
 
     //Create all menus and UI Elements
-    createMenu(scene, camera, internalCamera, freecamera);
+    createMenu(scene, freecamera);
     createButtons(scene);
-    loop.setupControls(scene);
+    setupControls(scene);
 
     setupGps(scene, container);
-    setupMirror(engine, freecamera)
-    loop.cameraOrientationSetup(camera);
-    scene.activeCamera = internalCamera;
-//    document.body.insertAdjacentHTML('afterbegin', `<div style='position: absolute; top: 10vh; left: 50vh;'>FOV: ${scene.activeCamera.fov}</div>`)
 
-    // Render every frame
+    //optimization
+    scene.autoClear = false // Color buffer
+    scene.autoClearDepthAndStencil = false//looks OK
+    scene.blockMaterialDirtyMechanism = true//material clearing
+    //
     engine.runRenderLoop(() => {
         //planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
         scene.render()
@@ -120,9 +122,8 @@ const boot = () => {
                 score.setupScore(mustang);
         } else if (!waitcar){
             score.loop()
-            //scene.activeCamera = freecamera//DEBUG, TO COMMENT
             carBotsLoop()
-            loop.loopSelector(scene, mustang, gps)
+          loopSelector(scene, mustang, gps)
         }
     })
 }

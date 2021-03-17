@@ -13,6 +13,8 @@ import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
 import { scene as globalScene } from '../index'
 import buildRoads, { roads } from './logic/roads'
 import buildPavements from './logic/pavements'
+//import buildPavements from '../old/oldPavements'
+
 import zoneGet from '../geofind/geozone'
 import { geoSegmentsInit, getSegmentGetClosest } from '../geofind/geosegment'
 import { checkerDebugSegment } from '../checkers/roadChecker'
