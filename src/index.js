@@ -22,6 +22,8 @@ import {setupMirror} from './mirror/centralmirror.ts'
 import { DefaultLoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
 import {createLoading} from './creators/loadingCreator'
 import {carBotsLoop} from './npcs/carbotsIndependantDetector'
+import {bikeFreeLoop} from './npcs/bikeFree'
+
 //import {carBotsLoop} from './npcs/carbotsSPS'
 
 let loadingStatus = {assets: false, car: false, randomgen: false, trees: false, walk: false, ground: false, count: 0}
@@ -83,10 +85,7 @@ const boot = () => {
     engine.displayLoadingUI();
 
     // Creates and sets camera 
-    // const camera = createCamera(scene, canvas);//NORMAL CAMERA
-    createCameras(scene)
-    // const internalCamera = createCamera(scene, canvas, 1);//CAM TEST
-    const freecamera = createFreeCamera(scene, canvas);// CAM TEST
+    let cameras = createCameras(scene)
     
     //Creates environements and camera
     createSkybox(scene)
@@ -103,10 +102,9 @@ const boot = () => {
     dressMap(scene, container)
 
     //Create all menus and UI Elements
-    createMenu(scene, freecamera);
+    createMenu(scene, cameras);
     createButtons(scene);
     setupControls(scene);
-
     setupGps(scene, container);
 
     //optimization
@@ -118,12 +116,13 @@ const boot = () => {
         //planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
         scene.render()
          if (waitcar && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar'))) { 
-                waitcar = false;
-                score.setupScore(mustang);
+            waitcar = false;
+            score.setupScore(mustang);
         } else if (!waitcar){
             score.loop()
             carBotsLoop()
-          loopSelector(scene, mustang, gps)
+            bikeFreeLoop()
+            loopSelector(scene, mustang, gps)
         }
     })
 }

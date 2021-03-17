@@ -17,9 +17,8 @@ import {setStatus} from '../index'
 import spawnProp from '../roadsigns/loadProp'
 import loadArrow from '../props/arrow'
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
-//import {createCarBots, loadCarBots} from '../npcs/carbots'
 import {createCarBots} from '../npcs/carbotsIndependantDetector'
-//import {createCarBots} from '../npcs/carbotsSPS'
+import {createBikeBots} from '../npcs/bikeFree'
 import preventCollision from '../npcs/preventCollisions'
 import {createScriptTriggers} from '../npcs/scriptTrigger'
 import {createParking} from './parking'
@@ -80,6 +79,8 @@ export default function dressMap(scene, container){
 
     (async () => {
        let bots = await createCarBots(scene, 10) 
+       let bike = await createBikeBots(scene, 1)
+
         spawnTrafficLight(container, bots, scene, -195, -105, Math.PI, 'red')
         spawnTrafficLight(container, bots, scene, -105, -105, -Math.PI/2, 'red')
         spawnTrafficLight(container, bots, scene, -5, -105, -Math.PI/2, 'red')

@@ -318,16 +318,9 @@ function resetWheel () {
         toggleSound()
     }
 
-
     const controlSwitch = () => {
         keymode = keymode === 2 ? 1 : keymode+1
     }
-
-    let lock = false
-    const lockControls = () => {
-        lock = scene.activeCamera[0].id === 'free_camera' ? true : false
-    }
-
 
     const lToggleBlinking = () => {
         if (blink === 'L') {
@@ -411,36 +404,28 @@ function resetWheel () {
     }
 
     document.addEventListener('keydown', (event) => {
-        if (lock) {return}
+        if (gameState != 'loop') {return}
        switch(event.key) {
-           case 'ArrowUp' : acceleratorPedal(); break
-           case 'ArrowDown' : brakePedal(); break
-           
+          
        }
        if (keymode === 1){
             switch(event.key) {
-            case 'ArrowLeft' : wheelMove(-300); break
-            case 'ArrowRight' : wheelMove(300); break
-            case ' ': resetWheel(); break
-            case 'Control' : kbView(-2); break
-            case 'Alt' : kbView(2); break
+         
             }
        } else if (keymode === 2){
         switch(event.key) {
             case ' ': keyLookTurn(0); break
             case 'ArrowLeft' : keyLookTurn(1); break
             case 'ArrowRight' : keyLookTurn(2); break
-            case 'Escape' : resetWheel(); break
             }   
        }
     })
     
 
     document.addEventListener('keyup', (event) => {
-        if (lock) {return}
+        if (gameState != 'loop') {return}
         switch(event.key) {
-            case 'ArrowUp' : acceleratorPedalEnd(); break
-            case 'ArrowDown' : brakePedalEnd(); break
+        
          
         }
         if (keymode === 1) {
@@ -476,7 +461,6 @@ function resetWheel () {
     aslide.addEventListener('mouseup', () => {toggleTouchA(false)})
     adiv.addEventListener('mouseleave', () => {toggleTouchA(false)})
     adiv.addEventListener('mousemove', (e) => {accelHandler(e.clientY)})
-    
 
     bslide.addEventListener('touchstart', () => {toggleTouchB(true)})
     bslide.addEventListener('touchend', () => {toggleTouchB(false)})
@@ -491,9 +475,6 @@ function resetWheel () {
     
     control.addEventListener('touchmove', () => controlSwitch())
     control.addEventListener('click', () => controlSwitch())
-
-    changecam.addEventListener('touchmove', () => lockControls())
-    changecam.addEventListener('click', () => lockControls())
 
     lblinker.addEventListener('touchmove', () => lToggleBlinking())
     lblinker.addEventListener('click', () => lToggleBlinking())

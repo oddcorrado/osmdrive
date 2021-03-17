@@ -12,13 +12,8 @@ import { getSpeed } from '../controls/loops'
 
 
 export default function spawnProp(scene, x, y) {
-   return new SceneLoader.ImportMeshAsync('', "../mesh/BlueArrow/", "BlueArrow.obj", scene).then(function(newMesh) {
-   let arrow = newMesh['meshes'][0]
-      arrow.position = new Vector3(0,10,0)
-      arrow.scalingDeterminant = 10
-      let mat = new StandardMaterial('arrow', scene)
-      mat.emissiveColor = new Color3(0,0,1)
-
-      arrow.material = mat
+   return new SceneLoader.ImportMeshAsync('', "../mesh/Bike/", "bike.obj", scene).then(function(newMesh) {
+   let prop = newMesh['meshes'][0]
+      prop.position = new Vector3(0,0,0)
    })
 }
