@@ -8,8 +8,7 @@ import createGround from './ground'
 import createMenu from './controls/menu.js'
 import createButtons from './controls/drivebuttons'
 import createFreeCamera from './cameras/freecamera'
-import createCamera from './cameras/camera'
-import {createCameras} from './cameras/camera'
+import {createCameras} from './cameras/camera.ts'
 import dressMap from './environment/dressmap'
 import createDefaultCar from './car/detailedcar'
 import {setupControls, loopSelector} from './controls/loops'
@@ -23,7 +22,7 @@ import { DefaultLoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
 import {createLoading} from './creators/loadingCreator'
 import {carBotsLoop} from './npcs/carbotsIndependantDetector'
 import {bikeFreeLoop} from './npcs/bikeFree'
-
+import {createRetro} from './cameras/retro'
 //import {carBotsLoop} from './npcs/carbotsSPS'
 
 let loadingStatus = {assets: false, car: false, randomgen: false, trees: false, walk: false, ground: false, count: 0}
@@ -72,6 +71,7 @@ DefaultLoadingScreen.prototype.hideLoadingUI = function(){
 }
 
 const canvas = document.getElementById('renderCanvas')
+console.log(canvas)
 const engine = new Engine(canvas,false,null,false)
 const boot = () => {
     let gps;
@@ -106,7 +106,6 @@ const boot = () => {
     createButtons(scene);
     setupControls(scene);
     setupGps(scene, container);
-
     //optimization
     scene.autoClear = false // Color buffer
     scene.autoClearDepthAndStencil = false//looks OK
@@ -118,6 +117,7 @@ const boot = () => {
          if (waitcar && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar'))) { 
             waitcar = false;
             score.setupScore(mustang);
+            createRetro(scene)
         } else if (!waitcar){
             score.loop()
             carBotsLoop()

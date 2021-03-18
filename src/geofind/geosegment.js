@@ -102,7 +102,7 @@ export const geoSegmentsInit = (roads) => {
         })
     })
 
-    zones.forEach(z => console.log("size", z.static.segments.length))
-    console.log("cnt", id)
+    // zones.forEach(z => console.log("size", z.static.segments.length))
+    // console.log("cnt", id)
 }
 
