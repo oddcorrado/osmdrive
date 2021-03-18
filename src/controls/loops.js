@@ -3,7 +3,6 @@ import e_ori from '../enum/orientation';
 import {playAccel, playEngine, toggleSound} from '../sounds/carsound';
 import { Vector3, Viewport } from '@babylonjs/core/Maths/math'
 import gamepad from './gamepad'
-import { recenterDisplay } from './recenterDisplay'
 import { driverPathBuild, driverGetSmootherTarget } from '../ways/logic/driver'
 import { Quaternion } from '@babylonjs/core/Maths/math.vector'
 import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/geosegment'

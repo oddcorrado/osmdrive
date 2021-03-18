@@ -1,6 +1,5 @@
 import screenfull from 'screenfull'
 import { divCreator } from './creators/buttoncreator'
-import { recenterDisplaySetup } from './controls/recenterDisplay'
 import UAParser from 'ua-parser-js'
 import {createStartScreen} from './creators/loadingCreator'
 
@@ -44,12 +43,11 @@ const startup = boot => {
     btn.onclick = () => {
         if (window.innerWidth > window.innerHeight) {
             start.innerText = 'Ubiquity'
-            if (screenfull.isEnabled  && os.name !== 'Mac OS' && (os !== 'iOS')) {
+           // if (screenfull.isEnabled  && os.name !== 'Mac OS' && (os !== 'iOS')) {
                 screenfull.request()
-            }
+            //}
             document.getElementById('startscreen').remove()
             boot()
-           // recenterDisplaySetup()
         }
     }
 }
