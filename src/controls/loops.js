@@ -229,7 +229,6 @@ function resetWheel () {
     let viewdrag = document.getElementById('viewdrag')
 
     const hideSearch = () =>{
-        console.log('hidden')
         screenfull.request(document.getElementsByTagName('body')[0], {navigationUI: 'hide'})
     }
 
