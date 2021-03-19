@@ -43,9 +43,17 @@ const startup = boot => {
     btn.onclick = () => {
         if (window.innerWidth > window.innerHeight) {
             start.innerText = 'Ubiquity'
-            if (screenfull.isEnabled && os.name !== 'Mac OS' && (os !== 'iOS')) {
+            const element = document.getElementsByTagName('html');
+            console.log(element)
+            if (screenfull.isEnabled){// && os.name !== 'Mac OS' && (os !== 'iOS')) {
                 screenfull.request()
-                screenfull.request(element, {navigationUI: 'hide'});
+                screenfull.request(element[0], {navigationUI: 'hide'})
+                screenfull.on('change', () => {
+                     if(!screenfull.isFullscreen){
+                        screenfull.request()
+                        screenfull.request(element, {navigationUI: 'hide'})
+                     }
+                });
             }
             document.getElementById('startscreen').remove()
             boot()

@@ -1,18 +1,14 @@
-    import e_sound from '../enum/soundenum';
-import e_ori from '../enum/orientation';
+import e_sound from '../enum/soundenum';
 import {playAccel, playEngine, toggleSound} from '../sounds/carsound';
 import { Vector3, Viewport } from '@babylonjs/core/Maths/math'
-import gamepad from './gamepad'
 import { driverPathBuild, driverGetSmootherTarget } from '../ways/logic/driver'
 import { Quaternion } from '@babylonjs/core/Maths/math.vector'
 import { geoSegmentGetProjection, geoAngleForInterpolation} from '../geofind/geosegment'
 import { gpsCheck, getNextTurn } from '../gps/plan'
 import { vectorIntesection } from '../maths/geometry'
-import { scoreDivCreator } from '../creators/buttoncreator';
 import score from '../scoring/scoring'
-import { rightViewCreator } from '../creators/UIElementsCreator';
 import {toggleBlinkerSound} from '../sounds/carsound'
-import { DeviceOrientationCamera } from '@babylonjs/core/Cameras/deviceOrientationCamera';
+import screenfull from 'screenfull'
 
 let sideTilt = 0
 let accel = 0
@@ -214,7 +210,8 @@ function resetWheel () {
 
  export function setupControls (scene){
     let soundtoggle = document.getElementById('sound');
-    let control = document.getElementById('control')
+    //let control = document.getElementById('control')
+    let fs = document.getElementById('fs')
     let changecam = document.getElementById('changecam');
     center = document.getElementById('center');
     let lblinker = document.getElementById('lblink');
@@ -224,7 +221,6 @@ function resetWheel () {
     var inter;
     let viewInter = null
     let viewX = 300
-
     let aslide = document.getElementById('accelslide')
     let bslide = document.getElementById('brakeslide')
     let adiv = document.getElementById('acceldiv')
@@ -232,8 +228,10 @@ function resetWheel () {
     let viewdiv = document.getElementById('viewdiv')
     let viewdrag = document.getElementById('viewdrag')
 
-    //let oW = viewdiv.offsetWidth/2//useful ?
-
+    const hideSearch = () =>{
+        console.log('hidden')
+        screenfull.request(document.getElementsByTagName('body')[0], {navigationUI: 'hide'})
+    }
 
     const viewHandler = (x) => {
         if (touchV && scene.activeCameras[0]){
@@ -472,8 +470,11 @@ function resetWheel () {
     soundtoggle.addEventListener('touchmove', () => soundSwitch())
     soundtoggle.addEventListener('click', () => soundSwitch())
     
-    control.addEventListener('touchmove', () => controlSwitch())
-    control.addEventListener('click', () => controlSwitch())
+    // control.addEventListener('touchmove', () => controlSwitch())
+    // control.addEventListener('click', () => controlSwitch())
+
+    fs.addEventListener('touchmove', () => hideSearch())
+    fs.addEventListener('click', () => hideSearch())
 
     lblinker.addEventListener('touchmove', () => lToggleBlinking())
     lblinker.addEventListener('click', () => lToggleBlinking())

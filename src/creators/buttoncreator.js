@@ -84,7 +84,7 @@ export function menuOptions(){
     <div style='position: absolute; top: 15vh; right: 1vw'>
         <img id='sound' src='../../images/nosound.svg' style='height: 7vh; width: 5vw; z-index: 12'></img>
         <img id='changecam' src='../../images/cam.svg' style='height: 7vh; width: 5vw; z-index: 12'></img>
-        <img id='control' src='../../images/keyboard.svg' style='height: 7vh; width: 5vw; z-index: 12'></img>
+        <img id='fs' src='../../images/fullscreen.svg' style='height: 7vh; width: 5vw; z-index: 12'></img>
     </div>`
     document.body.insertAdjacentHTML('afterbegin', div)
     
