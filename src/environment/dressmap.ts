@@ -22,16 +22,15 @@ import {createBikeBots} from '../npcs/bikeFree'
 import preventCollision from '../npcs/preventCollisions'
 import {createScriptTriggers} from '../npcs/scriptTrigger'
 import {createParking} from './parking'
+import { Scene } from '@babylonjs/core/scene'
+import { AssetContainer } from '@babylonjs/core/assetContainer'
 
-let propsContainer
-let pavements
-
-function getInterPos(curr, next){
-    var xD = next.x - curr.x
-    var yD = next.y - curr.y
-    var dist = Math.sqrt(Math.pow(xD, 2) + Math.pow(yD, 2))
-    var div = 10
-    var fract
+function getInterPos(curr: Vector3, next: Vector3){
+    var xD:number = next.x - curr.x
+    var yD:number = next.y - curr.y
+    var dist:number = Math.sqrt(Math.pow(xD, 2) + Math.pow(yD, 2))
+    var div:number = 10
+    var fract:number
     //var fract = 20 / dist
 
     //while (div < 100){//adapt to building algo
@@ -48,9 +47,10 @@ function getInterPos(curr, next){
     //}
 }
 
-function createTrees(scene) {
-    new SceneLoader.ImportMeshAsync('', "../mesh/Treebis/", "tree.obj", scene).then(function (newMesh){
-    let tree = Mesh.MergeMeshes(newMesh['meshes'], true, true, undefined, false, true)
+function createTrees(scene: Scene) {
+    SceneLoader.ImportMeshAsync('', "../mesh/Treebis/", "tree.obj", scene).then(function (newMesh){
+    let mshs = newMesh['meshes'] as Mesh[]
+    let tree = Mesh.MergeMeshes(mshs, true, true, undefined, false, true)
     ways.forEach(way => {
         for (var i = 1; i < way.points.length-1; i++){
             var posTab = getInterPos(way.points[i], way.points[i+1])
@@ -63,16 +63,12 @@ function createTrees(scene) {
    })
 }
 
-export function disableTrees(){
-    console.log(propsContainer)
-}
-
-function addInstance(mesh, x , y){
+function addInstance(mesh: Mesh, x: number , y: number){
     let newmesh = mesh.createInstance('newmesh')
     newmesh.position = new Vector3(x, 0.1, y)
 }
 
-export default function dressMap(scene, container){
+export default function dressMap(scene: Scene, container:AssetContainer){
     scene.actionManager = new ActionManager(scene)
     setSounds(scene)
     createTrees(scene);
@@ -88,7 +84,6 @@ export default function dressMap(scene, container){
         spawnStop(container, bots, scene, 195, -5, Math.PI)
         spawnYield(container, scene, 205, 95, Math.PI)
         spawnNoEntry(container, scene, 203, 207)
-        createScriptTriggers(scene, container, bots)
         preventCollision(scene, container, bots)
         createScriptTriggers(scene, container, bots, bikes, 6)
         createParking(scene)

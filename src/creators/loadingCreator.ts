@@ -1,6 +1,6 @@
 
 export function createStartScreen(){
-    let div = `<div id='startscreen'  style='width: 100%; height: 100%; background-color: white; z-index: 100;  position: fixed; font-weight: 800; top: 0; left: 0; font-size: 12vh; font-family: Asap Condensed; color: black; display: block; align-items: center; justify-content: center; text-align: center;'>
+    const div: string = `<div id='startscreen'  style='width: 100%; height: 100%; background-color: white; z-index: 100;  position: fixed; font-weight: 800; top: 0; left: 0; font-size: 12vh; font-family: Asap Condensed; color: black; display: block; align-items: center; justify-content: center; text-align: center;'>
             <img src='../../images/carloading.svg' style='width: 10%; display: block; margin-top: 17%; margin-left: 45% '></img>
             <div id='startdiv'>
                 Ubiquity
@@ -14,7 +14,7 @@ export function createStartScreen(){
 }
 
 export function createLoading(){
-    let div = `<div id='customLoadingScreenDiv' style='width: 100%; height: 100%; background-color: white; z-index: 100;  position: fixed; font-weight: 800; top: 0; left: 0; font-size: 12vh; font-family: Asap Condensed; color: black; display: block; align-items: center; justify-content: center; text-align: center;'>
+    const div: string = `<div id='customLoadingScreenDiv' style='width: 100%; height: 100%; background-color: white; z-index: 100;  position: fixed; font-weight: 800; top: 0; left: 0; font-size: 12vh; font-family: Asap Condensed; color: black; display: block; align-items: center; justify-content: center; text-align: center;'>
             <img src='../../images/carloading.svg' style='width: 6%; display: block; margin-top: 19%; margin-left: 47% '></img>
             <div id='loadtext' style='font-size: 3.5vh; width: 30%; margin-left: 35%; margin-top: 1%'>
                 Chargement ...
@@ -29,7 +29,7 @@ export function createLoading(){
 
 
 export function createEndOfLevel(){
-    let div = `
+    const div:string = `
     <div style='position: absolute; top: 18%; left: 30.5%; width: 37%; height: 40%; font-family: Asap Condensed; background-color: rgba(255,255,255,0.7); font-size: 5vh; text-align: center; border-radius: 1vh; box-shadow: -1px 2px 7.2px 1.8px rgba(0, 0, 0, 0.15)'>
         <div style='position: relative; top: -10%; height: '>
             <img src='../../images/congrats.svg'></img>

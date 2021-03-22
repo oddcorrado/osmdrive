@@ -1,58 +1,59 @@
 import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
-import { toggleDebugWays } from './../ways/logic/roads'
-import {disableTrees} from '../environment/dressmap'
+import { toggleDebugWays } from '../ways/logic/roads'
 import {toggleEsp} from './loops'
 import { Vector3 } from '@babylonjs/core/Maths/math';
-import {setGameState} from '../controls/loops'
+import {setGameState} from './loops'
 import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness, falseStickCreator, menuOptions} from '../creators/buttoncreator.js';
-import {scoreDivCreator} from '../creators/UIElementsCreator.js';
-import type from '../enum/buttontype';
+//import {scoreDivCreator} from '../creators/UIElementsCreator.js';
+import buttontype from '../enum/buttontype';
+import { Camera } from '@babylonjs/core/Cameras/camera';
+import { Scene } from '@babylonjs/core/scene';
 
-var camPosInterval;
-var controlTab = [[],[]];
+let camPosInterval: number
+let controlTab = [[],[]]
 
-export function toggleCustomModes(display){
-    controlTab[type.MODE].forEach((btn) => {
-        if (btn!=controlmode )
-        btn.style.display = display;
+// export function toggleCustomModes(display){
+//     controlTab[type.MODE].forEach((btn) => {
+//         if (btn!=controlmode )
+//         btn.style.display = display;
+//     })
+//     return controlTab;
+// }
+
+function changeColorAndText(divs: HTMLElement[], text:string[] = ['Enable', 'Disable'], colors:string[] = ['red', 'green']){
+    divs.forEach((div: HTMLElement) => {
+        let contains = div.innerText.includes(text[0])
+        div.style.backgroundColor = (div.style.backgroundColor === colors[0] ? colors[1] : colors[0])
+        div.innerText = div.innerText.replace(contains ? text[0] : text[1],  contains ? text[1] : text[0])
     })
-    return controlTab;
 }
 
-function changeColorAndText(divs, text = ['Enable', 'Disable'], colors = ['red', 'green']){
-    divs.forEach (div => {
-        var contains = div.innerText.includes(text[0]);
-        div.style.backgroundColor = (div.style.backgroundColor === colors[0] ? colors[1] : colors[0]);
-        div.innerText = div.innerText.replace(contains ? text[0] : text[1],  contains ? text[1] : text[0]);
-    })
-}
-
-function setMainMenu(scene, cameras){
+function setMainMenu(scene: Scene, cameras: Camera[]){
     let {sound, changecam} = menuOptions();
-    let top = 22
-    // var test = divCreator('top:0; left: 0;height: 100vh; width: 50vw; border: solid 2px black', {id: 'test', text:'middle debug'})
+    let top:number = 22
+    // let test = divCreator('top:0; left: 0;height: 100vh; width: 50vw; border: solid 2px black', {id: 'test', text:'middle debug'})
     //document.body.appendChild(test);// debug middle
-    var btnMenu = buttonCreator(`top: ${top}vh; right: 0; background-color:black; display: block`,{text: 'Debug Menu'});
-    var btnJ = buttonCreator(`top: ${top+8}vh; right: 0;background-color:green; display: none`,{text: 'Disable Joysticks'});
-    var btnBots = buttonCreator(`top: ${top+12}vh; right: 0;background-color:red; display: none`,{text: 'Enable Bots'});
-    var btnCamOri = buttonCreator(`top: ${top+16}vh; right: 0;background-color:red; display: none`,{text: 'Enable Orientation Pos'});
-    var btnTrees = buttonCreator(`top: ${top+20}vh; right: 0;background-color:red; display: none`,{text: 'Enable Trees'});
-    var btnBar = buttonCreator(`top: ${top+24}vh; right: 0;background-color:black; display: none`,{text: 'Hide TopBar'});
-    var btnWays = buttonCreator(`top: ${top+28}vh; right: 0;background-color:black; display: none`,{text: 'Show Ways'});
-    var btnEsp = buttonCreator(`top: ${top}vh; right: 0;background-color:green; display: none`,{text: 'Disable ESP'});
-    var btnGrids = buttonCreator(`top: ${top}vh; right: 0;background-color:red; display: none`,{text: 'Enable Grids'});
+    let btnMenu:HTMLElement = buttonCreator(`top: ${top}vh; right: 0; background-color:black; display: block`,{text: 'Debug Menu'});
+    let btnJ:HTMLElement = buttonCreator(`top: ${top+8}vh; right: 0;background-color:green; display: none`,{text: 'Disable Joysticks'});
+    let btnBots:HTMLElement = buttonCreator(`top: ${top+12}vh; right: 0;background-color:red; display: none`,{text: 'Enable Bots'});
+    let btnCamOri:HTMLElement = buttonCreator(`top: ${top+16}vh; right: 0;background-color:red; display: none`,{text: 'Enable Orientation Pos'});
+    let btnTrees:HTMLElement = buttonCreator(`top: ${top+20}vh; right: 0;background-color:red; display: none`,{text: 'Enable Trees'});
+    let btnBar:HTMLElement = buttonCreator(`top: ${top+24}vh; right: 0;background-color:black; display: none`,{text: 'Hide TopBar'});
+    let btnWays:HTMLElement = buttonCreator(`top: ${top+28}vh; right: 0;background-color:black; display: none`,{text: 'Show Ways'});
+    let btnEsp:HTMLElement = buttonCreator(`top: ${top}vh; right: 0;background-color:green; display: none`,{text: 'Disable ESP'});
+    let btnGrids:HTMLElement = buttonCreator(`top: ${top}vh; right: 0;background-color:red; display: none`,{text: 'Enable Grids'});
     
-    //var accelWitness = accelerationWitness();
-    var camFresh = divCreator('top: 0; left: 10%; height: 1rem;font-size:0.7rem; display: block', {text: '', id:'position'});
-    var camOriFresh = divCreator('top: 0; left: 0; width: 40vw; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'camerapos'});
-    var carPosFresh = divCreator('top: 0; left: 0; width: 40vw; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'carpos'});
-    var speedFresh = divCreator('font-family: aldrich ; text-align:center; bottom: -7vh; right: 35vw; height: 25vh; width: 29vw; display: none; color: #56CCF2;font-size: 5vw;', {text: '00', id: 'speedold'});
-    //var scoreFresh = scoreDivCreator();
-   // var falseStick = falseStickCreator();
+    //let accelWitness = accelerationWitness();
+    let camFresh:HTMLElement = divCreator('top: 0; left: 10%; height: 1rem;font-size:0.7rem; display: block', {text: '', id:'position'});
+    let camOriFresh:HTMLElement = divCreator('top: 0; left: 0; width: 40vw; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'camerapos'});
+    let carPosFresh:HTMLElement = divCreator('top: 0; left: 0; width: 40vw; color: #d42a2a; height: 2rem; display: block; font-size: 0.8rem;display: none;', {text: '', id:'carpos'});
+    let speedFresh:HTMLElement = divCreator('font-family: aldrich ; text-align:center; bottom: -7vh; right: 35vw; height: 25vh; width: 29vw; display: none; color: #56CCF2;font-size: 5vw;', {text: '00', id: 'speedold'});
+    //let scoreFresh = scoreDivCreator();
+   // let falseStick = falseStickCreator();
     
-    var btnDivArrayMenu = [btnMenu, btnJ, btnBots, btnWays, /*btnGrids, btnEsp,*/ btnCamOri, carPosFresh, btnBar];
-    var divArray = [speedFresh, camFresh, camOriFresh];
-    var insertArray= []// =  [scoreFresh/*, falseStick, accelWitness*/];
+    let btnDivArrayMenu = [btnMenu, btnJ, btnBots, btnWays, /*btnGrids, btnEsp,*/ btnCamOri, carPosFresh, btnBar];
+    let divArray = [speedFresh, camFresh, camOriFresh];
+    let insertArray= []// =  [scoreFresh/*, falseStick, accelWitness*/];
 
     insertArray.forEach(div => {
         document.body.insertAdjacentHTML('afterbegin', div);
@@ -87,7 +88,7 @@ function setMainMenu(scene, cameras){
         }
     }
 
-    var disableJoysticks = () => {
+    let disableJoysticks = () => {
         changeColorAndText([btnJ]);
         if (VirtualJoystick.Canvas.style.zIndex == "-1"){
             VirtualJoystick.Canvas.style.zIndex = "4";
@@ -122,19 +123,15 @@ function setMainMenu(scene, cameras){
 
    
 
-    btnBots.onclick = () => {
-        console.log(bots);
-        changeColorAndText([btnBots]);
-        bots.forEach(bot => {
-            bot.isVisible = (bot.isVisible ? false : true)
-            bot.setEnabled(bot.isVisible ? true : false)
-        })
-    }
+    // btnBots.onclick = () => {
+    //     console.log(bots);
+    //     changeColorAndText([btnBots]);
+    //     bots.forEach(bot => {
+    //         bot.isVisible = (bot.isVisible ? false : true)
+    //         bot.setEnabled(bot.isVisible ? true : false)
+    //     })
+    // }
 
-    btnTrees.onclick = () => {
-         disableTrees();
-    }
-    
     btnCamOri.onclick = () => {
         changeColorAndText([btnCamOri]);
         camOriFresh.style.display = camOriFresh.style.display == 'block' ? 'none' : 'block';
@@ -146,7 +143,7 @@ function setMainMenu(scene, cameras){
     }
 
     function showPosCam(){
-        camPosInterval = setInterval(() => {
+        camPosInterval = window.setInterval(() => {
             camFresh.innerHTML = `X: ${scene.activeCameras[0].position.x.toFixed(2)}   Y: ${scene.activeCameras[0].position.z.toFixed(2)}`;
         }, 100)
     }
@@ -159,10 +156,10 @@ function setMainMenu(scene, cameras){
 
 function setControlMenu(scene){
     //USELESS, TO REMOVE
-    //var btnMenuControls = buttonCreator('top: 15vh; white-space: nowrap; left: 0; background-color:black; display: block;',{text: 'Control Settings'});
-    var controlMenu = ['controlmode', 'lk', 'dir', 'spd'];
-    var sensiMenu = ['front', 'side', 'ori', 'setori', 'setcam', /*'sound',*/ 'controlmode', 'carselector'];//controlmode out if different modes are reinstantiated
-    var wasOpen = false;
+    //let btnMenuControls = buttonCreator('top: 15vh; white-space: nowrap; left: 0; background-color:black; display: block;',{text: 'Control Settings'});
+    let controlMenu:string[] = ['controlmode', 'lk', 'dir', 'spd'];
+    let sensiMenu:string[] = ['front', 'side', 'ori', 'setori', 'setcam', /*'sound',*/ 'controlmode', 'carselector'];//controlmode out if different modes are reinstantiated
+    let wasOpen:boolean = false;
 
     //document.body.appendChild(btnMenuControls);
     
@@ -182,15 +179,16 @@ function setControlMenu(scene){
     
 
     controlMenu.forEach(id => {
-        controlTab[type.MODE].push(document.getElementById(id));
+        controlTab[buttontype.MODE].push(document.getElementById(id));
     })
+
     sensiMenu.forEach(id => {
-        controlTab[type.SENSI].push(document.getElementById(id));
+        controlTab[buttontype.SENSI].push(document.getElementById(id));
     })
     
 }
 
-export default function createMenu(scene, camera, internalCamera, freecamera){
-    setMainMenu(scene,camera,internalCamera, freecamera);
+export default function createMenu(scene: Scene, camera: Camera[]){
+    setMainMenu(scene,camera);
     setControlMenu(scene);
 }

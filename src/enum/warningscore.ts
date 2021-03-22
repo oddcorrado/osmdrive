@@ -1,4 +1,4 @@
-const warningScore = {
+const warningScore:Object = {
     SPEED_USELESS_STOP: 'Arrêt inutile',
     SPEED_TOO_SLOW: 'Vitesse trop faible',
     SPEED_TOO_FAST: 'Vitesse trop rapide',

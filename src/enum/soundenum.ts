@@ -1,4 +1,4 @@
-const sound = {
+const sound:Object = {
     NONE: -1,
     IDLE: 0,
     LOW:1,
