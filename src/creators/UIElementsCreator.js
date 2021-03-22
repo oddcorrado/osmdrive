@@ -13,7 +13,7 @@ export function scoreDivCreator(){
 
 export function tapButtonCreator(){
     var div = `
-    <div style='display: none'>
+    <div style='display: block'>
         <div style="position: absolute;
             bottom: 4vh;
             right: 0vh;
@@ -126,7 +126,7 @@ export function blinkerCreator(){
 
 export function centralMirrorCreator(){
     var div =`
-    <div style='position: absolute; top: 0vh; left: 30%; height: 24vh; width: 39%; z-index: 11; border-radius: 0.2vh; border: black solid 1vh;'>
+    <div style='position: absolute; top: 0vh; left: 29.4vw; height: 24%; width: 40.2vw; z-index: 11; border-radius: 0.2vh; border: black solid 1vh;'>
         <canvas id='centralmirror'></canvas>
     </div>
    `

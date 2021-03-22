@@ -6,7 +6,6 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { Texture } from "@babylonjs/core/Materials/Textures/texture"
 import {createTextureCollection} from '../textureCollection'
 import {materialCreator} from '../building'
-import { Material } from "@babylonjs/core/Materials/material"
 import {setStatus} from '../index'
 
 const fillAssetsCountry = (zone: Vector3[], scene: Scene) => {
@@ -22,7 +21,7 @@ const createCountry = (zone: Vector3[], scene: Scene, groundMat: StandardMateria
     }
 }
 
-let offsetWalk = 5;
+let offsetWalk = 5
 let i = 0
 const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: StandardMaterial[]) => {
     let floor: Vector3[] = []
@@ -45,13 +44,13 @@ const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: 
             let z = point.z < maxZ ? point.z + offsetWalk : point.z - offsetWalk
             
             x = x === maxX ? point.x - offsetWalk : x
-            z = z === maxZ ? point.z - offsetWalk : z
+            z = z === maxZ ? point.z - offsetWalk : z 
             floor.push(new Vector3(x, point.y, z))
             top.push(new Vector3(x, point.y + 20, z))
             return true;
         }
     })
-    if ((floor[0].z === floor[1].z  && floor[2].z === floor[3].z && floor[3].z === floor[0].z) || (floor[0].x === floor[1].x && floor[2].x === floor[3].x && floor[3].x === floor[0].x)){
+    if ((floor[0].z === floor[1].z -offsetWalk && floor[2].z === floor[3].z -offsetWalk&& floor[3].z === floor[0].z -offsetWalk) || (floor[0].x === floor[1].x -offsetWalk && floor[2].x === floor[3].x - offsetWalk && floor[3].x === floor[0].x - offsetWalk)){
         console.log('WRONG BUILDING',points, maxX, maxZ, floor)
     } else {
         let building = MeshBuilder.CreateRibbon('newbuilding', {pathArray: [floor, top], closePath: true}, scene)

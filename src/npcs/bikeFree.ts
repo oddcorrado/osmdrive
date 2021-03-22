@@ -5,11 +5,11 @@ import { Vector3, Color3 } from "@babylonjs/core/Maths/math"
 import { InstancedMesh } from "@babylonjs/core/Meshes/instancedMesh"
 
 const startPos = [
-    new Vector3(71,0.1,5)
+    new Vector3(-47,0.1,-3)
 ]
 
 const endPos = [
-    new Vector3(-80,0.1,0)
+    new Vector3(245,0.1,-3)
 ]
 
 const ori = [
@@ -136,7 +136,7 @@ export const createBikeBots = (scene: Scene, nb: number): Promise<BikeFree[]>  =
    return (async () => {
      mesh = await loadBikeModel(scene)
        for (let i = 0; i < nb; i++){
-          bikes.push(addBikeInstanceClass(mesh, i, scene, false))//scripted always true
+          bikes.push(addBikeInstanceClass(mesh, i, scene, true))
        }
        mesh.isVisible = false
        return bikes

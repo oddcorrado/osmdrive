@@ -8,7 +8,6 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { Color3 } from '@babylonjs/core/Maths/math.color'
 import { Texture } from '@babylonjs/core/Materials/Textures/texture'
 import { Path3D } from '@babylonjs/core/Maths/math.path'
-import textPanel from '../textPanel'
 import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
 import { scene as globalScene } from '../index'
 import buildRoads, { roads } from './logic/roads'
@@ -66,7 +65,6 @@ export default function createWays(scene, planes) {
         // lines.push(MeshBuilder.CreateLines("ways", {points: right}, scene))
         const ribbon = MeshBuilder.CreateRibbon("ribbon", { pathArray: [right, left] },  scene )
         ribbon.material = roadMat
-        textPanel(scene, way.name, curve[0].x, 10, curve[0].z, planes)
         // ribbon.receiveShadows = true;
     })
 }

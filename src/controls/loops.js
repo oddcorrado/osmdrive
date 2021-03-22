@@ -8,7 +8,6 @@ import { gpsCheck, getNextTurn } from '../gps/plan'
 import { vectorIntesection } from '../maths/geometry'
 import score from '../scoring/scoring'
 import {toggleBlinkerSound} from '../sounds/carsound'
-import screenfull from 'screenfull'
 
 let sideTilt = 0
 let accel = 0
@@ -234,6 +233,8 @@ function resetWheel () {
         //screenfull.request(document.getElementsByTagName('html')[0], {navigationUI: 'hide'})
     }
 
+    
+
     const viewHandler = (x) => {
         if (touchV && scene.activeCameras[0]){
             if (inter) { clearInterval(inter) }
@@ -452,21 +453,21 @@ function resetWheel () {
     viewdiv.addEventListener('mouseleave', () => {toggleTouchV(false); viewHandlerEnd()})
     viewdiv.addEventListener('mousemove', (e) => {viewHandler(e.clientX)})
 
-    aslide.addEventListener('touchstart', () => {toggleTouchA(true)})
-    aslide.addEventListener('touchend', () => {toggleTouchA(false)})
-    adiv.addEventListener('touchmove', (e) => {accelHandler(e.targetTouches[0].clientY)})
-    aslide.addEventListener('mousedown', () => {toggleTouchA(true)})
-    aslide.addEventListener('mouseup', () => {toggleTouchA(false)})
-    adiv.addEventListener('mouseleave', () => {toggleTouchA(false)})
-    adiv.addEventListener('mousemove', (e) => {accelHandler(e.clientY)})
+    // aslide.addEventListener('touchstart', () => {toggleTouchA(true)})
+    // aslide.addEventListener('touchend', () => {toggleTouchA(false)})
+    // adiv.addEventListener('touchmove', (e) => {accelHandler(e.targetTouches[0].clientY)})
+    // aslide.addEventListener('mousedown', () => {toggleTouchA(true)})
+    // aslide.addEventListener('mouseup', () => {toggleTouchA(false)})
+    // adiv.addEventListener('mouseleave', () => {toggleTouchA(false)})
+    // adiv.addEventListener('mousemove', (e) => {accelHandler(e.clientY)})
 
-    bslide.addEventListener('touchstart', () => {toggleTouchB(true)})
-    bslide.addEventListener('touchend', () => {toggleTouchB(false)})
-    bdiv.addEventListener('touchmove', (e) => {brakeHandler(e.targetTouches[0].clientY)})
-    bslide.addEventListener('mousedown', () => {toggleTouchB(true)})
-    bslide.addEventListener('mouseup', () => {toggleTouchB(false)})
-    bdiv.addEventListener('mouseleave', () => {toggleTouchB(false)})
-    bdiv.addEventListener('mousemove', (e) => {brakeHandler(e.clientY)})
+    // bslide.addEventListener('touchstart', () => {toggleTouchB(true)})
+    // bslide.addEventListener('touchend', () => {toggleTouchB(false)})
+    // bdiv.addEventListener('touchmove', (e) => {brakeHandler(e.targetTouches[0].clientY)})
+    // bslide.addEventListener('mousedown', () => {toggleTouchB(true)})
+    // bslide.addEventListener('mouseup', () => {toggleTouchB(false)})
+    // bdiv.addEventListener('mouseleave', () => {toggleTouchB(false)})
+    // bdiv.addEventListener('mousemove', (e) => {brakeHandler(e.clientY)})
 
     soundtoggle.addEventListener('touchmove', () => soundSwitch())
     soundtoggle.addEventListener('click', () => soundSwitch())

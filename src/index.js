@@ -7,7 +7,6 @@ import createGround from './ground'
 //import control from './controls/control'
 import createMenu from './controls/menu.js'
 import createButtons from './controls/drivebuttons'
-import createFreeCamera from './cameras/freecamera'
 import {createCameras} from './cameras/camera.ts'
 import dressMap from './environment/dressmap'
 import createDefaultCar from './car/detailedcar'
@@ -17,13 +16,11 @@ import startup from './startup'
 import score from './scoring/scoring'
 import { SineEase } from '@babylonjs/core/Animations/easing'
 import {setupGps} from './gps/plan'
-import {setupMirror} from './mirror/centralmirror.ts'
 import { DefaultLoadingScreen } from "@babylonjs/core/Loading/loadingScreen";
 import {createLoading} from './creators/loadingCreator'
 import {carBotsLoop} from './npcs/carbotsIndependantDetector'
 import {bikeFreeLoop} from './npcs/bikeFree'
-import {createRetro} from './cameras/retro'
-//import {carBotsLoop} from './npcs/carbotsSPS'
+import {createRetro} from './cameras/createRetro'
 
 let loadingStatus = {assets: false, car: false, randomgen: false, trees: false, walk: false, ground: false, count: 0}
 let loadingInter
@@ -95,12 +92,11 @@ const boot = () => {
     
     //Creates car, AIs, road and add assets
     try{
-        createDefaultCar(scene, container) 
+        createDefaultCar(scene, container, cameras) 
     } catch (e){}
     
     createWays(scene, planes)
     dressMap(scene, container)
-
     //Create all menus and UI Elements
     createMenu(scene, cameras);
     createButtons(scene);
@@ -112,12 +108,11 @@ const boot = () => {
     scene.blockMaterialDirtyMechanism = true//material clearing
     //
     engine.runRenderLoop(() => {
-        //planes.forEach(p => p.rotation.y = p.rotation.y  + 0.01)
         scene.render()
-         if (waitcar && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar'))) { 
+         if (waitcar && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar')) && loadingStatus.count >= 100) { 
             waitcar = false;
-            score.setupScore(mustang);
-            createRetro(scene)
+            score.setupScore(mustang)
+            createRetro(scene, cameras)
         } else if (!waitcar){
             score.loop()
             carBotsLoop()

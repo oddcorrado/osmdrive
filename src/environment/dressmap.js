@@ -79,8 +79,7 @@ export default function dressMap(scene, container){
 
     (async () => {
        let bots = await createCarBots(scene, 10) 
-       let bike = await createBikeBots(scene, 1)
-
+       let bikes = await createBikeBots(scene, 1)
         spawnTrafficLight(container, bots, scene, -195, -105, Math.PI, 'red')
         spawnTrafficLight(container, bots, scene, -105, -105, -Math.PI/2, 'red')
         spawnTrafficLight(container, bots, scene, -5, -105, -Math.PI/2, 'red')
@@ -91,7 +90,7 @@ export default function dressMap(scene, container){
         spawnNoEntry(container, scene, 203, 207)
         createScriptTriggers(scene, container, bots)
         preventCollision(scene, container, bots)
-        createScriptTriggers(scene,container,bots,6)
+        createScriptTriggers(scene, container, bots, bikes, 6)
         createParking(scene)
         setStatus('assets')
     })()

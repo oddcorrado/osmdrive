@@ -80,6 +80,9 @@ typings/
 # parcel-bundler cache (https://parceljs.org/)
 .cache
 
+# old files folder
+/src/old
+
 # Next.js build output
 .next
 

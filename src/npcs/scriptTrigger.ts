@@ -6,8 +6,9 @@ import { Vector3 } from "@babylonjs/core/Maths/math"
 import { ActionManager, ExecuteCodeAction } from "@babylonjs/core/Actions"
 import { AssetContainer } from "@babylonjs/core/assetContainer"
 import mainCarLoaded from "../car/carloaded"
+import { BikeFree } from "./bikeFree"
 
-let scriptPos: Vector3[] = [
+let scriptBotPos: Vector3[] = [
    // new Vector3(-198,0.1,-113),//light 1
    new Vector3(-198,0.1,-130),//light 1
     new Vector3(-148,0.1,-102),//light 2
@@ -26,7 +27,15 @@ let carbotsId = [
     [8]
 ]
 
-const addActionTrig = (scene: Scene, car: Mesh, bots: CarBot[], trig: Mesh, i: number) => {
+let scriptBikePos: Vector3[] = [
+    new Vector3(2, 0, -64)
+]
+
+let bikeId = [
+    [0]
+]
+
+const addActionTrigBot = (scene: Scene, car: Mesh, bots: CarBot[], trig: Mesh, i: number) => {
     trig.actionManager = new ActionManager(scene)
         trig.actionManager.registerAction(
         new ExecuteCodeAction(
@@ -45,14 +54,38 @@ const addActionTrig = (scene: Scene, car: Mesh, bots: CarBot[], trig: Mesh, i: n
     )
 }
 
-export const createScriptTriggers = (scene: Scene, container:AssetContainer, bots: CarBot[], nb: number) => {
+const addActionTrigBike = (scene: Scene, car: Mesh, bikes: BikeFree[], trig: Mesh, i:number) => {
+    trig.actionManager = new ActionManager(scene)
+        trig.actionManager.registerAction(
+        new ExecuteCodeAction(
+            {
+                trigger: ActionManager.OnIntersectionEnterTrigger,
+                parameter: {
+                    mesh: car
+                }
+            },
+            () => {
+                bikeId[i].forEach(x => {
+                    bikes[x].go = true
+                })
+            })
+    )
+}
+
+export const createScriptTriggers = (scene: Scene, container:AssetContainer, bots: CarBot[], bikes:BikeFree[], nb: number) => {
     (async () => {
         let car = await mainCarLoaded(container)
         for (let i = 0 ; i < nb; i++){
             let trig = MeshBuilder.CreateBox(`trig${i}`, {width: 1, depth: 1, height: 1}, scene)
-            trig.position = scriptPos[i]
+            trig.position = scriptBotPos[i]
             trig.isVisible = false
-            addActionTrig(scene, car, bots, trig, i)
+            addActionTrigBot(scene, car, bots, trig, i)
+        }
+        for (let i = 0; i < scriptBikePos.length && bikes; i++){
+                let biketrig = MeshBuilder.CreateBox(`trig${i}`, {width: 1, depth: 1, height: 1}, scene)
+                biketrig.position = scriptBikePos[i]
+                biketrig.isVisible = true
+                addActionTrigBike(scene, car, bikes, biketrig, i)
         }
     })()
 }
