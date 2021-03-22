@@ -4,10 +4,11 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture'
 import { CubeTexture } from '@babylonjs/core/Materials/Textures/cubeTexture'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { Scene } from '@babylonjs/core/scene'
+import { Mesh } from '@babylonjs/core/Meshes/mesh'
 
-export default function createSkybox(scene) {
-    const skybox = MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
-    const skyboxMaterial = new StandardMaterial("skyBox", scene);
+export default function createSkybox(scene: Scene) {
+    const skybox:Mesh = MeshBuilder.CreateBox("skyBox", {size:1000.0}, scene);
+    const skyboxMaterial:StandardMaterial = new StandardMaterial("skyBox", scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.reflectionTexture = new CubeTexture("./textures/skybox/skybox", scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;

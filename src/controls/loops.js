@@ -133,6 +133,14 @@ export function mustangLoopTap (car, scene, gps) {
         startupDone = true
     }
 
+    // if (brakeStep){
+    //     speed = Math.max(0, speed - brakeStep)//0.004)
+    //     fakeAcceleration =  Math.min(fakeAccelerationMax, fakeAcceleration + fakeAccelerationStep)
+    // } else if (accelerationStep){
+    //     speed = Math.min(1/3, speed + accelerationStep)// 0.002)
+    //     fakeAcceleration = Math.max(-fakeAccelerationMax, fakeAcceleration - fakeAccelerationStep)
+    // }
+    
     if (brakeStep){
         speed = Math.max(0, speed - brakeStep)//0.004)
         fakeAcceleration =  Math.min(fakeAccelerationMax, fakeAcceleration + fakeAccelerationStep)
@@ -140,7 +148,6 @@ export function mustangLoopTap (car, scene, gps) {
         speed = Math.min(1/3, speed + accelerationStep)// 0.002)
         fakeAcceleration = Math.max(-fakeAccelerationMax, fakeAcceleration - fakeAccelerationStep)
     }
-        
    if(0 === speed||speed >= 0.3) {
         fakeAcceleration *= 0.9
     }
@@ -215,17 +222,21 @@ function resetWheel () {
     center = document.getElementById('center');
     let lblinker = document.getElementById('lblink');
     let rblinker = document.getElementById('rblink');
+    // let aslide = document.getElementById('accelslide')
+    // let bslide = document.getElementById('brakeslide')
+    // let adiv = document.getElementById('acceldiv')
+    // let bdiv = document.getElementById('brakediv')
+    let accel =  document.getElementById('accel')
+    let brake =  document.getElementById('brake')
+    let viewdiv = document.getElementById('viewdiv')
+    let viewdrag = document.getElementById('viewdrag')
     lblinkerimg = document.getElementById('lblinkimg');
     rblinkerimg = document.getElementById('rblinkimg')
     var inter;
     let viewInter = null
     let viewX = 300
-    let aslide = document.getElementById('accelslide')
-    let bslide = document.getElementById('brakeslide')
-    let adiv = document.getElementById('acceldiv')
-    let bdiv = document.getElementById('brakediv')
-    let viewdiv = document.getElementById('viewdiv')
-    let viewdrag = document.getElementById('viewdrag')
+    let mouseAction
+    let interAccel
 
     const hideSearch = () =>{
         let element = document.getElementsByTagName('body')
@@ -233,7 +244,38 @@ function resetWheel () {
         //screenfull.request(document.getElementsByTagName('html')[0], {navigationUI: 'hide'})
     }
 
-    
+    const accelTimeoutHandler = () => {
+        interAccel = setInterval(() => {
+            accelerationStep += 0.0001
+        }, 100)
+    }
+
+    const acceleratorPedal = () => {
+        accelTimeoutHandler()
+        brakeStep = 0
+        accel.src = '../../images/accelpress.svg'
+        playAccel(true)
+    }
+
+    const acceleratorPedalEnd = () => {
+        clearInterval(interAccel)
+        brakeStep = 0.0001
+        accelerationStep = 0
+        accel.src = '../../images/accel.svg'
+        playAccel(false)
+    }
+
+    const brakePedal = () => {
+        if (speed > 0) {
+            brakeStep = 0.004
+            brake.src = '../../images/brakepress.svg'
+        }
+    }
+
+    const brakePedalEnd = () => {
+        brakeStep = 0.0001
+        brake.src = '../../images/brake.svg'
+    }
 
     const viewHandler = (x) => {
         if (touchV && scene.activeCameras[0]){
@@ -468,6 +510,20 @@ function resetWheel () {
     // bslide.addEventListener('mouseup', () => {toggleTouchB(false)})
     // bdiv.addEventListener('mouseleave', () => {toggleTouchB(false)})
     // bdiv.addEventListener('mousemove', (e) => {brakeHandler(e.clientY)})
+
+    accel.addEventListener('touchmove', () => acceleratorPedal())
+    accel.addEventListener('touchstart', () => acceleratorPedal())
+    accel.addEventListener('mousedown', () => {
+        mouseAction = 'accelerator'
+        acceleratorPedal() 
+    })
+
+    brake.addEventListener('touchmove', () => brakePedal())
+    brake.addEventListener('touchstart', () => brakePedal())
+    brake.addEventListener('mousedown', () => { 
+        mouseAction = 'brake'
+        brakePedal()
+    })
 
     soundtoggle.addEventListener('touchmove', () => soundSwitch())
     soundtoggle.addEventListener('click', () => soundSwitch())

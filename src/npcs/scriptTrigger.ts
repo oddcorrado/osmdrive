@@ -84,7 +84,7 @@ export const createScriptTriggers = (scene: Scene, container:AssetContainer, bot
         for (let i = 0; i < scriptBikePos.length; i++){
                 let biketrig = MeshBuilder.CreateBox(`trig${i}`, {width: 1, depth: 1, height: 1}, scene)
                 biketrig.position = scriptBikePos[i]
-                biketrig.isVisible = true
+                biketrig.isVisible = false
                 addActionTrigBike(scene, car, bikes, biketrig, i)
         }
     })()

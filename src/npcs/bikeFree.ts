@@ -13,7 +13,7 @@ const endPos = [
 ]
 
 const ori = [
-    new Vector3(0, -Math.PI/2, 0)
+    new Vector3(0, Math.PI/2, 0)
 ]
 
 export class BikeFree {

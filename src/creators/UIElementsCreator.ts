@@ -23,10 +23,10 @@ export function tapButtonCreator(){
             display: flex;
             flex-direction: row-reverse;">
             <div style='width: 15vw'>
-                <img draggable=false id='up' style="height: 30vh; width: 12vw; opacity:0.9" src='../../images/accel.svg'></img>
+                <img draggable=false id='accel' style="height: 30vh; width: 12vw; opacity:0.9" src='../../images/accel.svg'></img>
             </div>
             <div style='width: 13vw'>
-                <img draggable=false id='down' style="height: 17vh; width: 14vw; margin-top: 13vh; opacity:0.9" src='../../images/brake.svg'></img> 
+                <img draggable=false id='brake' style="height: 17vh; width: 14vw; margin-top: 13vh; opacity:0.9" src='../../images/brake.svg'></img> 
             </div>
         </div>
     </div>`

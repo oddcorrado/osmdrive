@@ -7,7 +7,7 @@ import createGround from './ground'
 //import control from './controls/control'
 import createMenu from './controls/menu'
 import createButtons from './controls/drivebuttons'
-import {createCameras} from './cameras/camera.ts'
+import {createCameras} from './cameras/camera'
 import dressMap from './environment/dressmap'
 import createDefaultCar from './car/detailedcar'
 import {setupControls, loopSelector} from './controls/loops'
@@ -68,7 +68,6 @@ DefaultLoadingScreen.prototype.hideLoadingUI = function(){
 }
 
 const canvas = document.getElementById('renderCanvas')
-console.log(canvas)
 const engine = new Engine(canvas,false,null,false)
 const boot = () => {
     let gps;

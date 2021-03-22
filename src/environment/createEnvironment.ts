@@ -4,9 +4,48 @@ import { Scene } from "@babylonjs/core/scene"
 import { Mesh } from "@babylonjs/core/Meshes/mesh"
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { Texture } from "@babylonjs/core/Materials/Textures/texture"
-import {createTextureCollection} from '../textureCollection'
-import {materialCreator} from '../building'
 import {setStatus} from '../index'
+
+
+function textureCreator(scene: Scene, source:string, uS:number, vS:number){
+    const tmpTxtur = new Texture(source, scene)
+
+    tmpTxtur.uScale = uS
+    tmpTxtur.vScale = vS
+
+    return tmpTxtur
+}
+
+function fillCollection(scene: Scene){
+    const textureCollection = [
+        textureCreator(scene, '../textures/building/texture1.jpg', 10, 1),
+        textureCreator(scene, '../textures/building/texture2.jpg', 10, 1),
+        textureCreator(scene, '../textures/building/texture3.jpg', 10, 1),
+        textureCreator(scene, '../textures/building/texture4.jpg', 10, 1) 
+    ]    
+    return textureCollection
+}
+
+export function materialCreator(scene, name){
+    const tmpMat = new StandardMaterial(name, scene);
+    tmpMat.alpha = 1;
+    tmpMat.diffuseColor = new Color3(1, 1, 1);
+    tmpMat.emissiveColor = new Color3(1, 1, 1);
+    tmpMat.backFaceCulling = false
+    return tmpMat;
+}
+
+export function createTextureCollection (scene) {
+    let matTab = []
+    let textureCollection = fillCollection(scene)
+    textureCollection.forEach((texture, i = 0)  => {
+        matTab.push(materialCreator(scene, `mat${i}`))
+        matTab[i].diffuseTexture = textureCollection[i]
+    })
+
+    return matTab
+}
+
 
 const fillAssetsCountry = (zone: Vector3[], scene: Scene) => {
     //spawn between 2 random points 3 times random number of trees
