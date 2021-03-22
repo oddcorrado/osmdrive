@@ -35,7 +35,6 @@ function getInterPos(curr: Vector3, next: Vector3){
     let offsetRoadL:number = 6
     //var fract = 20 / dist
 
-    //while (div < 100){//adapt to building algo
     fract = div/dist
     if (xD/yD > 0.25 && xD/yD < 4)
         return {xR: (curr.x + xD * fract) + offsetRoadR, yR: (curr.y + yD * fract) - offsetRoadR, xL: (curr.x + xD * fract) - offsetRoadR, yL: (curr.y + yD * fract) + offsetRoadR} 
@@ -45,8 +44,6 @@ function getInterPos(curr: Vector3, next: Vector3){
         return {xR: (curr.x + xD * fract), yR: (curr.y + yD * fract) + offsetRoadL, xL: (curr.x + xD * fract), yL: (curr.y + yD * fract) - offsetRoadL} 
     else
         return {xR: (curr.x + xD * fract) + offsetRoadL, yR: (curr.y + yD * fract), xL: (curr.x + xD * fract) - offsetRoadL, yL: (curr.y + yD * fract)}
-        
-    //}
 }
 
 function createTrees(scene: Scene) {
