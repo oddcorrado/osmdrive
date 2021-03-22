@@ -47,6 +47,7 @@ const addActionTrigBot = (scene: Scene, car: Mesh, bots: CarBot[], trig: Mesh, i
             },
             () => {
                 carbotsId[i].forEach(x => {
+                    bots[x].bot.isVisible = true
                     bots[x].go = true
                 })
             }

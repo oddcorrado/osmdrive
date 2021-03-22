@@ -73,7 +73,8 @@ export default function spawnYield(container, scene, x, y, ori) {
    
    return new SceneLoader.ImportMeshAsync('', "../mesh/Panels/Yield/", "signYield.obj", scene).then(function(newMesh) {
       const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true)
-      sign.name = 'stop'
+      sign.name = 'yield'
+      sign.id = 'sign'
       sign.scalingDeterminant = 0.8
       sign.position = posSign
       sign.rotation = rotSign

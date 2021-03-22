@@ -51,6 +51,7 @@ export default function spawnSpeedSign(container, scene, speedLimit, x, y, ori) 
        const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
        sign.name = speedLimit
        limit = speedLimit
+       sign.id = 'sign'
        sign.scalingDeterminant = 1
        sign.position = posSign
        sign.rotation = rotSign

@@ -50,6 +50,7 @@ export default function spawnNoeEntry(container, scene, x, y) {
     return new SceneLoader.ImportMeshAsync('', "../mesh/Panels/Wrong/", "noentry.obj", scene).then(function(newMesh) {
        const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
        sign.name = 'stop';
+       sign.id = 'sign'
        sign.scalingDeterminant = 1;
        sign.position = posSign;
        sign.rotation = rotSign;

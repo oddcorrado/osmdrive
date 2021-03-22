@@ -136,6 +136,7 @@ export default function spawnStop(container, bots, scene, x, y, ori) {
    return new SceneLoader.ImportMeshAsync('', "../mesh/Stop/", "stop.obj", scene).then(function(newMesh) {
       const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true)
       sign.name = 'stop'
+      sign.id = 'sign'
       sign.scalingDeterminant = 0.8
       sign.position = posSign
       sign.rotation = rotSign

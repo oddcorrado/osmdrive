@@ -108,7 +108,9 @@ export class CarBot {
         
         this.bot = Mesh.MergeMeshes(meshes, true, false, undefined, false, true)
         this.bot.scalingDeterminant = 0.6
+        this.bot.isVisible = !scripted
         this.bot.position = trigBotPos[i]//botPos[i]
+        this.bot.name = 'bot'
         this.detector = MeshBuilder.CreateBox('detector', {width: 1, height: 1, depth: 5})
         let pos = trigBotPos[i].add(new Vector3(0,0,3))
         this.detector.position = pos
@@ -296,7 +298,6 @@ const addBotInstanceClass = (meshes: Mesh[], i: number, scene: Scene, scripted: 
 }
 
 const loadBotModel = async (scene: Scene): Promise<Mesh[]> => {
-    // return SceneLoader.ImportMeshAsync('', "../mesh/BotCar/", "cliobot.obj", scene).then(function(newMesh) {
     return SceneLoader.ImportMeshAsync('', "../mesh/ClioV3sign/", "clio.obj", scene).then(function(newMesh) {
         let msh = newMesh['meshes'] as Mesh[]
         return msh

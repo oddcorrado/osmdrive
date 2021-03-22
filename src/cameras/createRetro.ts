@@ -5,6 +5,7 @@ import { MeshBuilder } from "@babylonjs/core/Meshes/meshBuilder"
 import { Mesh } from "@babylonjs/core/Meshes/mesh"
 import { Scene } from "@babylonjs/core/scene"
 import { Camera } from "@babylonjs/core/Cameras/camera"
+import { InstancedMesh } from "@babylonjs/core/Meshes/instancedMesh"
 
 export const createRetro = (scene: Scene, cameras: Camera) => {
     let mirror =  MeshBuilder.CreatePlane('plane', {height: 0.33, width: 1.07, sideOrientation: Mesh.FRONTSIDE})
@@ -15,12 +16,12 @@ export const createRetro = (scene: Scene, cameras: Camera) => {
     mirror.position = new Vector3(0,0.5,1.6)
     text.activeCamera = cameras[2]
 
-    console.log(scene.meshes)
-    scene.meshes.forEach((msh, i) =>{
-       // if (msh != mirror && msh != InstancedMesh){text.renderList.push(msh)}
-        if (i < 200){text.renderList.push(msh)}
+    scene.meshes.forEach((msh, i) =>{        
+        if (msh != mirror &&msh.getClassName() != 'InstancedMesh'){
+            text.renderList.push(msh)
+        }
     })
-    console.log(text.renderList)
+    console.log(text.renderList.length)
 
     text.uScale = -1
     let mat = new StandardMaterial('mat', scene)

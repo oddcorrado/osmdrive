@@ -26,46 +26,55 @@ import { Scene } from '@babylonjs/core/scene'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
 
 function getInterPos(curr: Vector3, next: Vector3){
-    var xD:number = next.x - curr.x
-    var yD:number = next.y - curr.y
-    var dist:number = Math.sqrt(Math.pow(xD, 2) + Math.pow(yD, 2))
-    var div:number = 10
-    var fract:number
+    let xD:number = next.x - curr.x
+    let yD:number = next.y - curr.y
+    let dist:number = Math.sqrt(Math.pow(xD, 2) + Math.pow(yD, 2))
+    let div:number = 10
+    let fract:number
+    let offsetRoadR:number = 2
+    let offsetRoadL:number = 6
     //var fract = 20 / dist
 
     //while (div < 100){//adapt to building algo
     fract = div/dist
     if (xD/yD > 0.25 && xD/yD < 4)
-        return {xR: (curr.x + xD * fract) + 5, yR: (curr.y + yD * fract) - 5, xL: (curr.x + xD * fract) - 5, yL: (curr.y + yD * fract) + 5} 
+        return {xR: (curr.x + xD * fract) + offsetRoadR, yR: (curr.y + yD * fract) - offsetRoadR, xL: (curr.x + xD * fract) - offsetRoadR, yL: (curr.y + yD * fract) + offsetRoadR} 
     else if (xD/yD > -4 && xD/yD < -0.25 )
-        return {xR: (curr.x + xD * fract) + 5, yR: (curr.y + yD * fract) + 5, xL: (curr.x + xD * fract) - 5, yL: (curr.y + yD * fract) - 5} 
+        return {xR: (curr.x + xD * fract) + offsetRoadR, yR: (curr.y + yD * fract) + offsetRoadR, xL: (curr.x + xD * fract) - offsetRoadR, yL: (curr.y + yD * fract) - offsetRoadR} 
     else if (xD > yD)
-        return {xR: (curr.x + xD * fract), yR: (curr.y + yD * fract) + 8, xL: (curr.x + xD * fract), yL: (curr.y + yD * fract) - 8} 
+        return {xR: (curr.x + xD * fract), yR: (curr.y + yD * fract) + offsetRoadL, xL: (curr.x + xD * fract), yL: (curr.y + yD * fract) - offsetRoadL} 
     else
-        return {xR: (curr.x + xD * fract) + 8, yR: (curr.y + yD * fract), xL: (curr.x + xD * fract) - 8, yL: (curr.y + yD * fract)}
+        return {xR: (curr.x + xD * fract) + offsetRoadL, yR: (curr.y + yD * fract), xL: (curr.x + xD * fract) - offsetRoadL, yL: (curr.y + yD * fract)}
         
     //}
 }
 
 function createTrees(scene: Scene) {
-    SceneLoader.ImportMeshAsync('', "../mesh/Treebis/", "tree.obj", scene).then(function (newMesh){
-    let mshs = newMesh['meshes'] as Mesh[]
-    let tree = Mesh.MergeMeshes(mshs, true, true, undefined, false, true)
-    ways.forEach(way => {
-        for (var i = 1; i < way.points.length-1; i++){
-            var posTab = getInterPos(way.points[i], way.points[i+1])
-            addInstance(tree, posTab['xL'], posTab['yL'])
-            addInstance(tree, posTab['xR'], posTab['yR'])
-        }
-     })
-     tree.isVisible = false
-     setStatus('trees')
+    SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh1){
+        SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh2){
+            SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh3){
+                let mshs = newMesh1['meshes'] as Mesh[]
+                let tree = Mesh.MergeMeshes(mshs, true, true, undefined, false, true)
+                let trees = []
+                ways.forEach(way => {
+                    for (var i = 1; i < way.points.length-1; i++){
+                        var posTab = getInterPos(way.points[i], way.points[i+1])
+                        addInstance(tree, posTab['xL'], posTab['yL'])
+                        addInstance(tree, posTab['xR'], posTab['yR'])
+                    }
+                })
+                tree.isVisible = false
+                setStatus('trees')
+            })
+        })
    })
 }
 
 function addInstance(mesh: Mesh, x: number , y: number){
     let newmesh = mesh.createInstance('newmesh')
     newmesh.position = new Vector3(x, 0.1, y)
+    newmesh.scalingDeterminant = 3
+    newmesh.rotation = new Vector3(0,Math.random() * Math.PI,0)
 }
 
 export default function dressMap(scene: Scene, container:AssetContainer){

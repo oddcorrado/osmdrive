@@ -123,7 +123,7 @@ const loadBikeModel = async (scene: Scene): Promise<Mesh> => {
     return  SceneLoader.ImportMeshAsync('', "../mesh/Bike/", "bike.obj", scene).then(function(newMesh) {
         let msh = newMesh['meshes'] as Mesh[]
         let bike = Mesh.MergeMeshes(msh, true, true, null, false, true)
-
+        bike.name = 'bike'
         return bike
     }) 
 }

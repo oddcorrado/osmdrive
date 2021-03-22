@@ -128,6 +128,7 @@ export function spawnTrafficLight(container, bots, scene, x, y, ori, type) {
       })
       const traffic = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
       traffic.name = 'light'
+      traffic.id = 'sign'
       traffic.scalingDeterminant = 0.8
       traffic.position = posSign
       traffic.rotation = rotSign
