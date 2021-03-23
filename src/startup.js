@@ -42,10 +42,12 @@ const startup = boot => {
 
     btn.onclick = () => {
         if (window.innerWidth > window.innerHeight) {
+            let desktop = true
             start.innerText = 'Ubiquity'
             const element = document.getElementsByTagName('html');
             if (screenfull.isEnabled && os.name !== 'Mac OS' && (os !== 'iOS')) {
                  screenfull.request(element[0], {navigationUI: 'hide'})
+                 desktop = false
             }
             document.getElementById('startscreen').remove()
             boot()

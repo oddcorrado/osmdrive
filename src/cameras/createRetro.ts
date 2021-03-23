@@ -8,22 +8,19 @@ import { Camera } from "@babylonjs/core/Cameras/camera"
 import { InstancedMesh } from "@babylonjs/core/Meshes/instancedMesh"
 
 export const createRetro = (scene: Scene, cameras: Camera) => {
-    let mirror =  MeshBuilder.CreatePlane('plane', {height: 0.33, width: 1.07, sideOrientation: Mesh.FRONTSIDE})
-    let text = new RenderTargetTexture('tex', 512, scene)
+    let mirror =  MeshBuilder.CreatePlane('plane', {height: 0.34, width: 0.97, sideOrientation: Mesh.FRONTSIDE})
+    let text = new RenderTargetTexture('tex', 256, scene)
 
     mirror.parent = scene.activeCameras[0]
     mirror.rotation = new Vector3(0, 0, 0)
-    mirror.position = new Vector3(0,0.5,1.6)
+    mirror.position = new Vector3(0,0.5,1.58)
     text.activeCamera = cameras[2]
 
     scene.meshes.forEach((msh, i) =>{        
-        console.log(msh.name, msh.id)
-
         if (msh != mirror && msh.name != 'detector' && msh.name != 'detailedcar' && msh.getClassName() != 'InstancedMesh'){
             text.renderList.push(msh)
         }
     })
-    console.log(text.renderList.length)
 
     text.uScale = -1
     let mat = new StandardMaterial('mat', scene)

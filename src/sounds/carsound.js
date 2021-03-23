@@ -43,27 +43,26 @@ export function setSounds(scene){
 
 export function playAccel(isAccel){
     if (togSound){
-        if (!accelSound && isAccel){
-            speedSound[_.MEDIUM].play()
+        if (!accelSound && isAccel){//COMMENTER POUR ENLEVER LE SON
+            speedSound[_.LOW].play()
             accelSound = true
         } else if (accelSound && !isAccel){
-            speedSound[_.MEDIUM].stop()
+            speedSound[_.LOW].stop()
             accelSound = false
-        }   
+        }   //JUSQU'ICI
     }
 }
 
 export function playEngine(name, vol){
     if (togSound && (name != oldName || vol != oldVol)){
-        if (name != oldName){
+        if (name != oldName){//COMMENTER POUR ENLEVER LE SON
             if (oldName != _.NONE)
                 speedSound[oldName].stop()
             speedSound[name].play()
         }
         speedSound[name].setVolume(vol)
-
         oldVol = vol;
-        oldName = name;
+        oldName = name;//JUSQU'ICI
     }
 }
 

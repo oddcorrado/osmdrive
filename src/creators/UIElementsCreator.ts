@@ -132,7 +132,7 @@ export function blinkerCreator(){
 
 export function centralMirrorCreator(){
     const div: string =`
-    <div style='position: absolute; top: 0vh; left: 29.4vw; height: 24%; width: 40.2vw; z-index: 11; border-radius: 0.2vh; border: black solid 1vh;'>
+    <div style='position: absolute; top: 0vh; left: 29.4vw; height: 24%; width: 40.2%; z-index: 11; border-radius: 0.2vh; border: black solid 1vh;'>
         <canvas id='centralmirror'></canvas>
     </div>
    `

@@ -1,6 +1,6 @@
 import { AssetContainer } from "@babylonjs/core/assetContainer";
 import { Mesh } from "@babylonjs/core/Meshes/mesh";
-
+//set a variable returning mesh directly or loading it
 export default async function mainCarLoaded(container: AssetContainer): Promise<Mesh> {
     return await new Promise (function(resolve) {
         const interval = setInterval(container =>  {

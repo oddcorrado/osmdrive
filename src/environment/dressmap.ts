@@ -50,17 +50,24 @@ function createTrees(scene: Scene) {
     SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh1){
         SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh2){
             SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh3){
-                let mshs = newMesh1['meshes'] as Mesh[]
-                let tree = Mesh.MergeMeshes(mshs, true, true, undefined, false, true)
+                
+                let mshs1 = newMesh1['meshes'] as Mesh[]
+                let mshs2 = newMesh1['meshes'] as Mesh[]
+                let mshs3 = newMesh1['meshes'] as Mesh[]
+                let tree1 = Mesh.MergeMeshes(mshs1, true, true, undefined, false, true)
+                let tree2 = Mesh.MergeMeshes(mshs1, true, true, undefined, false, true)
+                let tree3 = Mesh.MergeMeshes(mshs1, true, true, undefined, false, true)
                 let trees = []
                 ways.forEach(way => {
                     for (var i = 1; i < way.points.length-1; i++){
                         var posTab = getInterPos(way.points[i], way.points[i+1])
-                        addInstance(tree, posTab['xL'], posTab['yL'])
-                        addInstance(tree, posTab['xR'], posTab['yR'])
+                        addInstance(tree1, posTab['xL'], posTab['yL'])
+                        addInstance(tree1, posTab['xR'], posTab['yR'])
                     }
                 })
-                tree.isVisible = false
+                tree1.isVisible = false
+                tree2.isVisible = false
+                tree3.isVisible = false
                 setStatus('trees')
             })
         })

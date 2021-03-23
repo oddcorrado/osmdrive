@@ -68,8 +68,12 @@ DefaultLoadingScreen.prototype.hideLoadingUI = function(){
 }
 
 const canvas = document.getElementById('renderCanvas')
-const engine = new Engine(canvas,false,null,false)
-const boot = () => {
+canvas.style.width = "1920px";
+canvas.style.height =  "1080px"; 
+const engine = new Engine(canvas,true,null,false)
+canvas.style.width = '100%';
+canvas.style.height = '100%';
+const boot = (type) => {
     let gps;
     let mustang;
     let waitcar = true;

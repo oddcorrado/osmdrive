@@ -2,7 +2,7 @@ import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick'
 import { toggleDebugWays } from '../ways/logic/roads'
 import {toggleEsp} from './loops'
 import { Vector3 } from '@babylonjs/core/Maths/math';
-import {setGameState} from './loops'
+import {setGameState, setJoystick} from './loops'
 import {buttonCreator, divCreator, valueButtonCreator, divControlCreator, accelerationWitness, falseStickCreator, menuOptions} from '../creators/buttoncreator.js';
 //import {scoreDivCreator} from '../creators/UIElementsCreator.js';
 import buttontype from '../enum/buttontype';
@@ -156,6 +156,7 @@ function setMainMenu(scene: Scene, cameras: Camera[]){
 
 function setControlMenu(scene){
     //USELESS, TO REMOVE
+    setJoystick(scene)
     //let btnMenuControls = buttonCreator('top: 15vh; white-space: nowrap; left: 0; background-color:black; display: block;',{text: 'Control Settings'});
     let controlMenu:string[] = ['controlmode', 'lk', 'dir', 'spd'];
     let sensiMenu:string[] = ['front', 'side', 'ori', 'setori', 'setcam', /*'sound',*/ 'controlmode', 'carselector'];//controlmode out if different modes are reinstantiated

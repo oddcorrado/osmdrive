@@ -8,10 +8,11 @@ import { gpsCheck, getNextTurn } from '../gps/plan'
 import { vectorIntesection } from '../maths/geometry'
 import score from '../scoring/scoring'
 import {toggleBlinkerSound} from '../sounds/carsound'
+import { VirtualJoystick } from '@babylonjs/core/Misc/virtualJoystick';
 
 let sideTilt = 0
 let accel = 0
-let currentLook
+let currentLook = 0
 let mouseAction = 'idle'
 const unselectedOpacity = 0.9
 
@@ -26,7 +27,16 @@ let nextdir = {up: false, down: false, right: false, left: false};
 var gameState = 'loop';
 var switchCam = 'ford';
 let blink = null
-
+let Lstick
+let scene
+let inter = null
+export function setJoystick(scn){
+    Lstick = new VirtualJoystick(true)
+    scene = scn
+    VirtualJoystick.Canvas.style.opacity = '0'
+    VirtualJoystick.Canvas.style.zIndex = '4'
+    Lstick.setJoystickSensibility(5)
+}
 
 export function loopSelector(scene, mustang, gps){
     if (gameState === 'loop'){
@@ -73,11 +83,37 @@ function setSpeedWitness(speed){
     setSound(speed);
 }
 
-function getCurrentTurn(){
-    var turn = turn = nextdir.right ? 'R' : nextdir.left ? 'L' : null;
-
-    return turn
+const jViewHandler = (touch) => {
+    if (scene.activeCameras[0] && Lstick.pressed){
+        if (inter) { clearInterval(inter); inter = null }
+        currentLook = touch * 100
+        scene.activeCameras[0].lockedTarget.x = currentLook
+        viewdrag.style.marginLeft = `${85 + currentLook}%`
+        if (80 < currentLook || currentLook < -80) {
+            viewdiv.style.background = `linear-gradient(${currentLook < 0 ? 90 : 270}deg , #F3CC30 0%, #F3CC30 50%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%)`
+        } else {
+            viewdiv.style.background = `linear-gradient(${currentLook < 0 ? 90 : 270}deg , #F3CC30 0%, rgba(243, 204, 48, 0) ${Math.abs(currentLook)/2}%, rgba(0,0,0,0) 51%, rgba(0,0,0,0) 100%)` 
+        }
+    } else if (!Lstick.pressed && inter === null && currentLook != 0){
+        jViewHandlerEnd()
+    }
 }
+
+const jViewHandlerEnd = () => {
+    if (inter) { clearInterval(inter) }
+    viewdiv.style.background = 'none'
+    inter = setInterval(() => {
+    if (-11 < currentLook && currentLook < 11 ){
+        clearInterval(inter)
+        scene.activeCameras[0].lockedTarget.x = currentLook = 0
+        viewdrag.style.marginLeft = '85%'
+    } else if (currentLook > 0){ currentLook -=10 }
+        else {currentLook += 10}
+        scene.activeCameras[0].lockedTarget.x = currentLook
+        viewdrag.style.marginLeft = `${85 + currentLook}%`
+    }, 20)
+}
+
 
 let nodes = null
 let selection = null // 'R' or 'L' or null
@@ -99,12 +135,13 @@ const fakeYawMax = 0.05
 let isTurning = false
 //CURRENT LOOP HERE
 let Tnodes = null
-
+let stickView
 export function mustangLoopTap (car, scene, gps) {
     //  var steerWheel = document.getElementById('wheel');
    // selection = isTurning ? selection : getNextTurn()
     document.getElementById('carpos').innerHTML = ` X: ${car.position.x.toFixed(2)}; Z: ${car.position.x.toFixed(2)}`;
     setSpeedWitness(speed*150);
+    jViewHandler(Lstick.deltaPosition.x)
     // *********************
     // CALCUL DU PATH
     // Attention dès qu'on atteint le virage bien penser à reset la selection sinon on tourne en rond....
@@ -174,7 +211,6 @@ export function mustangLoopTap (car, scene, gps) {
         fakeYaw *= 0.95
         car.rotationQuaternion = Quaternion.FromEulerAngles(fakeAcceleration, prevAngle, fakeYaw)
     }
-
     // var newVel = new Vector3(adjustSpeed * Math.cos(angle), vel.y , adjustSpeed * Math.sin(angle))
     
     return
@@ -213,8 +249,22 @@ function resetWheel () {
     selection = null
 }
 
+const getFPS = () =>
+    new Promise(resolve =>
+    requestAnimationFrame(t1 =>
+      requestAnimationFrame(t2 => resolve(1000 / (t2 - t1)))
+    )
+  )
 
  export function setupControls (scene){
+    let accelDefault = 0.0001
+    let brakeDefault = 0.0001
+
+    setTimeout(()=>{getFPS().then((fresh)=>{//adapt accel and brake ratio to refresh rate
+        brakeDefault = fresh > 30 ? 0.004 : 0.008
+        accelDefault = fresh > 30 ? 0.0001 : 0.0002
+        console.log(brakeDefault, accelDefault, fresh)
+    })}, 5000);
     let soundtoggle = document.getElementById('sound');
     //let control = document.getElementById('control')
     let fs = document.getElementById('fs')
@@ -238,6 +288,12 @@ function resetWheel () {
     let mouseAction
     let interAccel
 
+    let body = document.getElementsByTagName('body')
+    console.log(body)
+    body[0].addEventListener('touchmove', ()=>{console.log('test')})
+    body[0].addEventListener('touchstart', ()=>{console.log('test')})
+    //body[0].addEventListener('mousemove', ()=>{console.log('test')})
+    body[0].addEventListener('mousedown', ()=>{console.log('test')})
     const hideSearch = () =>{
         let element = document.getElementsByTagName('body')
         element[0].requestFullscreen()
@@ -245,8 +301,9 @@ function resetWheel () {
     }
 
     const accelTimeoutHandler = () => {
+        interAccel = accelDefault
         interAccel = setInterval(() => {
-            accelerationStep += 0.0001
+            accelerationStep += accelDefault
         }, 100)
     }
 
@@ -259,7 +316,7 @@ function resetWheel () {
 
     const acceleratorPedalEnd = () => {
         clearInterval(interAccel)
-        brakeStep = 0.0001
+        brakeStep = brakeDefault/12
         accelerationStep = 0
         accel.src = '../../images/accel.svg'
         playAccel(false)
@@ -267,13 +324,13 @@ function resetWheel () {
 
     const brakePedal = () => {
         if (speed > 0) {
-            brakeStep = 0.004
+            brakeStep = brakeDefault
             brake.src = '../../images/brakepress.svg'
         }
     }
 
     const brakePedalEnd = () => {
-        brakeStep = 0.0001
+        brakeStep = brakeDefault/12
         brake.src = '../../images/brake.svg'
     }
 
@@ -317,9 +374,9 @@ function resetWheel () {
 
     
 
-    const toggleTouchA = (touch) => {
-        touchA = touchA != touch ? touch : touchA
-    }
+    // const toggleTouchA = (touch) => {
+    //     touchA = touchA != touch ? touch : touchA
+    // }
 
     const accelHandler = (x) => {
         if (touchA === true){
@@ -486,14 +543,14 @@ function resetWheel () {
      })
 
 
-    viewdrag.addEventListener('touchstart', () => {toggleTouchV(true)})
-    viewdrag.addEventListener('touchend', () => {toggleTouchV(false); viewHandlerEnd()})
-    viewdiv.addEventListener('touchmove', (e) => {viewHandler(e.targetTouches[0].clientX)})
+    // viewdrag.addEventListener('touchstart', () => {toggleTouchV(true)})
+    // viewdrag.addEventListener('touchend', () => {toggleTouchV(false); viewHandlerEnd()})
+    // viewdiv.addEventListener('touchmove', (e) => {viewHandler(e.targetTouches[0].clientX)})
 
-    viewdrag.addEventListener('mousedown', () => {toggleTouchV(true)})
-    viewdiv.addEventListener('mouseup', () => {toggleTouchV(false); viewHandlerEnd()})
-    viewdiv.addEventListener('mouseleave', () => {toggleTouchV(false); viewHandlerEnd()})
-    viewdiv.addEventListener('mousemove', (e) => {viewHandler(e.clientX)})
+    // viewdrag.addEventListener('mousedown', () => {toggleTouchV(true)})
+    // viewdiv.addEventListener('mouseup', () => {toggleTouchV(false); viewHandlerEnd()})
+    // viewdiv.addEventListener('mouseleave', () => {toggleTouchV(false); viewHandlerEnd()})
+    // viewdiv.addEventListener('mousemove', (e) => {viewHandler(e.clientX)})
 
     // aslide.addEventListener('touchstart', () => {toggleTouchA(true)})
     // aslide.addEventListener('touchend', () => {toggleTouchA(false)})
@@ -511,19 +568,15 @@ function resetWheel () {
     // bdiv.addEventListener('mouseleave', () => {toggleTouchB(false)})
     // bdiv.addEventListener('mousemove', (e) => {brakeHandler(e.clientY)})
 
-    accel.addEventListener('touchmove', () => acceleratorPedal())
-    accel.addEventListener('touchstart', () => acceleratorPedal())
-    accel.addEventListener('mousedown', () => {
-        mouseAction = 'accelerator'
-        acceleratorPedal() 
-    })
+    accel.addEventListener('touchstart', () =>  acceleratorPedal())
+    accel.addEventListener('mousedown', () => acceleratorPedal())
+    accel.addEventListener('touchend', () => acceleratorPedalEnd())
+    accel.addEventListener('mouseup', () => acceleratorPedalEnd())
 
-    brake.addEventListener('touchmove', () => brakePedal())
     brake.addEventListener('touchstart', () => brakePedal())
-    brake.addEventListener('mousedown', () => { 
-        mouseAction = 'brake'
-        brakePedal()
-    })
+    brake.addEventListener('mousedown', () => brakePedal())
+    brake.addEventListener('touchend', () => brakePedalEnd())
+    brake.addEventListener('mouseup', () => brakePedalEnd())
 
     soundtoggle.addEventListener('touchmove', () => soundSwitch())
     soundtoggle.addEventListener('click', () => soundSwitch())
