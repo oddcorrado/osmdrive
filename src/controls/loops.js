@@ -280,20 +280,33 @@ const getFPS = () =>
     let brake =  document.getElementById('brake')
     let viewdiv = document.getElementById('viewdiv')
     let viewdrag = document.getElementById('viewdrag')
-    lblinkerimg = document.getElementById('lblinkimg');
+    lblinkerimg = document.getElementById('lblinkimg')
     rblinkerimg = document.getElementById('rblinkimg')
+    let middle = document.getElementsByTagName('body')
+
     var inter;
     let viewInter = null
     let viewX = 300
     let mouseAction
     let interAccel
 
-    let body = document.getElementsByTagName('body')
-    console.log(body)
-    body[0].addEventListener('touchmove', ()=>{console.log('test')})
-    body[0].addEventListener('touchstart', ()=>{console.log('test')})
-    //body[0].addEventListener('mousemove', ()=>{console.log('test')})
-    body[0].addEventListener('mousedown', ()=>{console.log('test')})
+    middle[0].addEventListener('touchstart', (e)=>{setViewDivPos(e.targetTouches[0].clientY-viewdiv.offsetTop)})
+    middle[0].addEventListener('touchend', ()=>{resetViewDivPos()})
+    middle[0].addEventListener('mousedown', (e)=>{setViewDivPos(e.clientX)})
+    middle[0].addEventListener('mouseup', ()=>{resetViewDivPos()})
+
+    const setViewDivPos = (x) => {
+        console.log(x)
+        // viewdiv.style.top = `${x/2}px`
+        // viewdiv.style.left = `${e.targetTouches[0].clientX-viewdiv.offsetWidth/2}px`
+    }
+
+    const resetViewDivPos = () => {
+        console.log('reset')
+        viewdiv.style.top = `${middle[0].offsetHeight/12*5}px`
+        viewdiv.style.left = `${middle[0].offsetWidth/11}px`
+    }
+
     const hideSearch = () =>{
         let element = document.getElementsByTagName('body')
         element[0].requestFullscreen()

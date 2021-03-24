@@ -100,20 +100,18 @@ export function wheelLockedCreator(){
 export function dashboardCreator(){
     const div: string = 
    ` <div style='position: absolute; bottom:0vh; left: 35vw; width: 30vw; height: 21vh; text-align: center; color: white; background: url("../images/dashboard.svg") no-repeat bottom; background-size:contain; font-family: Microbrew Soft One, sans-serif';'>
-            <div id='speeddiv' style=' rgba(0.25, 0.25, 0.25, 0.5); border-radius: 2vh; ;height: 40%; width: 40%; margin-top: 3%; margin-left: 30%'>
-                <div id='speed' style='text-align: center; display: inline-block ;height: 90%;font-size: 10vh; font-weight: 400' id='speed'>0</div>    
+            <div id='speeddiv' style=' rgba(0.25, 0.25, 0.25, 0.5); border-radius: 8vh; height: 45%; width: 22%; margin-top: 5%; margin-left: 39%'>
+                <div id='speed' style='text-align: center; display: inline-block ;height: 90%;font-size: 8.5vh; font-weight: 400' id='speed'>0</div>    
             </div> 
-            <div style='position: relative; right: 18%; top: 5%' id='next-turn'>
+            <div style='position: relative; right: 17%; bottom: 5%' id='next-turn'>
                 <img id='gps' style='height: 6vh; width: auto' src='../../images/straight.svg'></img>
             </div>
-            <div style='position: relative; left: 18%; bottom: 35%'>
+            <div style='position: relative; left: 18%; bottom: 45%'>
                 <img id='speedlimit' style='height: 9vh; width: auto;' src='../../images/30.svg'></img>
             </div>
     </div>`
     document.body.insertAdjacentHTML('afterbegin', div)
-    
 }
-
 
 export function blinkerCreator(){
     const div: string =`
@@ -157,6 +155,12 @@ export function viewCreator(){
         <div style='width: 50%; height: 100%; border-right: 0.1vw solid #C4C4C4'>
             <img draggable=false id='viewdrag' src='../images/Vcenter.svg' style='z-index: 11; height: 30%; width: 30%; margin-left: 85%; margin-top: 70%'></img>
         </div>
+    </div>`
+    document.body.insertAdjacentHTML('afterbegin', div)
+}
+
+export function middleDivCreator(){
+    const div: string = `<div id='middle' style='position: absolute; z-index: 4; top: 0%; left: 0%; width: 50vw; height: 100vh'>
     </div>`
     document.body.insertAdjacentHTML('afterbegin', div)
 }

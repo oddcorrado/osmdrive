@@ -73,7 +73,7 @@ canvas.style.height =  "1080px";
 const engine = new Engine(canvas,true,null,false)
 canvas.style.width = '100%';
 canvas.style.height = '100%';
-const boot = (type) => {
+const boot = () => {
     let gps;
     let mustang;
     let waitcar = true;
