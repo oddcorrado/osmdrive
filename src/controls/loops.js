@@ -290,19 +290,17 @@ const getFPS = () =>
     let mouseAction
     let interAccel
 
-    middle[0].addEventListener('touchstart', (e)=>{setViewDivPos(e.targetTouches[0].clientY-viewdiv.offsetTop)})
+    middle[0].addEventListener('touchstart', (e)=>{setViewDivPos(e.targetTouches[0].clientX-(viewdiv.offsetWidth/2), e.targetTouches[0].clientY-(viewdiv.offsetTop/2))})
     middle[0].addEventListener('touchend', ()=>{resetViewDivPos()})
-    middle[0].addEventListener('mousedown', (e)=>{setViewDivPos(e.clientX)})
+    middle[0].addEventListener('click', (e)=>{setViewDivPos(e.clientX-(viewdiv.offsetWidth/2), e.clientY-(viewdiv.offsetTop/2))})
     middle[0].addEventListener('mouseup', ()=>{resetViewDivPos()})
 
-    const setViewDivPos = (x) => {
-        console.log(x)
-        // viewdiv.style.top = `${x/2}px`
-        // viewdiv.style.left = `${e.targetTouches[0].clientX-viewdiv.offsetWidth/2}px`
+    const setViewDivPos = (x,y) => {
+        viewdiv.style.left = `${x}px`
+        viewdiv.style.top = `${y}px`
     }
 
     const resetViewDivPos = () => {
-        console.log('reset')
         viewdiv.style.top = `${middle[0].offsetHeight/12*5}px`
         viewdiv.style.left = `${middle[0].offsetWidth/11}px`
     }
