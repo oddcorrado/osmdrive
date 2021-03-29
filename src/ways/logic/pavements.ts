@@ -81,28 +81,28 @@ interface LeftNode {
     angle: number
 }
 const getLeftNode = (prev: PavNode, node: PavNode) : LeftNode | null => {
-    // console.log('\ngetLeftNode.........', node.id, prev.id, prev.point.x + '/' + prev.point.z, node.point.x + '/' + node.point.z)
+    // //console.log('\ngetLeftNode.........', node.id, prev.id, prev.point.x + '/' + prev.point.z, node.point.x + '/' + node.point.z)
     if(node.nexts == null || node.nexts.length === 0) { return null }
 
     const v = node.point.subtract(prev.point)
     let best : number | null = null
     let bestNode : PavNode | null = null
-    // console.log('v', v, node.nexts)
+    // //console.log('v', v, node.nexts)
     node.nexts.forEach((next: PavNode) => {
         const vt = next.point.subtract(node.point)
 
         const angle = Vector3.GetAngleBetweenVectors(v, vt, Vector3.Up())
-        // console.log('angle/v/vt', prev.junctionIndex, next.junctionIndex, node.id, next.id, angle, v.x + '/' + v.z, vt.x + '/' + vt.z)
+        // //console.log('angle/v/vt', prev.junctionIndex, next.junctionIndex, node.id, next.id, angle, v.x + '/' + v.z, vt.x + '/' + vt.z)
         if(next.id !== prev.id && (prev.junctionIndex === -1 || prev.junctionIndex !== next.junctionIndex)) {
             if(best == null || angle < best) {
                 best = angle
                 bestNode = next
-                // console.log('vt chosen', angle, vt.x + '/' + vt.z)
+                // //console.log('vt chosen', angle, vt.x + '/' + vt.z)
             }
         }
     })
 
-    // console.log('chosing...', bestNode.id)
+    // //console.log('chosing...', bestNode.id)
     return {node: bestNode, angle: best}
 }
 
@@ -123,7 +123,7 @@ const createPolygon = (nodes: PavRoad[], prev: PavNode, node: PavNode): PavRoad 
         if(node.nexts == null || node.nexts.length === 0) { return null }
 
         const next = getLeftNode(prev, node)
-        // console.log('next', next)
+        // //console.log('next', next)
 
         if(next == null) { return null }
 
@@ -145,7 +145,7 @@ const createPolygon = (nodes: PavRoad[], prev: PavNode, node: PavNode): PavRoad 
         if(loops++ > 50) { return polygon }
     }
 
-    // console.log(`totalAngle: ${totalAngle}`)
+    // //console.log(`totalAngle: ${totalAngle}`)
     if(totalAngle > 0) return null
 
     // check triplets
@@ -153,7 +153,7 @@ const createPolygon = (nodes: PavRoad[], prev: PavNode, node: PavNode): PavRoad 
     polygon.nodes.forEach((n: PavNode, i: number) => {
         if(i > 0 && i < polygon.nodes.length - 1 && n.junctionIndex !== -1) {
             const t = getTripletId(n.junctionIndex, polygon.nodes[i - 1].id, polygon.nodes[i + 1].id)
-            // console.log('checking ' + t + triplets.has(t) + triplets.get(t))
+            // //console.log('checking ' + t + triplets.has(t) + triplets.get(t))
 
             if(triplets.has(t)) { found = true }
         }
@@ -164,7 +164,7 @@ const createPolygon = (nodes: PavRoad[], prev: PavNode, node: PavNode): PavRoad 
     polygon.nodes.forEach((n: PavNode, i: number) => {
         if(i > 0 && i < polygon.nodes.length - 1 && n.junctionIndex !== -1) {
             const t = getTripletId(n.junctionIndex, polygon.nodes[i - 1].id, polygon.nodes[i + 1].id)
-            // console.log('adding ' + t)
+            // //console.log('adding ' + t)
             triplets.set(t, true)
         }
     })
@@ -179,7 +179,7 @@ const buildPolys = (roads: PavRoad[]) : PavRoad[] => {
             const prev = roads[ri].nodes[ni - 1]
             if(node.junctionIndex === -1) {
                 const poly = createPolygon(roads, prev,node)
-                // console.log('poly', poly)
+                // //console.log('poly', poly)
                 if(poly != null ) { polys.push(poly) }
             }
         }
@@ -223,7 +223,7 @@ const reducePoly = (poly: PavRoad) : Vector3[] => {
         const p = i === 0 ? poly.nodes[poly.nodes.length - 2] : poly.nodes[i - 1]
 
         const norm = getNormal(c.point.subtract(p.point)).scale(4)
-        // console.log("POINTS", c.point, p.point, norm, shiftSegment({a: p.point, b: c.point, normal: norm}, 10))
+        // //console.log("POINTS", c.point, p.point, norm, shiftSegment({a: p.point, b: c.point, normal: norm}, 10))
 
         segs1.push(shiftSegment({a: p.point, b: c.point, normal: norm}, 5))
         segs2.push(shiftSegment({a: p.point, b: c.point, normal: norm.scale(-1)}, 5))
@@ -276,9 +276,9 @@ const rotatePlanar = (v: Vector3, angle: number): Vector3 => {
     /* const normQuaternion = Quaternion.FromEulerAngles(0, angle, 0)
     let rotated: Vector3 = new Vector3(1, 1, 1)
     v.rotateByQuaternionToRef(normQuaternion, rotated) */
-    console.log(v)
+    //console.log(v)
     const vAngle = v.x !== 0 ? Math.atan2(v.z, v.x) : (v.z > 0 ? Math.PI * 0.5 : -Math.PI * 0.5)
-    console.log(vAngle)
+    //console.log(vAngle)
     const rotated = new Vector3(10 * Math.cos(vAngle + angle), 0 , 10 * Math.sin(vAngle + angle))
     return rotated
 }
@@ -289,15 +289,15 @@ const circleFromCorner = (prev: Vector3, cur: Vector3, next: Vector3, count: num
     const nextNorm = rotatePlanar(next.subtract(cur), Math.PI * 0.5)
 
     // find center
-    console.log(prev.subtract(cur).normalize(), prevNorm.normalize(), next.subtract(cur).normalize(), nextNorm.normalize())
-    console.log(vectorLineIntersection(prev, prev.add(prevNorm), next, next.add(nextNorm)))
+    //console.log(prev.subtract(cur).normalize(), prevNorm.normalize(), next.subtract(cur).normalize(), nextNorm.normalize())
+    //console.log(vectorLineIntersection(prev, prev.add(prevNorm), next, next.add(nextNorm)))
 
     // get line intersections
 }
 
 const cutCornerPoly = (poly: Vector3[]) : Vector3[] => {
     const cutPoly : Vector3[] = []
-//console.log('\n********', poly)
+////console.log('\n********', poly)
     poly.forEach((p: Vector3, i: number) => {
         const prev = i > 0 ? poly[i - 1] : poly[poly.length - 1]
         const next = i < poly.length - 1 ? poly[i + 1] : poly[0]
@@ -307,7 +307,7 @@ const cutCornerPoly = (poly: Vector3[]) : Vector3[] => {
         if((Math.abs(angle) > Math.PI * 0.1 && Math.abs(angle) < Math.PI * 0.9)
             || (Math.abs(angle) > Math.PI * 1.1 && Math.abs(angle) < Math.PI * 1.9))
         {
-            console.log('GO')
+            //console.log('GO')
             const prevVec = prev.subtract(p).normalize().scale(5)
             const nextVec = next.subtract(p).normalize().scale(5)
             cutPoly.push(p.add(prevVec))
@@ -316,7 +316,7 @@ const cutCornerPoly = (poly: Vector3[]) : Vector3[] => {
         }
         else
         {
-            // console.log(i, p, prev, next, angle)
+            // //console.log(i, p, prev, next, angle)
             cutPoly.push(p)
         }
 
@@ -344,16 +344,16 @@ const buildPavements = () : Vector3[][] => {
 
     const roads = createRoads(paths)
 
-  //  console.log('buildRoads', roads)
+  //  //console.log('buildRoads', roads)
 
     const polys = buildPolys(roads)
-   // console.log('polys', polys)
+   // //console.log('polys', polys)
 
     const reds = reducePolys(polys)
-   // console.log('reds', reds)
+   // //console.log('reds', reds)
 
     const cuts = cutCornerPolys(reds)
-   // console.log('cuts', cuts)
+   // //console.log('cuts', cuts)
 
     cuts.forEach((poly, i) => {
         const closedPoly = poly.concat(poly, [poly[0]])

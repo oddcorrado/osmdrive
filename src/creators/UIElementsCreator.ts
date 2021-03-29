@@ -151,16 +151,10 @@ export function speedButtonCreator(){
 
 export function viewCreator(){
     const div: string = 
-   `<div id='viewdiv' style='position: absolute; bottom: 20vh; left: 5vw; height: 40vh; width: 40vh; border-radius: 50%; border: solid 0.1vw #C4C4C4'>
-        <div style='width: 50%; height: 100%; border-right: 0.1vw solid #C4C4C4'>
-            <img draggable=false id='viewdrag' src='../images/Vcenter.svg' style='z-index: 11; height: 30%; width: 30%; margin-left: 85%; margin-top: 70%'></img>
-        </div>
-    </div>`
-    document.body.insertAdjacentHTML('afterbegin', div)
-}
-
-export function middleDivCreator(){
-    const div: string = `<div id='middle' style='position: absolute; z-index: 4; top: 0%; left: 0%; width: 50vw; height: 100vh'>
-    </div>`
+        `<div id='viewdiv' style='position: absolute; bottom: 20vh; left: 5vw; height: 40vh; width: 40vh; border-radius: 50%; border: solid 0.1vw #C4C4C4'>
+            <div style='width: 50%; height: 100%; border-right: 0.1vw solid #C4C4C4'>
+                <img draggable=false id='viewdrag' src='../images/Vcenter.svg' style='z-index: 11; height: 30%; width: 30%; margin-left: 85%; margin-top: 70%'></img>
+            </div>
+        </div>`
     document.body.insertAdjacentHTML('afterbegin', div)
 }

@@ -133,7 +133,6 @@ let fakeYaw = 0
 const fakeYawStep = 0.001
 const fakeYawMax = 0.05
 let isTurning = false
-//CURRENT LOOP HERE
 let Tnodes = null
 let stickView
 export function mustangLoopTap (car, scene, gps) {
@@ -256,15 +255,30 @@ const getFPS = () =>
     )
   )
 
- export function setupControls (scene){
-    let accelDefault = 0.0001
-    let brakeDefault = 0.0001
+  let accelDefault = 0.0001
+  let brakeDefault = 0.0004
+    let fps 
+  const getPreciseFPS = () => {
+    setTimeout(()=>{
+        getFPS().then((fresh)=>{//adapt accel and brake ratio to refresh rate
+            fps=fresh
+            brakeDefault = fps > 30 ? 0.004 : 0.008
+            accelDefault = fps > 30 ? 0.0001 : 0.0002
+            getFPS().then((fresh)=>{//adapt accel and brake ratio to refresh rate
+                console.log(fresh, fps)
+                if (fresh > fps){
+                    brakeDefault = fps > 30 ? 0.004 : 0.008
+                    accelDefault = fps > 30 ? 0.0001 : 0.0002
+                }
+            })
+        })
+    }, 5000);
+  }
 
-    setTimeout(()=>{getFPS().then((fresh)=>{//adapt accel and brake ratio to refresh rate
-        brakeDefault = fresh > 30 ? 0.004 : 0.008
-        accelDefault = fresh > 30 ? 0.0001 : 0.0002
-        console.log(brakeDefault, accelDefault, fresh)
-    })}, 5000);
+ export function setupControls (scene){
+   
+
+    getPreciseFPS()
     let soundtoggle = document.getElementById('sound');
     //let control = document.getElementById('control')
     let fs = document.getElementById('fs')
@@ -282,7 +296,7 @@ const getFPS = () =>
     let viewdrag = document.getElementById('viewdrag')
     lblinkerimg = document.getElementById('lblinkimg')
     rblinkerimg = document.getElementById('rblinkimg')
-    let middle = document.getElementsByTagName('body')
+    let body = document.getElementsByTagName('body')
 
     var inter;
     let viewInter = null
@@ -290,19 +304,23 @@ const getFPS = () =>
     let mouseAction
     let interAccel
 
-    middle[0].addEventListener('touchstart', (e)=>{setViewDivPos(e.targetTouches[0].clientX-(viewdiv.offsetWidth/2), e.targetTouches[0].clientY-(viewdiv.offsetTop/2))})
-    middle[0].addEventListener('touchend', ()=>{resetViewDivPos()})
-    middle[0].addEventListener('click', (e)=>{setViewDivPos(e.clientX-(viewdiv.offsetWidth/2), e.clientY-(viewdiv.offsetTop/2))})
-    middle[0].addEventListener('mouseup', ()=>{resetViewDivPos()})
+    body[0].addEventListener('touchstart', (e)=>{setViewDivPos(e.targetTouches[0].clientX, e.targetTouches[0].clientY)})
+    body[0].addEventListener('touchend', ()=>{resetViewDivPos()})
+   // middle[0].addEventListener('click', (e)=>{setViewDivPos(e.clientX-(viewdiv.offsetWidth/2), e.clientY-(viewdiv.offsetTop/2))})
+    body[0].addEventListener('mouseup', ()=>{resetViewDivPos()})
 
     const setViewDivPos = (x,y) => {
-        viewdiv.style.left = `${x}px`
-        viewdiv.style.top = `${y}px`
+        if (x < body[0].offsetWidth/2){
+            x = x-(viewdiv.offsetWidth/2)
+            y = y-(viewdiv.offsetTop/2)
+            viewdiv.style.left = `${x}px`
+            viewdiv.style.top = `${y}px`
+        }
     }
 
     const resetViewDivPos = () => {
-        viewdiv.style.top = `${middle[0].offsetHeight/12*5}px`
-        viewdiv.style.left = `${middle[0].offsetWidth/11}px`
+        viewdiv.style.top = `${body[0].offsetHeight/12*5}px`
+        viewdiv.style.left = `${body[0].offsetWidth/11}px`
     }
 
     const hideSearch = () =>{
@@ -327,7 +345,7 @@ const getFPS = () =>
 
     const acceleratorPedalEnd = () => {
         clearInterval(interAccel)
-        brakeStep = brakeDefault/12
+        brakeStep = brakeDefault/35
         accelerationStep = 0
         accel.src = '../../images/accel.svg'
         playAccel(false)
@@ -341,7 +359,7 @@ const getFPS = () =>
     }
 
     const brakePedalEnd = () => {
-        brakeStep = brakeDefault/12
+        brakeStep = brakeDefault/35
         brake.src = '../../images/brake.svg'
     }
 
@@ -379,45 +397,10 @@ const getFPS = () =>
         }
     }
 
-    const toggleTouchV = (touch) => {
-        touchV = touchV != touch ? touch : touchV
-    }//all toggle on same func
-
-    
-
     // const toggleTouchA = (touch) => {
     //     touchA = touchA != touch ? touch : touchA
     // }
 
-    const accelHandler = (x) => {
-        if (touchA === true){
-            const pos = (adiv.offsetTop + adiv.offsetHeight ) - x
-            let perc = (pos / adiv.offsetHeight) * 100
-            accelerationStep =  perc < 15 ? 0 : perc > 85 ? 0.002 : (perc / 100) * 0.002
-            aslide.style.top = `${perc < 15 ? 70 : perc > 80 ? 5 : (85 - perc)}%`
-            adiv.style.background = perc < 15 ? `linear-gradient(0deg , rgba(86, 241, 82, 0) 0%,  #56F152 15%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 100%)` : perc > 85 ? `rgba(86, 241, 82, 0.6)` : `linear-gradient(0deg , rgba(86, 241, 82, 0) 0%,  #56F152 ${perc}%, rgba(0,0,0,0) ${perc}%, rgba(0,0,0,0) ${100 - perc}%)`
-        }
-    }
-
-
-    const toggleTouchB = (touch) => {
-        touchB = touchB != touch ? touch : touchB
-    }
-
-    const brakeHandler = (x) => {
-        if (touchB === true){
-            const pos = (bdiv.offsetTop + bdiv.offsetHeight ) - x
-            let perc = (pos / bdiv.offsetHeight) * 100
-        
-            brakeStep =  perc < 15 ? 0 : perc > 85 ? 0.004 : (perc / 100) * 0.004
-            bslide.style.top = `${perc < 15 ? 70 : perc > 80 ? 5 : (85 - perc)}%`
-            bdiv.style.background = perc < 15 ? `linear-gradient(0deg , rgba(255, 0, 0, 0) 0%, #FF0000 15%, rgba(0,0,0,0) 15%, rgba(0,0,0,0) 100%)` : perc > 85 ? `rgba(255, 0, 0, 0.6)` : `linear-gradient(0deg ,rgba(255, 0, 0, 0) 0%,  #FF0000 ${perc}%, rgba(0,0,0,0) ${perc}%, rgba(0,0,0,0) ${100 - perc}%)`
-        }
-    }
-   
-    let touching = false
-
-    
     const soundSwitch = () => {
         if (soundtoggle.src.includes('no')) {
             soundtoggle.src = '../../images/sound.svg'
@@ -425,10 +408,6 @@ const getFPS = () =>
             soundtoggle.src = '../../images/nosound.svg'
         }
         toggleSound()
-    }
-
-    const controlSwitch = () => {
-        keymode = keymode === 2 ? 1 : keymode+1
     }
 
     const lToggleBlinking = () => {

@@ -12,8 +12,8 @@ import { getSpeed } from '../controls/loops'
 
 
 export default function spawnProp(scene, x, y) {
-   return new SceneLoader.ImportMeshAsync('', "../mesh/Bike/", "bike.obj", scene).then(function(newMesh) {
-   let prop = newMesh['meshes'][0]
+   return new SceneLoader.ImportMeshAsync('', "../mesh/NewPanels/", "testYield.obj", scene).then(function(newMesh) {
+      let prop = newMesh['meshes'][0]
       prop.position = new Vector3(0,0,0)
    })
 }

@@ -88,13 +88,8 @@ function setMainMenu(scene: Scene, cameras: Camera[]){
         }
     }
 
-    let disableJoysticks = () => {
-        changeColorAndText([btnJ]);
-        if (VirtualJoystick.Canvas.style.zIndex == "-1"){
-            VirtualJoystick.Canvas.style.zIndex = "4";
-        } else {
-            VirtualJoystick.Canvas.style.zIndex = "-1";
-        }
+    const disableJoysticks = () => {
+        VirtualJoystick.Canvas.style.zIndex =  VirtualJoystick.Canvas.style.zIndex === "-1" ?  '4' : '-1'
     }
 
     btnJ.onclick = () => {
@@ -103,6 +98,7 @@ function setMainMenu(scene: Scene, cameras: Camera[]){
 
 
     const switchCam = () => {
+        disableJoysticks()
         switch (scene.activeCameras[0]){
             case cameras[0]:
                 scene.activeCameras[0] = cameras[1]

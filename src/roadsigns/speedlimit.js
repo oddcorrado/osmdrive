@@ -10,7 +10,6 @@ import { ActionManager, ExecuteCodeAction } from '@babylonjs/core/Actions'
 let limit;
 
 async function createAction(scene, trig, container){
-   var stopped = false
    trig.actionManager = new ActionManager(scene)
    return await new Promise (function(resolve) {
       const interval = setInterval(container =>  {
@@ -37,7 +36,8 @@ async function createAction(scene, trig, container){
    })
 }
 
-export default function spawnSpeedSign(container, scene, speedLimit, x, y, ori) {
+export default function spawnSpeedSign(container, scene, speed, mesh, x, y, ori) {
+   console.log(mesh)
     const rotSign = new Vector3(0, ori, 0);
     const posSign = new Vector3(x, 0, y);
     let trig = MeshBuilder.CreateBox('box', {width:1, height:1.5, depth: 0.3}, scene)
@@ -47,15 +47,12 @@ export default function spawnSpeedSign(container, scene, speedLimit, x, y, ori) 
     trig.position = trigPos
     trig.rotation = trigRot
     trig.isVisible = false
-    return new SceneLoader.ImportMeshAsync('', `../mesh/Panels/${speedLimit}/`, `${speedLimit}.obj`, scene).then(function(newMesh) {
-       const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true);
-       sign.name = speedLimit
-       limit = speedLimit
-       sign.id = 'sign'
-       sign.scalingDeterminant = 1
-       sign.position = posSign
-       sign.rotation = rotSign
-       createAction(scene, trig, container)
-       return sign;
-    })
- }
+      const sign = mesh.clone()
+      sign.name = speed
+      limit = speed
+      sign.id = 'sign'
+      sign.scalingDeterminant = 1
+      sign.position = posSign
+      sign.rotation = rotSign
+      createAction(scene, trig, container)
+}

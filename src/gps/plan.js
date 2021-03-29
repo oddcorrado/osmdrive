@@ -38,7 +38,7 @@ function checkJunctionGps(current, prev){
     idx = plan[idx] === 'E' ? idx : idx+1;
     arrow.src = imageSources[plan[idx]];
     if (plan[idx] ==='E'){
-        setTimeout(() => {setGameState('end'); createEndOfLevel()}, 2000)
+        setTimeout(() => {setGameState('end'); createEndOfLevel()}, 3500)
     }
 }
 

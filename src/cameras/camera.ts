@@ -10,8 +10,8 @@ import { TransformNode } from '@babylonjs/core/Meshes/transformNode';
 
 export const createCameras = (scene: Scene, canvas: HTMLElement) => {
     let camera1 = new FreeCamera("cam1", new Vector3(0, 3,0.4), scene)
-    let camera2 = new FreeCamera("cam2",new Vector3(0, 3,-3), scene)
-    let freecamera = new FreeCamera("freecam", new Vector3(-200, 10, -280), scene)
+    let camera2 = new FreeCamera("cam2", new Vector3(0, 3,-3), scene)
+     let freecamera = new FreeCamera("freecam", new Vector3(-200, 10, -210), scene)
 
     freecamera.attachControl(canvas, true)
     camera2.rotation.y = Math.PI

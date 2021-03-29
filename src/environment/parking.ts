@@ -9,6 +9,6 @@ export const createParking = (scene: Scene) => {
     let park = MeshBuilder.CreateBox('plane', {width: 3, height: 0.2, depth: 7}, scene)
     let mat = new StandardMaterial('matpark', scene)
     mat.emissiveColor = new Color3(0,0,0.4)
-    park.position = new Vector3(301.8, 0.2, 223)
+    park.position = new Vector3(301.8, 0.2, 300)
     park.material = mat
 }

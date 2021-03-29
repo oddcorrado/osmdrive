@@ -7,14 +7,15 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { ActionManager, ExecuteCodeAction, DoNothingAction } from '@babylonjs/core/Actions'
 import score from '../scoring/scoring'
 import { getSpeed } from '../controls/loops'
-
+import { Scene } from '@babylonjs/core/scene'
+import { AssetContainer } from '@babylonjs/core/assetContainer'
 
 function clearSceneActionManager(scene){
    if (scene.actionManager.actions)
       scene.actionManager.actions = []
 }
 
-async function createAction(scene, trig, container){
+async function createAction(scene: Scene, trig: Mesh, container:AssetContainer){
    var stopped = false
    trig.actionManager = new ActionManager(scene)
    return await new Promise (function(resolve) {
@@ -36,9 +37,7 @@ async function createAction(scene, trig, container){
                },
             },
          function(){
-         const speed = car.physicsImpostor != null
-            ? car.physicsImpostor.getLinearVelocity().length()
-            : getSpeed()
+            const speed = getSpeed()
             score.newScore('YIELD', speed*150 >= 25 ? -50 : 50)
          })
       )
@@ -71,8 +70,10 @@ export default function spawnYield(container, scene, x, y, ori) {
    trig.rotation = lineRot
    trig.isVisible = false
    
-   return new SceneLoader.ImportMeshAsync('', "../mesh/Panels/Yield/", "signYield.obj", scene).then(function(newMesh) {
-      const sign = Mesh.MergeMeshes(newMesh['meshes'], true, false, undefined, false, true)
+   // return new SceneLoader.ImportMeshAsync('', "../mesh/Panels/Yield/", "signYield.obj", scene).then(function(newMesh) {
+   return  SceneLoader.ImportMeshAsync('', "../mesh/NewPanels/", "YieldRev.obj", scene).then(function(newMesh) {
+      let msh = newMesh['meshes'] as Mesh[]
+      const sign = Mesh.MergeMeshes(msh, true, false, undefined, false, true)
       sign.name = 'yield'
       sign.id = 'sign'
       sign.scalingDeterminant = 0.8

@@ -174,7 +174,7 @@ export class CarBot {
     faststop = () => {
         //this.speed = 0;
         if (this.speed > 0){
-            this.speed = Math.max(0, this.speed - 0.01)
+            this.speed = Math.max(0, this.speed - 0.005)
             this.fakeAcceleration = Math.min(this.fakeAccelerationMax, this.fakeAcceleration + this.fakeAccelerationStep)
         }
     }

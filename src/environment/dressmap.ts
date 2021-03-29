@@ -3,7 +3,6 @@ import  '@babylonjs/loaders/OBJ'
 import {SceneLoader} from '@babylonjs/core/Loading/sceneLoader'
 import { Vector3, Color3 } from '@babylonjs/core/Maths/math'
 import { ways } from '../map'
-import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
 import spawnStop from '../roadsigns/stopsign'
@@ -24,6 +23,10 @@ import {createScriptTriggers} from '../npcs/scriptTrigger'
 import {createParking} from './parking'
 import { Scene } from '@babylonjs/core/scene'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
+import loadPanels from '../roadsigns/loadPanels'
+import spawnPanel from '../roadsigns/spawnPanel'
+import spawnTrafficLightSq from '../roadsigns/trafficLightClass'
+
 
 function getInterPos(curr: Vector3, next: Vector3){
     let xD:number = next.x - curr.x
@@ -48,15 +51,15 @@ function getInterPos(curr: Vector3, next: Vector3){
 
 function createTrees(scene: Scene) {
     SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh1){
-        SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh2){
-            SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh3){
+     //   SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh2){
+   //         SceneLoader.ImportMeshAsync('', "../mesh/NewTree/", "tree.obj", scene).then(function (newMesh3){
                 
                 let mshs1 = newMesh1['meshes'] as Mesh[]
-                let mshs2 = newMesh1['meshes'] as Mesh[]
-                let mshs3 = newMesh1['meshes'] as Mesh[]
+                //let mshs2 = newMesh1['meshes'] as Mesh[]
+                //let mshs3 = newMesh1['meshes'] as Mesh[]
                 let tree1 = Mesh.MergeMeshes(mshs1, true, true, undefined, false, true)
-                let tree2 = Mesh.MergeMeshes(mshs1, true, true, undefined, false, true)
-                let tree3 = Mesh.MergeMeshes(mshs1, true, true, undefined, false, true)
+                //let tree2 = Mesh.MergeMeshes(mshs2, true, true, undefined, false, true)
+                //let tree3 = Mesh.MergeMeshes(mshs3, true, true, undefined, false, true)
                 let trees = []
                 ways.forEach(way => {
                     for (var i = 1; i < way.points.length-1; i++){
@@ -66,12 +69,12 @@ function createTrees(scene: Scene) {
                     }
                 })
                 tree1.isVisible = false
-                tree2.isVisible = false
-                tree3.isVisible = false
+              //  tree2.isVisible = false
+               // tree3.isVisible = false
                 setStatus('trees')
             })
-        })
-   })
+       // })
+   //})
 }
 
 function addInstance(mesh: Mesh, x: number , y: number){
@@ -87,19 +90,27 @@ export default function dressMap(scene: Scene, container:AssetContainer){
     createTrees(scene);
 
     (async () => {
+        // available panels '110Limit', 'EndBikeLane', 'Zone30', 'EndInterdiction', 'LowBranches', 'NoTraffic', 'OneWay', 'Yield50', 'School', 'Slippery', 'PedestrianLane', 'LevelCrossing'
        let bots = await createCarBots(scene, 10) 
        let bikes = await createBikeBots(scene, 1)
-        spawnTrafficLight(container, bots, scene, -195, -105, Math.PI, 'red')
-        spawnTrafficLight(container, bots, scene, -105, -105, -Math.PI/2, 'red')
-        spawnTrafficLight(container, bots, scene, -5, -105, -Math.PI/2, 'red')
-        spawnTrafficLight(container, bots, scene, 5, -5, Math.PI, 'green')
+       let panels: Object = await loadPanels(scene)
+       spawnSpeedSign(container, scene, 30, panels['Zone30'], -195, -270, Math.PI)
 
+       spawnTrafficLightSq(scene, bots, [new Vector3(-200, 0, -100)])
+       spawnTrafficLightSq(scene, bots, [new Vector3(-100, 0, -100)])
+       spawnTrafficLightSq(scene, bots, [new Vector3(0, 0, -100)])
+       spawnTrafficLightSq(scene, bots, [new Vector3(0, 0, 0)])
         spawnStop(container, bots, scene, 195, -5, Math.PI)
+        spawnPanel(panels['Yield50'], [new Vector3(205, 0, 25), new Vector3(0, Math.PI, 0)])
         spawnYield(container, scene, 205, 95, Math.PI)
         spawnNoEntry(container, scene, 203, 207)
         preventCollision(scene, container, bots)
         createScriptTriggers(scene, container, bots, bikes, 6)
+        spawnSpeedSign(container, scene, 110, panels['110Limit'], 305, 222,Math.PI)
         createParking(scene)
+        for (let name in panels){
+            panels[name].isVisible = false
+        }
         setStatus('assets')
     })()
    //botshandler.createBots(scene, container)
@@ -111,7 +122,6 @@ export default function dressMap(scene: Scene, container:AssetContainer){
     // spawnSpeedSign(container, scene, '30', 15, -5)//'50', '100'
     //
     loadArrow(scene)
-    spawnSpeedSign(container, scene, '30', -195, -280, Math.PI)
-    //spawnProp(scene, 0, 0)
+  //  spawnProp(scene, -190, -270)
 }
 
