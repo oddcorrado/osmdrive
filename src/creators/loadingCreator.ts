@@ -30,7 +30,7 @@ export function createLoading(){
 
 export function createEndOfLevel(){
     const div:string = `
-    <div style='position: absolute; top: 18%; left: 30.5%; width: 37%; height: 40%; font-family: Asap Condensed; background-color: rgba(255,255,255,0.7); font-size: 5vh; text-align: center; border-radius: 1vh; box-shadow: -1px 2px 7.2px 1.8px rgba(0, 0, 0, 0.15)'>
+    <div style='position: absolute; top: 18%; left: 30.5%; width: 37%; height: 40%; font-family: Asap Condensed; background-color: rgba(255,255,255,0.7); font-size: 5vh; text-align: center; border-radius: 1vh; box-shadow: -1px 2px 7.2px 1.8px rgba(0, 0, 0, 0.15); z-index: 20'>
         <div style='position: relative; top: -10%; height: '>
             <img src='../../images/congrats.svg'></img>
         </div>

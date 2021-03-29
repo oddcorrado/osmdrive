@@ -181,7 +181,7 @@ export function mustangLoopTap (car, scene, gps) {
         speed = Math.max(0, speed - brakeStep)//0.004)
         fakeAcceleration =  Math.min(fakeAccelerationMax, fakeAcceleration + fakeAccelerationStep)
     } else if (accelerationStep){
-        speed = Math.min(1/3, speed + accelerationStep)// 0.002)
+        speed = Math.min(4/5, speed + accelerationStep)// 0.002)
         fakeAcceleration = Math.max(-fakeAccelerationMax, fakeAcceleration - fakeAccelerationStep)
     }
    if(0 === speed||speed >= 0.3) {

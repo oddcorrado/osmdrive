@@ -101,8 +101,8 @@ export class BikeFree {
 
     bikeFreeLoop = () => {           
         if (this.bot.position != endPos[this.idx]){
-            this.bot.position.x -= this.adVector.x/1000
-            this.bot.position.z -= this.adVector.z/1000
+            this.bot.position.x -= this.adVector.x/2000
+            this.bot.position.z -= this.adVector.z/2000
            // console.log(this.bot.position)
             //console.log(this.bot.position.x-=0.01)
         } else {
