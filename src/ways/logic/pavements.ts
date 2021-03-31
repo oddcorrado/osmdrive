@@ -272,31 +272,76 @@ const reducePolys = (polys: PavRoad[]) : Vector3[][] => {
     return reds
 }
 
+// rotates a vector by angle on the XZ plan
+// TODO: find out how to use quaternions
 const rotatePlanar = (v: Vector3, angle: number): Vector3 => {
     /* const normQuaternion = Quaternion.FromEulerAngles(0, angle, 0)
     let rotated: Vector3 = new Vector3(1, 1, 1)
     v.rotateByQuaternionToRef(normQuaternion, rotated) */
     //console.log(v)
     const vAngle = v.x !== 0 ? Math.atan2(v.z, v.x) : (v.z > 0 ? Math.PI * 0.5 : -Math.PI * 0.5)
-    //console.log(vAngle)
-    const rotated = new Vector3(10 * Math.cos(vAngle + angle), 0 , 10 * Math.sin(vAngle + angle))
+    
+    const rotated = new Vector3(Math.cos(vAngle + angle), 0 , Math.sin(vAngle + angle)).normalize().scale(v.length())
+
     return rotated
 }
-const circleFromCorner = (prev: Vector3, cur: Vector3, next: Vector3, count: number = 3) => {
-    
-    // get normals
-    const prevNorm = rotatePlanar(prev.subtract(cur), Math.PI * 0.5)
-    const nextNorm = rotatePlanar(next.subtract(cur), Math.PI * 0.5)
 
-    // find center
-    //console.log(prev.subtract(cur).normalize(), prevNorm.normalize(), next.subtract(cur).normalize(), nextNorm.normalize())
-    //console.log(vectorLineIntersection(prev, prev.add(prevNorm), next, next.add(nextNorm)))
+// using a tringle builds returns a set of points following a cruve from prev to next, cur is used to determine the radius
+const circleFromCorner = (point: Vector3, toPrev: Vector3, toNext: Vector3, count: number = 3): Vector3[] => {
+    const output = []
+    const isPositive = toPrev.cross(toNext).y > 0 ? 1 : -1
+
+    // get internal normals
+    const prevNorm = rotatePlanar(toPrev, -isPositive * Math.PI * 0.5).normalize().scale(5)
+    const nextNorm = rotatePlanar(toNext, isPositive * Math.PI * 0.5).normalize().scale(5)
+
+    /* let li = Mesh.CreateLines('li', [point.add(toPrev), point.add(toPrev).add(prevNorm)], globalScene)
+    li.position.y = li.position.y + 1
+    li.color = Color3.Red()
+
+    let lii = Mesh.CreateLines('lii', [point.add(toNext), point.add(toNext).add(nextNorm)], globalScene)
+    lii.position.y = lii.position.y + 1
+    lii.color = Color3.Green() */
 
     // get line intersections
-}
+    const a1 = point.add(toNext)
+    const a2 = a1.add(nextNorm)
+    const b1 = point.add(toPrev)
+    const b2 = b1.add(prevNorm)
+    const center = vectorLineIntersection(a1, a2, b1, b2)
+
+    /* let licenter = Mesh.CreateLines('licenter', [center, center.add(new Vector3(0, 2, 0))], globalScene)
+    licenter.color = Color3.Blue() */
+
+    // set start and end vector
+    const start = point.add(toPrev).subtract(center)
+    const end = point.add(toNext).subtract(center)
+
+    // get angle from start to prev
+    const startAngle = start.x !== 0 ? Math.atan2(start.z, start.x) : (start.z > 0 ? Math.PI * 0.5 : -Math.PI * 0.5)
+    const endAngle = end.x !== 0 ? Math.atan2(end.z, end.x) : (end.z > 0 ? Math.PI * 0.5 : -Math.PI * 0.5)
+
+    const diffAngle = endAngle - startAngle
+    const angleStep = Math.abs(diffAngle) < Math.PI 
+        ? (diffAngle) / (count + 1)
+        : (diffAngle > 0 ? diffAngle - 2 * Math.PI : diffAngle + 2 * Math.PI) / (count + 1)
+
+    for(let i = 1; i <= count; i++) {
+        // TODO: draw an ellipse
+        // const length = (end.length() * i + start.length() * (count + 1 - i)) / (count + 1)
+        const length = start.length()
+        const v = rotatePlanar(start.normalizeToNew().scale(length), angleStep * i)
+        /* const lip = Mesh.CreateLines('lip', [center, center.add(v)], globalScene)
+        lip.position.y = lip.position.y + 1
+        lip.color = Color3.White() */
+        output.push(center.add(v))
+    }
+
+    return output
+ }
 
 const cutCornerPoly = (poly: Vector3[]) : Vector3[] => {
-    const cutPoly : Vector3[] = []
+    let cutPoly : Vector3[] = []
 ////console.log('\n********', poly)
     poly.forEach((p: Vector3, i: number) => {
         const prev = i > 0 ? poly[i - 1] : poly[poly.length - 1]
@@ -305,17 +350,14 @@ const cutCornerPoly = (poly: Vector3[]) : Vector3[] => {
         const angle = Vector3.GetAngleBetweenVectors(next.subtract(p), prev.subtract(p), Vector3.Up())
 
         if((Math.abs(angle) > Math.PI * 0.1 && Math.abs(angle) < Math.PI * 0.9)
-            || (Math.abs(angle) > Math.PI * 1.1 && Math.abs(angle) < Math.PI * 1.9))
-        {
-            //console.log('GO')
+            || (Math.abs(angle) > Math.PI * 1.1 && Math.abs(angle) < Math.PI * 1.9)) {
             const prevVec = prev.subtract(p).normalize().scale(5)
             const nextVec = next.subtract(p).normalize().scale(5)
             cutPoly.push(p.add(prevVec))
+            cutPoly = cutPoly.concat(circleFromCorner(p, prevVec, nextVec))
             cutPoly.push(p.add(nextVec))
-            circleFromCorner(prevVec, p, nextVec)
         }
-        else
-        {
+        else {
             // //console.log(i, p, prev, next, angle)
             cutPoly.push(p)
         }
