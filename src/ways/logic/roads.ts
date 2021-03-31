@@ -24,6 +24,17 @@ interface node {
     connections?: node[] // connected nodes
 }
 
+
+// # # # # # # # # # # # # # MARKINGS # # # # # # # # 
+// used for ground Mark
+interface markingNode {
+    point: Vector3 // position
+    type?: string // used for intermediate nodes
+    isJunction:boolean
+}
+
+type markingRoad = markingNode[]
+
 // a simple node structure used at the beginning of the computaiton
 interface pathNode {
     point: Vector3
@@ -61,6 +72,9 @@ interface insertionSegment {
 const junctions: Vector3[] = []
 let paths: path[] = []
 export let roads: road[] = []
+// # # # # # # # # # # # # # MARKINGS # # # # # # # # 
+export let markings: markingRoad[] = []
+
 // these are mostly node references inside the roads that help connect everything together in the end
 const unqualifiedIntersections: insertionPoint[] = []
 const qualifiedIntersections: insertionPoint[] = []
@@ -68,6 +82,7 @@ const qualifiedIntersections: insertionPoint[] = []
 
 
 export default function buildRoads() {
+    console.log('WAYS ORIGIN # # # # # # # # # # # # # # # # # # # # # # # # # # # # # ',ways)
     // We start with ways, a way is built on nodes and indicates the number of lanes
     /* WAYS (x represents a node), '|' and '-' are the 'lines' beween nodes, '.' is nothing
             2 lanes
@@ -192,6 +207,9 @@ export default function buildRoads() {
     .................
     */
     connectIntersectionNodes()
+
+// # # # # # # # # # # # # # MARKINGS # # # # # # # # 
+    buildGround()
 }
 
 interface way {
@@ -543,7 +561,33 @@ function connectIntersectionNodes() {
             })
         })
     })
-    console.log("new roads", roads)
+    console.log("new roads #  # # # # # # # # # # # # # # # # # # # # # # # # ", roads)
+
+}
+
+// # # # # # # # # # # # # # MARKINGS # # # # # # # # 
+// Defines a new model for markings use only. So far we just take the middle of the two lanes.
+function buildGround() {
+    roads.forEach((road,roadIndex) => {
+        // create a road array
+        markings.push([])
+
+        road.lanes[0].forEach(node0 => {
+            // node in the 0 lane
+            const node0Point= node0.point
+            // node in front of it in the lane 1
+            const node1Point = road.lanes[1][node0.laneIndex].point
+            // determine the middle of the two and push it to the markingRoad table
+            markings[roadIndex].push( 
+                {   
+                    point:node0Point.add(node1Point).scale(0.5),
+                    type:'lane',
+                    isJunction: node0.type === "junction"
+                }
+            )
+        })
+    })
+// console.log("MARKINGS #  # # # # # # # # # # # # # # # # # # # # # # # # ", markings)
 }
 
 export function toggleDebugWays() {
@@ -563,7 +607,7 @@ export function toggleDebugWays() {
         })
     })
 
-    console.log(roads)
+    // console.log(roads)
     roads.forEach((road, i) => {
         road.lanes.forEach((lane) => {
             const curve = lane.map(n => n.point)
