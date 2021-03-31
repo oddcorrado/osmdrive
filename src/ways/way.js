@@ -10,7 +10,7 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture'
 import { Path3D } from '@babylonjs/core/Maths/math.path'
 import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
 import { scene as globalScene } from '../index'
-import buildRoads, { roads } from './logic/roads'
+import buildRoads, { roads,markings } from './logic/roads'
 import buildPavements from './logic/pavements'
 //import buildPavements from '../old/oldPavements'
 
@@ -26,14 +26,14 @@ let enableDebug = false
 export default function createWays(scene, planes) {
     const roadMat = new StandardMaterial("mat2", scene);
     roadMat.alpha = 1;
-    roadMat.diffuseColor = new Color3(0.5, 0.5, 0.5)
-    roadMat.specularColor = new Color3(0, 0, 0)
-    roadMat.emissiveColor = new Color3(0.3, 0.3, 0.3);
+    roadMat.diffuseColor = new Color3(1, 1, 1)
+    roadMat.specularColor = new Color3(1, 1, 1)
+    roadMat.emissiveColor = new Color3(1, 1, 1);
     roadMat.backFaceCulling = false
-    const roadTexture = new Texture('./textures/road2.jpeg', scene)//road, road2
-    roadTexture.vScale = 1
-    roadTexture.uScale = 50
-    roadMat.diffuseTexture = roadTexture
+    // const roadTexture = new Texture('./textures/road2.jpeg', scene)//road, road2
+    // roadTexture.vScale = 1
+    // roadTexture.uScale = 50
+    // roadMat.diffuseTexture = roadTexture
 
     // find the junctions
     buildRoads()
@@ -49,24 +49,44 @@ export default function createWays(scene, planes) {
         const curve = path3D.getCurve();
         
 
-        const left = curve.map ((p,i) => p.add(normals[i].scale(4)))
-        const right = curve.map ((p,i) => p.subtract(normals[i].scale(4)))
+        const left = curve.map ((p,i) => p.add(normals[i].scale(1)))
+        const right = curve.map ((p,i) => p.subtract(normals[i].scale(1)))
 
-        const pathLeft3D = new Path3D(left.concat())
-        const pathRight3D = new Path3D(right.concat().reverse())
-
-        pathLeft3D.type = 'left'
-        pathRight3D.type = 'right'
-        paths.push(pathLeft3D)
-        paths.push(pathRight3D)
         
-        // lines.push(MeshBuilder.CreateLines("ways", {points: curve}, scene))
-        // lines.push(MeshBuilder.CreateLines("ways", {points: left}, scene))
-        // lines.push(MeshBuilder.CreateLines("ways", {points: right}, scene))
-        const ribbon = MeshBuilder.CreateRibbon("ribbon", { pathArray: [right, left] },  scene )
-        ribbon.material = roadMat
+        // const ribbon = MeshBuilder.CreateRibbon("ribbon", { pathArray: [right, left] },  scene )
+        // ribbon.material = roadMat
         // ribbon.receiveShadows = true;
     })
+
+    const markMat = new StandardMaterial("mat2", scene);
+    markMat.alpha = 1;
+    markMat.emissiveColor = new Color3(1, 1, 1);
+    markings.forEach((markRoad,mRIndex) =>{
+        // markRoad is the road, it's an array of nodes
+        markRoad.forEach((markNode,i) =>{
+            // construct the white lane
+            if(!markNode.isJunction){
+                const plane = MeshBuilder.CreatePlane("plane", {height:1, width: 12});
+                plane.position=markNode.point
+                plane.rotation.x = Math.PI/2
+                plane.material = markMat
+                // define next point and get the angle of the line they form
+                let nextPoint
+                if(i<markRoad.length-1){
+                    nextPoint = markRoad[i+1].point
+                } else {
+                    nextPoint = markRoad[i-1].point
+                }
+                const diff=markNode.point.subtract(nextPoint)
+                const angle=Math.atan2(diff.z,diff.x)
+                // give that angle to our marking lane
+                plane.rotation.y = -angle
+            }
+            
+        })
+    })
+
+
 }
 
 
