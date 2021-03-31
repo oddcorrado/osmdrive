@@ -26,6 +26,7 @@ import { AssetContainer } from '@babylonjs/core/assetContainer'
 import loadPanels from '../roadsigns/loadPanels'
 import spawnPanel from '../roadsigns/spawnPanel'
 import spawnTrafficLightSq from '../roadsigns/trafficLightClass'
+import mainCarLoaded from '../car/carloaded'
 
 
 function getInterPos(curr: Vector3, next: Vector3){
@@ -94,12 +95,10 @@ export default function dressMap(scene: Scene, container:AssetContainer){
        let bots = await createCarBots(scene, 10) 
        let bikes = await createBikeBots(scene, 1)
        let panels: Object = await loadPanels(scene)
-       spawnSpeedSign(container, scene, 30, panels['Zone30'], -195, -270, Math.PI)
+        let car: Mesh = await mainCarLoaded(container) 
 
-       spawnTrafficLightSq(scene, bots, [new Vector3(-200, 0, -100)])
-       spawnTrafficLightSq(scene, bots, [new Vector3(-100, 0, -100)])
-       spawnTrafficLightSq(scene, bots, [new Vector3(0, 0, -100)])
-       spawnTrafficLightSq(scene, bots, [new Vector3(0, 0, 0)])
+        spawnSpeedSign(container, scene, 30, panels['Zone30'], -195, -270, Math.PI)
+        spawnTrafficLightSq(scene, car, bots, [new Vector3(-200, 0, -100), new Vector3(-100, 0, -100), new Vector3(0, 0, -100), new Vector3(0, 0, 0)])
         spawnStop(container, bots, scene, 195, -5, Math.PI)
         spawnPanel(panels['Yield50'], [new Vector3(205, 0, 25), new Vector3(0, Math.PI, 0)])
         spawnYield(container, scene, 205, 95, Math.PI)

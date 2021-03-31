@@ -97,10 +97,14 @@ async function createAction(scene, bots, line, trig, container){
                }
             },
            function(){
-              if (stopped === true)
-                  score.newScore('SIGNALING_STOP', 50)
-              else
-                  score.newScore('SIGNALING_STOP', -100)
+              if (stopped === true){
+                 // score.newScore('SIGNALING_STOP', 50)
+                  score.newScore('speed', true)
+              }else{
+                  // score.newScore('SIGNALING_STOP', -100)
+                  score.newScore('speed', false)
+              }
+                 
             clearSceneActionManager(scene)
             stopped = false
            }

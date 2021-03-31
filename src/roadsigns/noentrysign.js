@@ -8,31 +8,31 @@ import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import score from '../scoring/scoring'
 import { ActionManager, ExecuteCodeAction, DoNothingAction } from '@babylonjs/core/Actions'
 
-async function createAction(scene, trig, container){
-   trig.actionManager = new ActionManager(scene);
-   return await new Promise (function(resolve){
-      const interval = setInterval(() => {
-         if (container && container['meshes'].find(car => car.name == 'detailedcar')){
-            resolve(container['meshes'].find(car => car.name == 'detailedcar'));
-            clearInterval(interval);
-         }
-      }, 100, container)
-   }).then(car => {
-      trig.actionManager.registerAction( 
-         new ExecuteCodeAction(
-            {
-               trigger: ActionManager.OnIntersectionEnterTrigger,
-               parameter: {
-                  mesh: car,
-                  usePreciseIntersection: true
-               },
-            },
-            function(){
-               score.newScore('NO_ENTRY', -100);
-            })
-      )
-   })
-}
+// async function createAction(scene, trig, container){
+//    trig.actionManager = new ActionManager(scene);
+//    return await new Promise (function(resolve){
+//       const interval = setInterval(() => {
+//          if (container && container['meshes'].find(car => car.name == 'detailedcar')){
+//             resolve(container['meshes'].find(car => car.name == 'detailedcar'));
+//             clearInterval(interval);
+//          }
+//       }, 100, container)
+//    }).then(car => {
+//       trig.actionManager.registerAction( 
+//          new ExecuteCodeAction(
+//             {
+//                trigger: ActionManager.OnIntersectionEnterTrigger,
+//                parameter: {
+//                   mesh: car,
+//                   usePreciseIntersection: true
+//                },
+//             },
+//             function(){
+//                // score.newScore('NO_ENTRY', -100);
+//             })
+//       )
+//    })
+// }
 
 
 export default function spawnNoeEntry(container, scene, x, y) {
@@ -54,7 +54,7 @@ export default function spawnNoeEntry(container, scene, x, y) {
        sign.scalingDeterminant = 1;
        sign.position = posSign;
        sign.rotation = rotSign;
-       createAction(scene, trig, container);
+      // createAction(scene, trig, container);
        return sign;
     })
  }

@@ -12,8 +12,9 @@ export default function lookScoring(approach){
 
      if (!approach && checking === true) {
         checking = false;
-        lookScore = lookScore <= 0 ? -100 : lookScore > 80 ? lookScore * 0.625 : -50
-        score.newScore(`INTERSECTION_CHECK_${lookScore > 0 ? 'GOOD' : 'BAD'}`, lookScore | 0);
+        lookScore = lookScore <= 0 ? -100 : lookScore > 75 ? lookScore * 0.625 : -50
+        // score.newScore(`INTERSECTION_CHECK_${lookScore > 0 ? 'GOOD' : 'BAD'}`, lookScore | 0);
+        score.newScore(`look`, lookScore>0?true:false);
         checks = [0,0];
     } else if (approach && approach < 20){
         checking = true;

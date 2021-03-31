@@ -57,10 +57,14 @@ async function createAction(scene, bots, trigbot, line, container, idx){
                },
             },
              function(){
-               if (status[idx] === 'red') 
-                  score.newScore('TRAFFIC_LIGHT_BAD', -100);
-               if (status[idx] === 'green' || status[idx] === 'orange')
-                  score.newScore('TRAFFIC_LIGHT_GOOD', 50);
+               if (status[idx] === 'red') {
+                 // score.newScore('TRAFFIC_LIGHT_BAD', -100);
+                  score.newScore('speed', false);
+               } else if (status[idx] === 'green' || status[idx] === 'orange'){
+                  //score.newScore('TRAFFIC_LIGHT_GOOD', 50);
+                  score.newScore('speed', false);
+               }
+                  
             })
       )
    })   
@@ -110,8 +114,8 @@ export function spawnTrafficLight(container, bots, scene, x, y, ori, type) {
    line.position = linePos
    line.rotation = lineRot
    trigbot.position = trigPos
-   line.isVisible = false
-   trigbot.isVisible = false
+   line.isVisible = true
+   trigbot.isVisible = true
 
    return new SceneLoader.ImportMeshAsync('', "../mesh/DoubleTrafficLight/", "doubletraffic.obj", scene).then(function(newMesh) {
       var lights = [];

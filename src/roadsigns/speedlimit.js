@@ -37,7 +37,6 @@ async function createAction(scene, trig, container){
 }
 
 export default function spawnSpeedSign(container, scene, speed, mesh, x, y, ori) {
-   console.log(mesh)
     const rotSign = new Vector3(0, ori, 0);
     const posSign = new Vector3(x, 0, y);
     let trig = MeshBuilder.CreateBox('box', {width:1, height:1.5, depth: 0.3}, scene)

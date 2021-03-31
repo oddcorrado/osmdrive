@@ -35,13 +35,14 @@ function speedingCheck(speed, approach){
     if (speed > currentLimit &&  (!approach || approach > 12 )) {
         if (!inter.fast){
             inter.fast = setInterval(() => {
-                score.newScore('SPEED_TOO_FAST', -10);
+                //score.newScore('SPEED_TOO_FAST', -10);
+                score.newScore('speed', false);
             }, 5000)
         }
     } else if (hasStarted && speed > 0 && speed < (currentLimit*0.6) && (!approach || approach > 12 )) {   
         if (!inter.slow){
             inter.slow = setInterval(() => {
-                score.newScore('SPEED_TOO_SLOW', -10);
+                score.newScore('speed', false);
             }, 5000)
         }
     } else {
@@ -55,7 +56,7 @@ function speedingIntersectionCheck(speed, approach){
     if (isTurning && speed>0.2){
         if (!inter.turnfast){
             inter.turnfast = setInterval(() => {
-                score.newScore('SPEED_TURN_TOO_FAST', -10);
+                //score.newScore('SPEED_TURN_TOO_FAST', -10);
             }, 1000)
         }
     } else
@@ -63,7 +64,7 @@ function speedingIntersectionCheck(speed, approach){
     if (approach < 3 && speed > 0.2)
         if (!inter.juncfast){
             inter.juncfast = setInterval(() => {
-                score.newScore('INTERSECTION_TOO_FAST', -10);
+               // score.newScore('INTERSECTION_TOO_FAST', -10);
         }, 1000)
     } else
         inter.juncfast = resetInterval(inter.juncfast);
@@ -76,9 +77,9 @@ function stopCheck(speed, approach, hasStarted){
     }
     if (speed === 0 && hasStarted === true && (!approach || approach > 12 )){//+ pas de voiture devant
         if (!inter.stop){
-            score.newScore('SPEED_USELESS_STOP', -10);
+            score.newScore('speed', false);
             inter.stop = setInterval(() => {
-                score.newScore('SPEED_USELESS_STOP', -10);
+                score.newScore('speed', false);
             }, 5000)
         }
     }

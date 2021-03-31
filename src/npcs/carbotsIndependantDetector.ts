@@ -36,6 +36,7 @@ let botPos: Vector3[] = [
 ]
 
 let trigBotPos: Vector3[] = [
+    new Vector3(-197, 0, -292),
     new Vector3(-120,0,-98),
     new Vector3(-260,0,-102),//trig 1
    
@@ -174,7 +175,7 @@ export class CarBot {
     faststop = () => {
         //this.speed = 0;
         if (this.speed > 0){
-            this.speed = Math.max(0, this.speed - 0.005)
+            this.speed = Math.max(0, this.speed - 0.007)
             this.fakeAcceleration = Math.min(this.fakeAccelerationMax, this.fakeAcceleration + this.fakeAccelerationStep)
         }
     }
@@ -313,7 +314,7 @@ export const createCarBots = (scene: Scene, nb: number): Promise<CarBot[]>  => {
    return (async () => {
      mesh = await loadBotModel(scene)
        for (let i = 0; i < nb; i++){
-          bots.push(addBotInstanceClass(mesh, i, scene, i!=11?true:false))//scripted always true
+          bots.push(addBotInstanceClass(mesh, i, scene, i!=0?true:false))//scripted always true
        }
        mesh.forEach(msh => {msh.dispose()})
        return bots

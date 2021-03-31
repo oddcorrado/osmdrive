@@ -35,6 +35,7 @@ export function setJoystick(scn){
     scene = scn
     VirtualJoystick.Canvas.style.opacity = '0'
     VirtualJoystick.Canvas.style.zIndex = '4'
+    // VirtualJoystick.Canvas.style.zIndex = '-1'
     Lstick.setJoystickSensibility(5)
 }
 
@@ -56,11 +57,14 @@ export function toggleEsp(){
 
 function checkBlinker(){
     //useless blinker
-    if (blink === selection){
-        score.newScore('GOOD_BLINKER', 50)
+    if (blink === oldSelection){
+        //score.newScore('GOOD_BLINKER', 50)
+        score.newScore('blinker', true)
     } else {
-        score.newScore('WRONG_BLINKER', -50)
+        //score.newScore('WRONG_BLINKER', -50)
+        score.newScore('blinker', false)
     }
+    oldSelection = null
     lStopBlink()
     rStopBlink()
     toggleBlinkerSound(false)
@@ -135,6 +139,7 @@ const fakeYawMax = 0.05
 let isTurning = false
 let Tnodes = null
 let stickView
+let oldSelection
 export function mustangLoopTap (car, scene, gps) {
     //  var steerWheel = document.getElementById('wheel');
    // selection = isTurning ? selection : getNextTurn()
@@ -159,6 +164,7 @@ export function mustangLoopTap (car, scene, gps) {
         nextJuction = Tnodes[1]
         oldjunct = Tnodes[1]
         selection = getNextTurn()
+        oldSelection = selection
     } else if (Tnodes[0].type === 'junction'){
         nextJuction = null
     }

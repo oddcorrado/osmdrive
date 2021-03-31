@@ -38,7 +38,8 @@ async function createAction(scene: Scene, trig: Mesh, container:AssetContainer){
             },
          function(){
             const speed = getSpeed()
-            score.newScore('YIELD', speed*150 >= 25 ? -50 : 50)
+            // score.newScore('YIELD', speed*150 >= 25 ? -50 : 50)
+            score.newScore('speed', speed*150 >= 25 ? false : true)
          })
       )
    })
