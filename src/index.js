@@ -118,7 +118,7 @@ const boot = () => {
             createRetro(scene, cameras)
         } else if (!waitcar){
             score.loop()
-            // scene.activeCameras[0] = cameras[1]
+           //  scene.activeCameras[0] = cameras[1]
             carBotsLoop()
             bikeFreeLoop()
            loopSelector(scene, mustang, gps)

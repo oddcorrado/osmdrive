@@ -35,7 +35,6 @@ export function setJoystick(scn){
     scene = scn
     VirtualJoystick.Canvas.style.opacity = '0'
     VirtualJoystick.Canvas.style.zIndex = '4'
-    // VirtualJoystick.Canvas.style.zIndex = '-1'
     Lstick.setJoystickSensibility(5)
 }
 

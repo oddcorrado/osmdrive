@@ -91,17 +91,22 @@ export default function dressMap(scene: Scene, container:AssetContainer){
     createTrees(scene);
 
     (async () => {
-        // available panels '110Limit', 'EndBikeLane', 'Zone30', 'EndInterdiction', 'LowBranches', 'NoTraffic', 'OneWay', 'Yield50', 'School', 'Slippery', 'PedestrianLane', 'LevelCrossing'
+        // available panels 110Limit, EndBikeLane, Zone30, EndInterdiction, LowBranches, NoTraffic, OneWay, Yield50, School, Slippery, PedestrianLane, LevelCrossing, PriorityRoad, PrioRight
        let bots = await createCarBots(scene, 10) 
        let bikes = await createBikeBots(scene, 1)
        let panels: Object = await loadPanels(scene)
         let car: Mesh = await mainCarLoaded(container) 
 
         spawnSpeedSign(container, scene, 30, panels['Zone30'], -195, -270, Math.PI)
+        spawnPanel(panels['PriorityRoad'], [new Vector3(-195, 0, -250), new Vector3(0, Math.PI, 0)])
+        spawnYield(container, scene, -212.5, -205, -Math.PI/2)
+        spawnYield(container, scene, -187.5, -195, Math.PI/2)
         spawnTrafficLightSq(scene, car, bots, [new Vector3(-200, 0, -100), new Vector3(-100, 0, -100), new Vector3(0, 0, -100), new Vector3(0, 0, 0)])
+        spawnPanel(panels['PrioRight'], [new Vector3(75, 0, -5), new Vector3(0, -Math.PI/2, 0)])
         spawnStop(container, bots, scene, 195, -5, Math.PI)
         spawnPanel(panels['Yield50'], [new Vector3(205, 0, 25), new Vector3(0, Math.PI, 0)])
-        spawnYield(container, scene, 205, 95, Math.PI)
+        spawnYield(container, scene, 205, 87.5, Math.PI)
+        spawnSpeedSign(container, scene, 50, panels['Zone30End'], 205, 124, Math.PI)
         spawnNoEntry(container, scene, 203, 207)
         preventCollision(scene, container, bots)
         createScriptTriggers(scene, container, bots, bikes, 6)

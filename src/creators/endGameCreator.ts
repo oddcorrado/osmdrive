@@ -49,7 +49,7 @@ export function createEndOfLevel(){
                 </div>
             </div>
         </div>
-        <button id='reload' style='box-shadow: 0px 0.5vh 1.2vh rgba(0,0,0,0.14); width: 10%; height:5%;border: none;font-family: Poppins; font-style: normal; background-color: #FFEC00; border-radius: 10px; margin-top:5%; font-weight: 500; font-size: 3vh'>
+        <button id='reload' style='position: absolute; bottom: 10vh; right: 5vw; box-shadow: 0px 0.5vh 1.2vh rgba(0,0,0,0.14); width: 12vw; height:8vh;border: none;font-family: Poppins; font-style: normal; background-color: #FFEC00; border-radius: 10px; margin-top:5%; font-weight: 500; font-size: 3vh'>
             Relancer
         </button>
     </div>

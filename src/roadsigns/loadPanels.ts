@@ -18,7 +18,7 @@ const load = async(name:string, scene:Scene):Promise<{pannel:Mesh, state:boolean
 
 export default async function loadPanels(scene: Scene){
    return new Promise((resolve) => {
-      let panelNames: string[] = ['110Limit', 'EndBikeLane', 'Zone30', 'EndInterdiction', 'LowBranches', 'NoTraffic', 'OneWay', 'Yield50', 'School', 'Slippery', 'PedestrianLane', 'LevelCrossing']
+      let panelNames: string[] = ['110Limit', 'EndBikeLane', 'Zone30', 'Zone30End', 'EndInterdiction', 'LowBranches', 'NoTraffic', 'OneWay', 'Yield50', 'School', 'Slippery', 'PedestrianLane', 'LevelCrossing', 'PriorityRoad', 'PrioRight']
       let panels: Object = {}
       toload = panelNames.length
       panelNames.forEach(async(name, i=0) => {

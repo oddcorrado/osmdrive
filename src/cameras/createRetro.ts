@@ -8,12 +8,12 @@ import { Camera } from "@babylonjs/core/Cameras/camera"
 import { InstancedMesh } from "@babylonjs/core/Meshes/instancedMesh"
 
 export const createRetro = (scene: Scene, cameras: Camera) => {
-    let mirror =  MeshBuilder.CreatePlane('plane', {height: 0.34, width: 0.97, sideOrientation: Mesh.FRONTSIDE})
+    let mirror =  MeshBuilder.CreatePlane('plane', {height: 0.33, width: 0.885, sideOrientation: Mesh.FRONTSIDE})
     let text = new RenderTargetTexture('tex', 256, scene)
 
     mirror.parent = scene.activeCameras[0]
     mirror.rotation = new Vector3(0, 0, 0)
-    mirror.position = new Vector3(0,0.5,1.58)
+    mirror.position = new Vector3(0.01,0.464,1.58)
     text.activeCamera = cameras[2]
 
     scene.meshes.forEach((msh, i) =>{        

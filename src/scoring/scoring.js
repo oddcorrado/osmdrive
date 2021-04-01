@@ -22,7 +22,7 @@ function newScore(type, value){
         globalscore++
     }
     scoresTot[type]++   
-    console.log(type, value, scores, globalscore)
+    //console.log(type, value, scores, globalscore)
 }
 
 

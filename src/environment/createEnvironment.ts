@@ -62,13 +62,14 @@ const createCountry = (zone: Vector3[], scene: Scene, groundMat: StandardMateria
 
 let offsetWalk = 5
 let i = 0
-const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: StandardMaterial[]) => {
+const spawnSingleRandomBuilding = (pointsRaw: Vector3[], scene: Scene, collection: StandardMaterial[]) => {
     let floor: Vector3[] = []
     let top:Vector3[] = []
     let positions: number[] = []
     let keep: number[] = []
     let maxX: number = null
     let maxZ: number = null
+    let points = pointsRaw.filter(vec => vec.x%1 === 0 && vec.y%1)
     let max = points.length
 
     for (let i = 0; i < max; i++){positions.push(i)}
@@ -89,8 +90,10 @@ const spawnSingleRandomBuilding = (points: Vector3[], scene: Scene, collection: 
             return true;
         }
     })
-    if ((floor[0].z === floor[1].z -offsetWalk && floor[2].z === floor[3].z -offsetWalk&& floor[3].z === floor[0].z -offsetWalk) || (floor[0].x === floor[1].x -offsetWalk && floor[2].x === floor[3].x - offsetWalk && floor[3].x === floor[0].x - offsetWalk)){
-        console.log('WRONG BUILDING',points, maxX, maxZ, floor)
+    //console.log(floor)
+    if ((floor[0].x === floor[1].x && floor[2].x === floor[3].x) || (floor[1].x === floor[2].x && floor[0].x === floor[3].x) || (floor[1].x === floor[3].x && floor[0].x === floor[2].x) ||
+        (floor[0].z === floor[1].z && floor[2].z === floor[3].z) || (floor[1].z === floor[2].z && floor[0].z === floor[3].z) || (floor[1].z === floor[3].z && floor[0].z === floor[2].z)){
+        console.log('WRONG BUILDING', maxX, maxZ, floor)
     } else {
         let building = MeshBuilder.CreateRibbon('newbuilding', {pathArray: [floor, top], closePath: true}, scene)
         building.material = collection[Math.random() * collection.length | 0]
