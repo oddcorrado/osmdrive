@@ -115,7 +115,7 @@ const boot = () => {
          if (waitcar && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar')) && loadingStatus.count >= 100) { 
             waitcar = false;
             score.setupScore(mustang)
-            //createRetro(scene, cameras)
+            createRetro(scene, cameras)
         } else if (!waitcar){
             score.loop()
            //  scene.activeCameras[0] = cameras[1]
