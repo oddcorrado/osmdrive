@@ -110,7 +110,7 @@ export default function createWays(scene, planes) {
                 // }
                 
                 
-                const plane = MeshBuilder.CreatePlane("plane", {height:0.7, width: 3.5});
+                const plane = MeshBuilder.CreateBox("plane", {depth: 0.7, width: 3.5, height: 0.1});
                 plane.position=markNode.point
                 plane.rotation.x = Math.PI/2
                 plane.material = markNode.isFirst ? markMatRed:markMat
