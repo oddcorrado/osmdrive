@@ -8,6 +8,7 @@ import { Color3 } from '@babylonjs/core/Maths/math.color'
 import { scene as globalScene } from '../../index'
 import { vectorIntersection } from '../../maths/geometry'
 import { DynamicTexture } from '@babylonjs/core/Materials/Textures/dynamicTexture'
+import { shadowMapPixelShader } from '@babylonjs/core/Shaders/shadowMap.fragment'
 let enableDebug = false
 
 // The node type we use in many structures
@@ -22,6 +23,7 @@ interface node {
     type?: string // used for intermediate nodes
     nexts?: node[] // where to go from this node
     connections?: node[] // connected nodes
+    roadConnectionCount?: number // number of connected roads, used for markings mainly
 }
 
 
@@ -195,6 +197,10 @@ export default function buildRoads() {
     .................
     */
     connectIntersectionNodes()
+
+    // Calulate for each node the number of road intersections
+    // Used for markings
+    calculateRoadIntersectionCounts()
 }
 
 interface way {
@@ -548,6 +554,43 @@ function connectIntersectionNodes() {
     })
 }
 
+function calculateRoadIntersectionCounts() {
+    // JunctionIndexToExtraRoadCount
+    const ji2erc = new Map<number, number>()
+
+    // got through the path structure
+    // for each pathNode check if a junction index is not at the edges of the path
+    // if it is not increment its road count in the map
+    // x-----j------x => cnt++
+    // x-----x------j => do nothing
+    paths.forEach((p: path) => {
+        p.forEach((pn: pathNode, i: number) => {
+            // check if pathNode is not at the edges of the path
+            if(i > 0 && i < p.length - 1 && pn.junctionIndex !== -1) {
+                let cnt = ji2erc.has(pn.junctionIndex) ? ji2erc.get(pn.junctionIndex) : 0
+                ji2erc.set(pn.junctionIndex, cnt + 1)
+            }
+        })
+    })
+
+    // then for each node of the road :
+    // if it is not a junction => road count is 2 
+    // if it is a junction => road count is 2 plus the number of extra road counts
+    roads.forEach(road => {
+        road.lanes.forEach(lane => {
+            lane.forEach(node => {
+                if(node.junctionIndex === -1) {
+                    node.roadConnectionCount = 2
+                } else {
+                    node.roadConnectionCount = ji2erc.has(node.junctionIndex)
+                        ? ji2erc.get(node.junctionIndex) + 2
+                        : 2
+                }
+            })
+        })
+    })
+}
+
 export function toggleDebugWays() {
     enableDebug = !enableDebug
 
@@ -589,7 +632,7 @@ export function toggleDebugWays() {
                     materialGround.diffuseTexture = textureGround
                     
                     var font = "bold 100px monospace"
-                    textureGround.drawText(`${node.roadIndex}/${node.laneIndex}/${node.nodeIndex}`, 75, 135, font, "white", "blue", true, true)
+                    textureGround.drawText(`${node.roadConnectionCount}/${node.laneIndex}/${node.nodeIndex}`, 75, 135, font, "white", "blue", true, true)
 
                     const m = MeshBuilder.CreateBox("box", {size: 0.4}, globalScene)
                     m.position = node.point
