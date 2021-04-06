@@ -110,10 +110,10 @@ export default function createWays(scene, planes) {
                 // }
                 
                 
-                const plane = MeshBuilder.CreatePlane("plane", {height:0.7, width: 3.5});
-                plane.position=markNode.point
-                plane.rotation.x = Math.PI/2
-                plane.material = markNode.isFirst ? markMatRed:markMat
+                // const plane = MeshBuilder.CreatePlane("plane", {height:0.7, width: 3.5});
+                // plane.position=markNode.point
+                // plane.rotation.x = Math.PI/2
+                // plane.material = markNode.isFirst ? markMatRed:markMat
                 // define next point and get the angle of the line they form
                 let nextPoint
                 if(i<markRoad.length-1){
@@ -124,7 +124,7 @@ export default function createWays(scene, planes) {
                 const diff=markNode.point.subtract(nextPoint)
                 const angle=Math.atan2(diff.z,diff.x)
                 // give that angle to our marking lane
-                plane.rotation.y = -angle
+                // plane.rotation.y = -angle
             // }  
         })
     })

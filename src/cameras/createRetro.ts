@@ -17,7 +17,7 @@ export const createRetro = (scene: Scene, cameras: Camera) => {
     text.activeCamera = cameras[2]
     
     scene.meshes.forEach((msh, i) =>{        
-        if (msh && msh != mirror && !nameIgn.includes(msh.name) && msh.getClassName() != 'InstancedMesh'){
+        if (msh && msh != mirror && ! nameIgn.includes(msh.name) && msh.getClassName() != 'InstancedMesh'){
             text.renderList.push(msh)
         }
     })
