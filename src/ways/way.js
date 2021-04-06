@@ -10,7 +10,8 @@ import { Texture } from '@babylonjs/core/Materials/Textures/texture'
 import { Path3D } from '@babylonjs/core/Maths/math.path'
 import { ColorCurves } from '@babylonjs/core/Materials/colorCurves'
 import { scene as globalScene } from '../index'
-import buildRoads, { roads,markings } from './logic/roads'
+import buildRoads, {roads} from './logic/roads'
+import buildRoadMarkings, {roadMarkings,roadMarkingsFoundation} from './logic/roadMarkings'
 import buildPavements from './logic/pavements'
 //import buildPavements from '../old/oldPavements'
 
@@ -37,39 +38,82 @@ export default function createWays(scene, planes) {
 
     // find the junctions
     buildRoads()
+    // build the ground markings
+    buildRoadMarkings()
+
     geoSegmentsInit(roads)
     let pavements = buildPavements()
     createEnvironment(scene, pavements)
     // remove old junctions from root lanes
 
-    ways.forEach(way => {
-        const points = way.points.map( point => new Vector3(point.x, Math.random() * (0.4, 0.1), point.y))//Math.random to avoid road sparkling
-        const path3D = new Path3D(points);
-        const normals = path3D.getNormals();
-        const curve = path3D.getCurve();
+    // ways.forEach(way => {
+    //     const points = way.points.map( point => new Vector3(point.x, Math.random() * (0.4, 0.1), point.y))//Math.random to avoid road sparkling
+    //     const path3D = new Path3D(points);
+    //     const normals = path3D.getNormals();
+    //     const curve = path3D.getCurve();
         
 
-        const left = curve.map ((p,i) => p.add(normals[i].scale(1)))
-        const right = curve.map ((p,i) => p.subtract(normals[i].scale(1)))
+    //     const left = curve.map ((p,i) => p.add(normals[i].scale(1)))
+    //     const right = curve.map ((p,i) => p.subtract(normals[i].scale(1)))
 
         
-        // const ribbon = MeshBuilder.CreateRibbon("ribbon", { pathArray: [right, left] },  scene )
-        // ribbon.material = roadMat
-        // ribbon.receiveShadows = true;
-    })
+    //     const ribbon = MeshBuilder.CreateRibbon("ribbon", { pathArray: [right, left] },  scene )
+    //     ribbon.material = roadMat
+    //     ribbon.receiveShadows = true;
+    // })
 
-    const markMat = new StandardMaterial("mat2", scene);
+    // const red = new StandardMaterial("groundMat");
+    // red.diffuseColor = new Color3.Red();
+    // const blue = new StandardMaterial("groundMat");
+    // blue.diffuseColor = new Color3.Blue();
+    
+    // let isRed = true
+    // roadMarkingsFoundation.forEach((markRoad) =>{
+    //     // markRoad is the road, it's an array of nodes
+    //     markRoad.forEach((markNode,i) =>{
+    //         const sphere = MeshBuilder.CreateSphere('S',{diameter:1.5})
+    //         sphere.material = isRed?red:blue
+    //         sphere.position = markNode.point
+           
+    //     })
+    //     isRed=!isRed
+    // })
+
+
+
+
+    const markMat = new StandardMaterial("mat", scene);
     markMat.alpha = 1;
     markMat.emissiveColor = new Color3(1, 1, 1);
-    markings.forEach((markRoad,mRIndex) =>{
+
+    const markMatRed = new StandardMaterial("mat", scene);
+    markMatRed.emissiveColor = new Color3.Blue();
+
+    roadMarkings.forEach((markRoad,mRi) =>{
         // markRoad is the road, it's an array of nodes
         markRoad.forEach((markNode,i) =>{
             // construct the white lane
-            if(!markNode.isJunction){
-                const plane = MeshBuilder.CreatePlane("plane", {height:1, width: 12});
+            // console.log(i===markRoad.length-1)
+            // if(!markNode.isJunction){
+                if(markNode.isJunction){
+                    // console.log(mRi,markRoad.length,i)
+                    // if(i<2 || i>markRoad.length-2 ){return}
+                }
+
+                // if(markNode.isJunction &&  i===0){
+                //     console.log('OUT1 !',mRi,i);
+                //     return
+                // }
+                // if(markNode.isJunction && i === markRoad.length-1){
+                //     console.log('OUT2 !',mRi,i);
+                //     return
+                // }
+                
+                
+                const plane = MeshBuilder.CreatePlane("plane", {height:0.7, width: 3.5});
                 plane.position=markNode.point
                 plane.rotation.x = Math.PI/2
-                plane.material = markMat
+                plane.material = markNode.isFirst ? markMatRed:markMat
                 // define next point and get the angle of the line they form
                 let nextPoint
                 if(i<markRoad.length-1){
@@ -81,8 +125,7 @@ export default function createWays(scene, planes) {
                 const angle=Math.atan2(diff.z,diff.x)
                 // give that angle to our marking lane
                 plane.rotation.y = -angle
-            }
-            
+            // }  
         })
     })
 
