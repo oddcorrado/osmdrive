@@ -149,16 +149,31 @@ export class TrafficLightSq {
                     }
                 },
                 () => {
-                    classbot.detected = ['traffic', this.status[i % 2 === 0 ? 0:1]]//push it
+                    // classbot.detected = ['traffic', this.status[i % 2 === 0 ? 0:1]]//push it
+                    classbot.detected.push(['traffic', this.status[i % 2 === 0 ? 0:1]])//push it
                     inter = setInterval(() => {
                         if (this.status[i % 2 === 0 ? 0:1]=== 'green'){
-                            classbot.detected = []
-                            clearInterval(inter)
+                            //classbot.detected = []
+                            classbot.filter('traffic')
+                        } else if (this.status[i % 2 === 0 ? 0:1] === 'red' || 'orange'){
+                            classbot.filter('traffic')
+                            classbot.detected.push(['traffic', this.status[i % 2 === 0 ? 0:1]])
                         }
                     }, 1000)
                 })
             )
-        })
+            this.trigMesh[i].actionManager.registerAction(    
+                new ExecuteCodeAction(
+                    {
+                        trigger: ActionManager.OnIntersectionExitTrigger,
+                        parameter: {
+                            mesh: classbot.bot
+                        }
+                    },
+                    () => {clearInterval(inter) }
+                    )
+                )
+            })
 
         this.scoreMesh[i].actionManager.registerAction(
             new ExecuteCodeAction(

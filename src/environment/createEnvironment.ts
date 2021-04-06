@@ -69,6 +69,8 @@ const spawnSingleRandomBuilding = (pointsRaw: Vector3[], scene: Scene, collectio
     let keep: number[] = []
     let maxX: number = null
     let maxZ: number = null
+    let minX: number = null
+    let minZ: number = null
     let points = pointsRaw.filter(vec => vec.x%1 === 0 && vec.y%1)
     let max = points.length
 
@@ -77,27 +79,22 @@ const spawnSingleRandomBuilding = (pointsRaw: Vector3[], scene: Scene, collectio
         keep.push(positions.splice(Math.random() * (max-i) | 0, 1).pop()) 
         maxX = maxX ? points[keep[i]].x > maxX ? points[keep[i]].x : maxX : points[keep[i]].x
         maxZ = maxZ ? points[keep[i]].z > maxZ ? points[keep[i]].z : maxZ : points[keep[i]].z
+        minX = minX ? points[keep[i]].x < minX ? points[keep[i]].x : minX : points[keep[i]].x
+        minZ = minZ ? points[keep[i]].z < minZ ? points[keep[i]].z : minZ : points[keep[i]].z
     }
     points.filter((point, i = 0) => {
         if (keep.includes(i)){
-            let x = point.x < maxX ? point.x + offsetWalk : point.x - offsetWalk
-            let z = point.z < maxZ ? point.z + offsetWalk : point.z - offsetWalk
+            let x = point.x === maxX ? point.x - offsetWalk : point.x === minX ? point.x + offsetWalk : point.x
+            let z = point.z === maxZ ? point.z - offsetWalk : point.z === minZ ? point.z + offsetWalk : point.z
             
-            x = x === maxX ? point.x - offsetWalk : x
-            z = z === maxZ ? point.z - offsetWalk : z 
             floor.push(new Vector3(x, point.y, z))
             top.push(new Vector3(x, point.y + 20, z))
             return true;
         }
     })
-    //console.log(floor)
-    if ((floor[0].x === floor[1].x && floor[2].x === floor[3].x) || (floor[1].x === floor[2].x && floor[0].x === floor[3].x) || (floor[1].x === floor[3].x && floor[0].x === floor[2].x) ||
-        (floor[0].z === floor[1].z && floor[2].z === floor[3].z) || (floor[1].z === floor[2].z && floor[0].z === floor[3].z) || (floor[1].z === floor[3].z && floor[0].z === floor[2].z)){
-        console.log('WRONG BUILDING', maxX, maxZ, floor)
-    } else {
-        let building = MeshBuilder.CreateRibbon('newbuilding', {pathArray: [floor, top], closePath: true}, scene)
-        building.material = collection[Math.random() * collection.length | 0]
-    }
+
+    let building = MeshBuilder.CreateRibbon('newbuilding', {pathArray: [floor, top], closePath: true}, scene)
+    building.material = collection[Math.random() * collection.length | 0]
 }
 
 const spawnBuilding = (from: Vector3, to: Vector3, scene: Scene) => {

@@ -26,11 +26,12 @@ async function createAction(scene, bots, trigbot, line, container, idx){
                }
            },
              function (){
-
-               classbot.detected = ['traffic', status[idx]]//push it
+               // classbot.detected = ['traffic', status[idx]]//push it
+               classbot.detected.push(['traffic', status[idx]])
                inter = setInterval(() => {
                   if (status[idx] === 'green'){
-                     classbot.detected = []
+                     classbot.filter('traffic')
+                     //classbot.detected = []
                      clearInterval(inter)
                   }
                }, 1000);

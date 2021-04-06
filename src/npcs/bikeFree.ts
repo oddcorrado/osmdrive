@@ -1,8 +1,12 @@
+import  '@babylonjs/loaders/OBJ'
+import  '@babylonjs/loaders/glTF'
 import { Scene } from "@babylonjs/core/scene"
 import { Mesh } from "@babylonjs/core/Meshes/mesh"
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader"
 import { Vector3, Color3 } from "@babylonjs/core/Maths/math"
 import { InstancedMesh } from "@babylonjs/core/Meshes/instancedMesh"
+import { VertexBuffer } from '@babylonjs/core/Meshes/buffer'
+import { AbstractMesh } from '@babylonjs/core/Meshes/abstractMesh'
 
 const startPos = [
     new Vector3(-47,0.1,-3)
@@ -34,9 +38,11 @@ export class BikeFree {
         this.idx = i
         this.go = !scripted
         this.adVector = startPos[i].subtract(endPos[i])
+       
         this.bot = mesh
+        this.bot.isVisible = false
         this.bot.position = startPos[i]
-        this.bot.rotation = ori[i]
+        // this.bot.rotation = ori[i]
         // this.detector = MeshBuilder.CreateBox('detector', {width: 1, height: 1, depth: 5})
         // let pos = trigBikePos[i].add(new Vector3(0,0,3))
         // this.detector.position = pos
@@ -99,7 +105,9 @@ export class BikeFree {
         return this.speed
     }
 
-    bikeFreeLoop = () => {           
+    bikeFreeLoop = () => {   
+       
+        
         if (this.bot.position != endPos[this.idx]){
             this.bot.position.x -= this.adVector.x/2000
             this.bot.position.z -= this.adVector.z/2000
@@ -119,14 +127,28 @@ const addBikeInstanceClass = (mesh: Mesh, i: number, scene: Scene, scripted: boo
 }
 
 const loadBikeModel = async (scene: Scene): Promise<Mesh> => {
-   return  SceneLoader.ImportMeshAsync('', "../mesh/Bike/", "bike.obj", scene).then(function(newMesh) {
+   return  SceneLoader.ImportMeshAsync('', "../mesh/BikeRider/", "bikersep.obj", scene).then(function(newMesh) {
         let msh = newMesh['meshes'] as Mesh[]
-        let bike = Mesh.MergeMeshes(msh, true, true, null, false, true)
-        bike.scalingDeterminant = 2
-        bike.name = 'bike'
-        console.log('bike', bike, bike.position)
-        return bike
+        let bike = Mesh.MergeMeshes(msh,true, false, undefined, false, true)
+        //msh.forEach(msh => msh.dispose())
+        return bike as Mesh
     }) 
+    //  return SceneLoader.ImportMeshAsync("", "../mesh/BikeRider/", "test2.glb", scene).then(function (newMesh/*, particleSystems, skeletons, animationGroups*/) {
+    //    // console.log(newMesh, particleSystems, skeletons, animationGroups)
+       
+    //     return newMesh['meshes'] as Mesh[]
+        
+    //     //  var hero = newMeshes[0];
+    //     //  //Scale the model down        
+    //     //  hero.scaling.scaleInPlace(0.1);
+    //     //  //Lock camera on the character 
+    //     //  camera1.target = hero;
+    //     //  //Get the Samba animation Group
+    //     const anim = scene.getAnimationGroupByName("Armature.002|Armature.002|Armature|mixamo.com|Layer0|Armature.0");
+    //     console.log(anim)
+    //     //  //Play the Samba animation  
+    //     //sambaAnim.start(true, 1.0, sambaAnim.from, sambaAnim.to, false);
+    // })
 }
 
 let bikes: BikeFree[] = []
@@ -135,7 +157,8 @@ export const createBikeBots = (scene: Scene, nb: number): Promise<BikeFree[]>  =
     let mesh: Mesh
 
    return (async () => {
-     mesh = await loadBikeModel(scene)
+    //    await loadBikeModel(scene)
+        mesh = await loadBikeModel(scene)
        for (let i = 0; i < nb; i++){
           bikes.push(addBikeInstanceClass(mesh, i, scene, true))
        }

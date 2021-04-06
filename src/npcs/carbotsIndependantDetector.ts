@@ -1,3 +1,4 @@
+import  '@babylonjs/loaders/OBJ'
 import { Scene } from "@babylonjs/core/scene"
 import { Mesh } from "@babylonjs/core/Meshes/mesh"
 import { SceneLoader } from "@babylonjs/core/Loading/sceneLoader"
@@ -37,6 +38,7 @@ let botPos: Vector3[] = [
 
 let trigBotPos: Vector3[] = [
     new Vector3(-197, 0, -292),
+    new Vector3(-197,0,-260),
     new Vector3(-120,0,-98),
     new Vector3(-260,0,-102),//trig 1
    
@@ -53,8 +55,6 @@ let trigBotPos: Vector3[] = [
     // new Vector3(265,0,101),// trig 6
 
     new Vector3(115,0,98),// trig 7
-
-    new Vector3(-178,0,-298)// behind
 
 ]
 
@@ -83,7 +83,8 @@ export class CarBot {
     fakeYawMax:number = 0.05
     turnChancePercentage:number = Math.random() * 50 + 40
     choiceMade:boolean = false
-    detected: string[] = []
+    // detected: string[] = []
+    detected: string[][] = []
     Rlig: StandardMaterial
     Llig: StandardMaterial
     blinkInter: any
@@ -118,6 +119,10 @@ export class CarBot {
         this.detector.isVisible = false
         var pivotTranslate = pos.subtract(trigBotPos[i]);
         this.detector.setPivotMatrix(Matrix.Translation(pivotTranslate.x, pivotTranslate.y, pivotTranslate.z), false)
+    }
+
+    filter = (det: string) => {
+       this.detected = this.detected.filter(elem => elem[0] != det)
     }
 
     clearBlinker = () => {
@@ -164,7 +169,8 @@ export class CarBot {
     }
 
     trafficLightHandler = () => {
-        if (this.detected[1] === 'red' || this.detected[1] === 'orange'){ 
+        //if (this.detected[1] === 'red' || this.detected[1] === 'orange'){ 
+        if (this.detected[0][1] === 'red' || this.detected[0][1] === 'orange'){ 
             this.stop()
         } else {
             this.accelerate()
@@ -185,7 +191,8 @@ export class CarBot {
     }
 
     detectorHandler = () => {
-        switch(this.detected[0]){
+       // console.log(this.detected[0][0])
+        switch(this.detected[0][0]){
             case 'contact':
                 this.contactHandler()
                 break
@@ -226,6 +233,7 @@ export class CarBot {
     }
 
     easyTurn = (): string => {
+        //return null
         let val = Math.random() * 100
         return val < this.turnChancePercentage/2 ? 'L' : val < this.turnChancePercentage ? 'R' : null
     }
@@ -308,13 +316,13 @@ const loadBotModel = async (scene: Scene): Promise<Mesh[]> => {
 let bots: CarBot[] = []
 
 export const createCarBots = (scene: Scene, nb: number): Promise<CarBot[]>  => {
-    nb = 10
+    nb = 11
     let mesh: Mesh[]
 
    return (async () => {
      mesh = await loadBotModel(scene)
        for (let i = 0; i < nb; i++){
-          bots.push(addBotInstanceClass(mesh, i, scene, i!=0?true:false))//scripted always true
+          bots.push(addBotInstanceClass(mesh, i, scene, i!=0 && i!=1?true:false))//scripted always true
        }
        mesh.forEach(msh => {msh.dispose()})
        return bots

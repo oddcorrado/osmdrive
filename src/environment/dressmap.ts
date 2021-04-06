@@ -13,7 +13,7 @@ import { spawnTrafficLight } from '../roadsigns/trafficlight.js'
 import { ActionManager } from '@babylonjs/core/Actions'
 import {setSounds} from '../sounds/carsound'
 import {setStatus} from '../index'
-import spawnProp from '../roadsigns/loadProp'
+import {spawnPropObj, spawnPropGltf} from '../roadsigns/loadProp'
 import loadArrow from '../props/arrow'
 import { VertexData } from '@babylonjs/core/Meshes/mesh.vertexData'
 import {createCarBots} from '../npcs/carbotsIndependantDetector'
@@ -92,9 +92,9 @@ export default function dressMap(scene: Scene, container:AssetContainer){
 
     (async () => {
         // available panels 110Limit, EndBikeLane, Zone30, EndInterdiction, LowBranches, NoTraffic, OneWay, Yield50, School, Slippery, PedestrianLane, LevelCrossing, PriorityRoad, PrioRight
-       let bots = await createCarBots(scene, 10) 
-       let bikes = await createBikeBots(scene, 1)
-       let panels: Object = await loadPanels(scene)
+        let bots = await createCarBots(scene, 10) 
+        let bikes = await createBikeBots(scene, 1)
+        let panels: Object = await loadPanels(scene)
         let car: Mesh = await mainCarLoaded(container) 
 
         spawnSpeedSign(container, scene, 30, panels['Zone30'], -195, -270, Math.PI)
@@ -107,7 +107,7 @@ export default function dressMap(scene: Scene, container:AssetContainer){
         spawnPanel(panels['Yield50'], [new Vector3(205, 0, 25), new Vector3(0, Math.PI, 0)])
         spawnYield(container, scene, 205, 87.5, Math.PI)
         spawnSpeedSign(container, scene, 50, panels['Zone30End'], 205, 124, Math.PI)
-        spawnNoEntry(container, scene, 203, 207)
+        spawnNoEntry(container, scene, 204, 208)
         preventCollision(scene, container, bots)
         createScriptTriggers(scene, container, bots, bikes, 6)
         spawnSpeedSign(container, scene, 110, panels['110Limit'], 305, 222,Math.PI)
@@ -125,7 +125,7 @@ export default function dressMap(scene: Scene, container:AssetContainer){
     // spawnNoEntry(container, scene, 304, 105)
     // spawnSpeedSign(container, scene, '30', 15, -5)//'50', '100'
     //
-    loadArrow(scene)
-  //  spawnProp(scene, -190, -270)
+    // spawnPropObj(scene)
+  // spawnPropGltf(scene)
 }
 

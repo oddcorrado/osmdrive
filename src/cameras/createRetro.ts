@@ -10,14 +10,14 @@ import { InstancedMesh } from "@babylonjs/core/Meshes/instancedMesh"
 export const createRetro = (scene: Scene, cameras: Camera) => {
     let mirror =  MeshBuilder.CreatePlane('plane', {height: 0.33, width: 0.885, sideOrientation: Mesh.FRONTSIDE})
     let text = new RenderTargetTexture('tex', 256, scene)
-
+    let nameIgn = ['detector', 'detailedcar']
     mirror.parent = scene.activeCameras[0]
     mirror.rotation = new Vector3(0, 0, 0)
     mirror.position = new Vector3(0.01,0.464,1.58)
     text.activeCamera = cameras[2]
-
+    
     scene.meshes.forEach((msh, i) =>{        
-        if (msh && msh != mirror && msh.name != 'detector' && msh.name != 'detailedcar' && msh.getClassName() != 'InstancedMesh'){
+        if (msh && msh != mirror && !nameIgn.includes(msh.name) && msh.getClassName() != 'InstancedMesh'){
             text.renderList.push(msh)
         }
     })

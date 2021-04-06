@@ -19,12 +19,12 @@ let scriptBotPos: Vector3[] = [
 ]
 
 let carbotsId = [
-    [0,1],
     [2,3],
     [4,5],
-    [6],
-    [7],
-    [8]
+    [6,7],
+    [8],
+    [9],
+    [10]
 ]
 
 let scriptBikePos: Vector3[] = [
@@ -68,6 +68,7 @@ const addActionTrigBike = (scene: Scene, car: Mesh, bikes: BikeFree[], trig: Mes
             () => {
                 bikeId[i].forEach(x => {
                     bikes[x].go = true
+                    bikes[x].bot.isVisible = true
                 })
             })
     )

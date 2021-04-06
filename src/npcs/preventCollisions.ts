@@ -4,13 +4,31 @@ import { ActionManager, ExecuteCodeAction} from '@babylonjs/core/Actions';
 import { Scene } from "@babylonjs/core/scene";
 import { AssetContainer } from "@babylonjs/core/assetContainer";
 import mainCarLoaded from '../car/carloaded'
+import {createEndOfLevel} from '../creators/endGameCreator'
+import {setGameState} from '../controls/loops'
 
 export default function preventCollisions(scene: Scene, container: AssetContainer, bots: CarBot[]){
     (async () => {
         let car = await mainCarLoaded(container)
         bots.forEach(botclass => {
             botclass.detector.actionManager = new ActionManager(scene)
+            botclass.bot.actionManager = new ActionManager(scene)
+
             bots.forEach(botdiff => {
+
+                botclass.bot.actionManager.registerAction(
+                    new ExecuteCodeAction(
+                        {
+                            trigger: ActionManager.OnIntersectionEnterTrigger,
+                            parameter: {
+                            mesh: car
+                        }
+                    },
+                    function(){
+                        // botclass.detected.push(['contact'])
+                       setTimeout(() => {setGameState('end'); createEndOfLevel(false)}, 100)
+                    })
+                )
 
                 botclass.detector.actionManager.registerAction(
                     new ExecuteCodeAction(
@@ -21,7 +39,8 @@ export default function preventCollisions(scene: Scene, container: AssetContaine
                         }
                     },
                     function(){
-                        botclass.detected = ['contact']
+                        botclass.detected.push(['contact'])
+                       // setTimeout(() => {setGameState('end'); createEndOfLevel(false)}, 100)
                     })
                 )
 
@@ -34,7 +53,7 @@ export default function preventCollisions(scene: Scene, container: AssetContaine
                         }
                     },
                     function(){    
-                        setTimeout(() => {botclass.detected = []}, 200)
+                        setTimeout(() => {botclass.filter('contact')}, 200)
                     })
                 )
 
@@ -48,10 +67,15 @@ export default function preventCollisions(scene: Scene, container: AssetContaine
                             }
                         },
                         function(){     
-                            botclass.detected = ['contact', botdiff.id]
-                            if (botdiff.detected.length == 2 && botdiff.detected[1] === botclass.id){
-                                setTimeout(() => {botclass.detected = []}, 200)
-                            }//choose prio
+                            // botclass.detected = ['contact', botdiff.id]
+                            //if (botdiff.detected.length == 2 && botdiff.detected[1] === botclass.id){
+                            botclass.detected.push(['contact', botdiff.id])
+                            if (botdiff.detected.length == 2 && botdiff.detected[0][1] === botclass.id){
+                                setTimeout(() => {
+                                    // botclass.detected = []
+                                    botclass.filter('contact')
+                                }, 200)
+                            }
                         })
                     )
                     botclass.detector.actionManager.registerAction(
@@ -63,71 +87,10 @@ export default function preventCollisions(scene: Scene, container: AssetContaine
                             }
                         },
                         function(){       
-                            setTimeout(() => {botclass.detected = []}, 200)
-                        })
-                    )
-                }
-
-            })
-        })
-    })()
-}
-
-export  function preventCollisionsOld(scene: Scene, container: AssetContainer, botmesh:Mesh, bots: CarBot[]){
-    (async () => {
-        let car = await mainCarLoaded(container)
-        bots.forEach(botclass => {
-            botclass.bot.actionManager = new ActionManager(scene)
-            bots.forEach(botdiff => {
-
-                botclass.bot.actionManager.registerAction(
-                    new ExecuteCodeAction(
-                        {
-                            trigger: ActionManager.OnIntersectionEnterTrigger,
-                            parameter: {
-                            mesh: car
-                        }
-                    },
-                    function(){                            
-                        botclass.detected = ['contact']
-                    })
-                )
-                botclass.bot.actionManager.registerAction(
-                    new ExecuteCodeAction(
-                        {
-                            trigger: ActionManager.OnIntersectionExitTrigger,
-                            parameter: {
-                            mesh: car
-                        }
-                    },
-                    function(){       
-                        setTimeout(() => {botclass.detected = []}, 200)
-                    })
-                )
-
-                if (botdiff.id != botclass.id){
-                    botclass.bot.actionManager.registerAction(
-                        new ExecuteCodeAction(
-                            {
-                                trigger: ActionManager.OnIntersectionEnterTrigger,
-                                parameter: {
-                                mesh: botdiff.bot
-                            }
-                        },
-                        function(){                            
-                            botclass.detected = ['contact']
-                        })
-                    )
-                    botclass.bot.actionManager.registerAction(
-                        new ExecuteCodeAction(
-                            {
-                                trigger: ActionManager.OnIntersectionExitTrigger,
-                                parameter: {
-                                mesh: botdiff.bot
-                            }
-                        },
-                        function(){       
-                            setTimeout(() => {botclass.detected = []}, 200)
+                            setTimeout(() => {
+                                // botclass.detected = []
+                                botclass.filter('contact')
+                            }, 200)
                         })
                     )
                 }

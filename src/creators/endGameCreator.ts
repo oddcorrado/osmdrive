@@ -17,23 +17,22 @@ function createScoreCircle(score: number): string {
     return div
 }
 
-export function createEndOfLevel(){
+export function createEndOfLevel(status: boolean){
     let sc = getScore()
-    console.log(sc)
     const div:string = `
     <div style='position: absolute; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); z-index: 100; font-family: Poppins'>
         <div style='width:54%; height:86%; background-color: white; margin-top: 3.5%; margin-left: 23%; border-radius: 5%; text-align: center'>
             <div style='height: 50%'>
                 <div style='width:100%; height: 20%; font-size: 6vh; padding-top: 5%'>
-                    Parcours terminé !
+                    ${status ? 'Parcours terminé !' : 'Accident: Parcours Interrompu'}
                 </div>
                 <div style='width: 100%; height:15%; font-size: 5vh'>
                     Votre synthèse :
                 </div>
                 <div style='margin-left:32%; height: 55%; padding-top: 5%'>
-                    <img id='star1' style='height: 10vh; float: left' src='../../images/${sc.globalscore > 25 ? 'star' : 'stargrey'}.svg'></img>
-                    <img id='star2' style='height: 10vh; float: left; margin-left: 3%' src='../../images/${sc.globalscore > 50 ? 'star' : 'stargrey'}.svg'></img>
-                    <img id='star3' style='height: 10vh; float: left; margin-left: 3%' src='../../images/${sc.globalscore > 75 ? 'star' : 'stargrey'}.svg'></img>
+                    <img id='star1' style='height: 10vh; float: left' src='../../images/${sc.tot > 25 ? 'star' : 'stargrey'}.svg'></img>
+                    <img id='star2' style='height: 10vh; float: left; margin-left: 3%' src='../../images/${sc.tot > 50 ? 'star' : 'stargrey'}.svg'></img>
+                    <img id='star3' style='height: 10vh; float: left; margin-left: 3%' src='../../images/${sc.tot > 75 ? 'star' : 'stargrey'}.svg'></img>
                 </div>
             </div>
             <div style='width: 100%; height: 48%; margin-top: 2%;'>
@@ -43,9 +42,9 @@ export function createEndOfLevel(){
                     <div style='float: left; margin-left:5%;width:25%'>Clignotants</div>
                 </div>
                 <div style='height: 75%; width: 100%;'>
-                    ${createScoreCircle(sc.finalScores.look)}
-                    ${createScoreCircle(sc.finalScores.speed)}
-                    ${createScoreCircle(sc.finalScores.blinker)}
+                    ${createScoreCircle(status ? sc.finalScores.look : 0 )}
+                    ${createScoreCircle(status ? sc.finalScores.speed : 0)}
+                    ${createScoreCircle(status ? sc.finalScores.blinker : 0)}
                 </div>
             </div>
         </div>
