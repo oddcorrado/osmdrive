@@ -84,10 +84,10 @@ export default function createWays(scene, planes) {
 
     const markMat = new StandardMaterial("mat", scene);
     markMat.alpha = 1;
-    markMat.emissiveColor = new Color3(1, 1, 1);
+    markMat.diffusiveColor = new Color3(1, 1, 1);
 
     const markMatRed = new StandardMaterial("mat", scene);
-    markMatRed.emissiveColor = new Color3.Blue();
+    markMatRed.diffusiveColor = new Color3.Blue();
 
     roadMarkings.forEach((markRoad,mRi) =>{
         // markRoad is the road, it's an array of nodes
