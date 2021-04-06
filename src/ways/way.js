@@ -88,6 +88,8 @@ export default function createWays(scene, planes) {
 
     const markMatRed = new StandardMaterial("mat", scene);
     markMatRed.diffusiveColor = new Color3.Blue();
+    const planePrefab = MeshBuilder.CreateBox("plane", {depth: 0.7, width: 3.5, height: 0.1});
+    planePrefab.material = markMat
 
     roadMarkings.forEach((markRoad,mRi) =>{
         // markRoad is the road, it's an array of nodes
@@ -110,10 +112,10 @@ export default function createWays(scene, planes) {
                 // }
                 
                 
-                const plane = MeshBuilder.CreateBox("plane", {depth: 0.7, width: 3.5, height: 0.1});
-                plane.position=markNode.point
+                const plane = planePrefab.createInstance("planeInstance");
+                plane.position = markNode.point
                 plane.rotation.x = Math.PI/2
-                plane.material = markNode.isFirst ? markMatRed:markMat
+                
                 // define next point and get the angle of the line they form
                 let nextPoint
                 if(i<markRoad.length-1){
