@@ -87,8 +87,10 @@ export default function createWays(scene, planes) {
 
     const markMatRed = new StandardMaterial("mat", scene);
     markMatRed.diffuseColor = new Color3.Blue();
-    const planePrefab = MeshBuilder.CreateBox("plane", {depth: 0.05, width: 3.5, height: 0.7});
-    planePrefab.material = markMat
+    // const planePrefab = MeshBuilder.CreateBox("plane", {depth: 0.05, width: 3.5, height: 0.7});
+    // planePrefab.material = markMat
+
+let test = []
 
     roadMarkings.forEach((markRoad,mRi) =>{
         // markRoad is the road, it's an array of nodes
@@ -111,9 +113,11 @@ export default function createWays(scene, planes) {
                 // }
                 
                 
-                const plane = planePrefab.createInstance("planeInstance");
-                plane.position = markNode.point
-                plane.rotation.x = Math.PI/2
+                // const plane = planePrefab.createInstance("planeInstance");
+                // plane.position = markNode.point
+                // plane.rotation.x = Math.PI/2
+               
+            
                 
                 // define next point and get the angle of the line they form
                 let nextPoint
@@ -125,12 +129,19 @@ export default function createWays(scene, planes) {
                 const diff=markNode.point.subtract(nextPoint)
                 const angle=Math.atan2(diff.z,diff.x)
                 // give that angle to our marking lane
-                plane.rotation.y = -angle
+                let z = MeshBuilder.CreateBox("plane", {depth: 0.4, width: 3.5, height: 0.05})
+                z.position = markNode.point
+                z.material = markMat
+                z.rotation.y = -angle
+                test.push(z)
+
+                //plane.rotation.y = -angle
             // }  
-        })
+        })       
     })
 
-
+   
+    const x = Mesh.MergeMeshes(test, true, false, undefined, true, false)
 }
 
 

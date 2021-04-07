@@ -174,6 +174,7 @@ export const driverPathDisplay = (nodes) => {
         // console.log(dir)
         let point = prevNode.point
         while(boxIndex < boxes.length && node.point.subtract(point).length() > boxSpacing) {
+          //  console.log(boxes)
             // console.log(point)
             point = point.add(dir)
             boxes[boxIndex++].position = new Vector3(point.x, 0.2, point.z)
