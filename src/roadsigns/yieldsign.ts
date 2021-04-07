@@ -20,8 +20,8 @@ async function createAction(scene: Scene, trig: Mesh, container:AssetContainer){
    trig.actionManager = new ActionManager(scene)
    return await new Promise (function(resolve) {
       const interval = setInterval(container =>  {
-         if (container && container['meshes'].find(car => car.name == 'detailedcar')){
-            resolve(container['meshes'].find(car => car.name == 'detailedcar'))
+         if (container && container['meshes'].find(car => car.name == 'car')){
+            resolve(container['meshes'].find(car => car.name == 'car'))
             clearInterval(interval)
          }
       }, 100, container)
@@ -50,7 +50,7 @@ export default function spawnYield(container, scene, x, y, ori) {
    let line = [MeshBuilder.CreateBox('line1', {width:1, height:0.1, depth: 1}, scene),
                MeshBuilder.CreateBox('line2', {width:1, height:0.1, depth: 1}, scene),
                MeshBuilder.CreateBox('line3', {width:1, height:0.1, depth: 1}, scene)]
-   let trig = MeshBuilder.CreateBox('box', {width:1, height:1, depth: 0.3}, scene)
+   let trig = MeshBuilder.CreateBox('trigger', {width:1, height:1, depth: 0.3}, scene)
    let coefX = ori < 0 ? 1 : -1
    let coefY = Math.abs(ori) === Math.PI ? 1 : -1
    const rotSign = new Vector3(0, ori, 0)

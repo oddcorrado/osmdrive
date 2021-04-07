@@ -13,7 +13,7 @@ const startPos = [
 ]
 
 const endPos = [
-    new Vector3(245,0.1,-3)
+    new Vector3(300,0.1,-4)
 ]
 
 const ori = [
@@ -108,13 +108,13 @@ export class BikeFree {
     bikeFreeLoop = () => {   
        
         
-        if (this.bot.position != endPos[this.idx]){
+        if (this.bot.position.x < endPos[this.idx].x){
             this.bot.position.x -= this.adVector.x/2000
             this.bot.position.z -= this.adVector.z/2000
            // console.log(this.bot.position)
             //console.log(this.bot.position.x-=0.01)
         } else {
-            console.log('arrivé')
+            
         }
         //this.detector.position = this.bot.position
         //this.detector.rotationQuaternion = this.bot.rotationQuaternion

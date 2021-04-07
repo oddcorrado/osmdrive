@@ -10,11 +10,11 @@ export default function createLights(scene: Scene) {
     const dirLight = new DirectionalLight("DirectionalLight", new Vector3(-1, -1, 0), scene)
 
     // Default intensity is 1. Let's dim the light a small amount
-    hemiLight.intensity = 0
-    hemiLight.diffuse = new Color3(0, 0, 0)
-    hemiLight.specular = new Color3(0, 0, 0)
-    hemiLight.groundColor = new Color3(0.2, 0.2, 1)
+     hemiLight.intensity = 0
+     hemiLight.diffuse = new Color3(0, 0, 0)
+    //  hemiLight.specular = new Color3(0, 0, 0)
+    // hemiLight.groundColor = new Color3(0.2, 0.2, 1)
     dirLight.intensity = 1
     dirLight.diffuse = new Color3(1, 1, 1)
-    dirLight.specular = new Color3(1, 1, 1)
+   //dirLight.specular = new Color3(1, 1, 1)
 }

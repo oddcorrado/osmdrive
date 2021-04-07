@@ -9,7 +9,7 @@ import createMenu from './controls/menu'
 import createButtons from './controls/drivebuttons'
 import {createCameras} from './cameras/camera'
 import dressMap from './environment/dressmap'
-import createDefaultCar from './car/detailedcar'
+import createDefaultCar from './car/maincar'
 import {setupControls, loopSelector} from './controls/loops'
 import { AssetContainer } from '@babylonjs/core/assetContainer'
 import startup from './startup'
@@ -21,6 +21,7 @@ import {createLoading} from './creators/loadingCreator'
 import {carBotsLoop} from './npcs/carbotsIndependantDetector'
 import {bikeFreeLoop} from './npcs/bikeFree'
 import {createRetro} from './cameras/createRetro'
+import {optimizeScene} from './optimizer/optimize'
 
 let loadingStatus = {assets: false, car: false, randomgen: false, trees: false, walk: false, ground: false, count: 0}
 let loadingInter
@@ -75,7 +76,7 @@ canvas.style.width = '100%';
 canvas.style.height = '100%';
 const boot = () => {
     let gps;
-    let mustang;
+    let car;
     let waitcar = true;
     const planes = []
 
@@ -105,23 +106,20 @@ const boot = () => {
     createButtons(scene);
     setupControls(scene);
     setupGps(scene, container);
-    //optimization
-    scene.autoClear = false // Color buffer
-    scene.autoClearDepthAndStencil = false//looks OK
-    scene.blockMaterialDirtyMechanism = true//material clearing
-    //
+    
     engine.runRenderLoop(() => {
         scene.render()
-         if (waitcar && (mustang = container['meshes'].find(mesh => mesh.name == 'detailedcar')) && loadingStatus.count >= 100) { 
+         if (waitcar && (car = container['meshes'].find(mesh => mesh.name == 'car')) && loadingStatus.count >= 100) { 
             waitcar = false;
-            score.setupScore(mustang)
+            score.setupScore(car)
+            optimizeScene(scene)
             createRetro(scene, cameras)
         } else if (!waitcar){
             score.loop()
            //  scene.activeCameras[0] = cameras[1]
             carBotsLoop()
             bikeFreeLoop()
-           loopSelector(scene, mustang, gps)
+           loopSelector(scene, car, gps)
         }
     })
 }

@@ -12,14 +12,13 @@ export default function createGround(scene: Scene) {
     const ground: Mesh = Mesh.CreateGround("ground1", 1000, 1000, 0, scene);
 
     groundMat.alpha = 1;
-    groundMat.diffuseColor = new Color3(1, 1, 1)
-    groundMat.specularColor = new Color3(0, 0, 0)
-    groundMat.emissiveColor = new Color3(0.2, 0.2, 0.2)
+    groundMat.diffuseColor = new Color3(0.3, 0.3, 0.3)
+    groundMat.emissiveColor = new Color3(0, 0, 0)
 
-    groundTexture.vScale = 100
-    groundTexture.uScale = 100
-    groundMat.diffuseTexture = groundTexture
-    groundMat.backFaceCulling = false;
+    // groundTexture.vScale = 100
+    // groundTexture.uScale = 100
+    // groundMat.diffuseTexture = groundTexture
+    // groundMat.backFaceCulling = false;
 
     ground.material = groundMat;
 

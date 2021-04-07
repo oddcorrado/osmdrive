@@ -83,12 +83,11 @@ export default function createWays(scene, planes) {
 
 
     const markMat = new StandardMaterial("mat", scene);
-    markMat.alpha = 1;
-    markMat.diffusiveColor = new Color3(1, 1, 1);
+    markMat.emissiveColor = new Color3(0.8, 0.8, 0.8);
 
     const markMatRed = new StandardMaterial("mat", scene);
-    markMatRed.diffusiveColor = new Color3.Blue();
-    const planePrefab = MeshBuilder.CreateBox("plane", {depth: 0.7, width: 3.5, height: 0.1});
+    markMatRed.diffuseColor = new Color3.Blue();
+    const planePrefab = MeshBuilder.CreateBox("plane", {depth: 0.05, width: 3.5, height: 0.7});
     planePrefab.material = markMat
 
     roadMarkings.forEach((markRoad,mRi) =>{

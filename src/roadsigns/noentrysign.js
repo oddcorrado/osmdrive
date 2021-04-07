@@ -12,8 +12,8 @@ import { ActionManager, ExecuteCodeAction, DoNothingAction } from '@babylonjs/co
 //    trig.actionManager = new ActionManager(scene);
 //    return await new Promise (function(resolve){
 //       const interval = setInterval(() => {
-//          if (container && container['meshes'].find(car => car.name == 'detailedcar')){
-//             resolve(container['meshes'].find(car => car.name == 'detailedcar'));
+//          if (container && container['meshes'].find(car => car.name == 'car')){
+//             resolve(container['meshes'].find(car => car.name == 'car'));
 //             clearInterval(interval);
 //          }
 //       }, 100, container)

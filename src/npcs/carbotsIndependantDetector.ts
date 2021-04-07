@@ -94,8 +94,8 @@ export class CarBot {
     constructor(meshes: Mesh[], i: number, scene: Scene, scripted: boolean){
         this.id = `bot ${i}`
         this.go = !scripted
-        this.Rlig = new StandardMaterial('blinkR', scene)
-        this.Llig = new StandardMaterial('blinkL', scene)
+        this.Rlig = new StandardMaterial('blinker', scene)
+        this.Llig = new StandardMaterial('blinker', scene)
         let Rl = meshes.filter(m => m.id.includes('RLight'))
         let Ll = meshes.filter(m => m.id.includes('LLight'))
         this.Rlig.emissiveColor = this.off
@@ -105,7 +105,7 @@ export class CarBot {
 
         let body = meshes.filter(m => m.id.includes('mm1'))
         let mat = new StandardMaterial('body', scene)
-        mat.diffuseColor = new Color3(Math.random()*0.6, Math.random()*0.6, Math.random()*0.6)
+        mat.diffuseColor = new Color3(Math.random()*0.5+0.5, Math.random()*0.5+0.5, Math.random()*0.5+0.5)
         body.forEach(b => {b.material = mat})
         
         this.bot = Mesh.MergeMeshes(meshes, true, false, undefined, false, true)

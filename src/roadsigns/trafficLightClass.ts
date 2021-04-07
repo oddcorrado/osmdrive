@@ -35,8 +35,8 @@ export class TrafficLightSq {
                     
 
     constructor(scene: Scene, car: Mesh, trafficMesh: Mesh[], pos: Vector3, carbots: CarBot[]){
-        this.colorNS =  [new StandardMaterial('green', scene), new StandardMaterial('orange', scene), new StandardMaterial('red', scene)]
-        this.colorEW =  [new StandardMaterial('green', scene), new StandardMaterial('orange', scene), new StandardMaterial('red', scene)]
+        this.colorNS =  [new StandardMaterial('traffic', scene), new StandardMaterial('traffic', scene), new StandardMaterial('traffic', scene)]
+        this.colorEW =  [new StandardMaterial('traffic', scene), new StandardMaterial('traffic', scene), new StandardMaterial('traffic', scene)]
         let meshColor = ['green', 'orange', 'red']
         // let posVectors = [new Vector3(-5,0,5), new Vector3(5,0,5), new Vector3(5,0,-5), new Vector3(-5,0,-5)] 
         let posVectors = [new Vector3(-5,0,13), new Vector3(13,0,5), new Vector3(5,0,-13), new Vector3(-13,0,-5)] 
@@ -70,24 +70,23 @@ export class TrafficLightSq {
     createLines(scene:Scene, pos: Vector3, tfPos: Vector3, rot: Vector3, idx: number){
         let tmpline: Mesh = MeshBuilder.CreateBox('line', {width: 1, height: 0.05, depth: 4}, scene)
         let mat = new StandardMaterial('matline', scene)
-
-        tmpline.material = mat
         mat.emissiveColor = new Color3(1,1,1)
+        tmpline.material = mat
         for (let i = 0 ; i<4; i++){
-            let tmp = tmpline.clone()
-            tmp.material = mat
-            tmp.position = pos.add(new Vector3(idx%2 == 0 ? tfPos.x + (idx === 2 ? -2 + -i * 2 : 2 + i * 2) : tfPos.x/1.5, 0.1, idx%2 == 0 ? tfPos.z/1.5 : tfPos.z + (idx === 1 ? -2 + -i * 2 : 2 + i * 2)))
+            let tmp = tmpline.createInstance('tes')
+            tmp.position = pos.add(new Vector3(idx%2 == 0 ? tfPos.x + (idx === 2 ? -2 + -i * 2 : 2 + i * 2) : tfPos.x/1.5, 2, idx%2 == 0 ? tfPos.z/1.5 : tfPos.z + (idx === 1 ? -2 + -i * 2 : 2 + i * 2)))
             tmp.rotation = rot
+            //console.log(tmp.position)
         }
         tmpline.dispose()
     }
 
     setTriggers(scene: Scene, i: number, posVectors: Vector3[], pos: Vector3){
-        this.trigMesh.push(MeshBuilder.CreateBox('box',{width:0.5, height:0.5, depth: 0.3}, scene))
+        this.trigMesh.push(MeshBuilder.CreateBox('trigger',{width:0.5, height:0.5, depth: 0.3}, scene))
         this.trigMesh[i].position = pos.add(new Vector3(i % 2 == 0 ? posVectors[i].x/3 : posVectors[i].x*1.4, 0.2, i % 2 == 0 ? posVectors[i].z*1.4 : posVectors[i].z/3))
         this.trigMesh[i].isVisible = false
         
-        this.scoreMesh.push(MeshBuilder.CreateBox('box',{width:0.5, height:0.5, depth: 0.5}, scene))
+        this.scoreMesh.push(MeshBuilder.CreateBox('trigger',{width:0.5, height:0.5, depth: 0.5}, scene))
         this.scoreMesh[i].position = pos.add(new Vector3(posVectors[i].x/3, 0.2,  posVectors[i].z/3))
         this.scoreMesh[i].isVisible = false
         

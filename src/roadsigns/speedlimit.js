@@ -13,8 +13,8 @@ async function createAction(scene, trig, container){
    trig.actionManager = new ActionManager(scene)
    return await new Promise (function(resolve) {
       const interval = setInterval(container =>  {
-         if (container && container['meshes'].find(car => car.name == 'detailedcar')){
-            resolve(container['meshes'].find(car => car.name == 'detailedcar'))
+         if (container && container['meshes'].find(car => car.name == 'car')){
+            resolve(container['meshes'].find(car => car.name == 'car'))
             clearInterval(interval)
          }
       }, 100, container)
@@ -39,7 +39,7 @@ async function createAction(scene, trig, container){
 export default function spawnSpeedSign(container, scene, speed, mesh, x, y, ori) {
     const rotSign = new Vector3(0, ori, 0);
     const posSign = new Vector3(x, 0, y);
-    let trig = MeshBuilder.CreateBox('box', {width:1, height:1.5, depth: 0.3}, scene)
+    let trig = MeshBuilder.CreateBox('trigger', {width:1, height:1.5, depth: 0.3}, scene)
     const trigRot = new Vector3(Math.PI/2, ori/10*4, y)
     const trigPos = new Vector3(x - 3, 1, y)
 

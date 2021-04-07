@@ -41,8 +41,8 @@ async function createAction(scene, bots, trigbot, line, container, idx){
    
    return await new Promise (function(resolve) {
       const interval = setInterval(container =>  {
-         if (container && container['meshes'].find(car => car.name == 'detailedcar')){
-            resolve(container['meshes'].find(car => car.name == 'detailedcar'));
+         if (container && container['meshes'].find(car => car.name == 'car')){
+            resolve(container['meshes'].find(car => car.name == 'car'));
             clearInterval(interval);
          }
       }, 100, container)
@@ -104,8 +104,8 @@ function createLightRotation(colors, type, idx){
 export function spawnTrafficLight(container, bots, scene, x, y, ori, type) {
    status.push(type)
    let idx = id++
-   let line = MeshBuilder.CreateBox('box', {width:0.5, height:0.5, depth: 0.3}, scene);     
-   let trigbot = MeshBuilder.CreateBox('trig', {width:0.5, height:0.5, depth: 1}, scene);     
+   let line = MeshBuilder.CreateBox('trigger', {width:0.5, height:0.5, depth: 0.3}, scene);     
+   let trigbot = MeshBuilder.CreateBox('trigger', {width:0.5, height:0.5, depth: 1}, scene);     
    const rotSign = new Vector3(0, ori, 0)
    const posSign = new Vector3(x, 0, y)
    const lineRot = new Vector3(Math.PI/2, 0, y)

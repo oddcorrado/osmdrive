@@ -42,8 +42,8 @@ async function createAction(scene, bots, line, trig, container){
 
    return await new Promise (function(resolve) {
       const interval = setInterval(container =>  {
-         if (container && container['meshes'].find(car => car.name == 'detailedcar')){
-            resolve(container['meshes'].find(car => car.name == 'detailedcar'))
+         if (container && container['meshes'].find(car => car.name == 'car')){
+            resolve(container['meshes'].find(car => car.name == 'car'))
             clearInterval(interval)
          }
       }, 100, container)
@@ -117,7 +117,7 @@ async function createAction(scene, bots, line, trig, container){
 
 export default function spawnStop(container, bots, scene, x, y, ori) {
    var mat = new StandardMaterial('matstop', scene)
-   var line = MeshBuilder.CreateBox('box', {width:1, height:3.8, depth: 0.3}, scene)      
+   var line = MeshBuilder.CreateBox('trigger', {width:1, height:3.8, depth: 0.3}, scene)      
    var trig = line.clone()
    var showLine = line.clone()
    const rotSign = new Vector3(0, ori, 0)

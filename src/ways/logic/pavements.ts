@@ -397,12 +397,12 @@ const buildPavements = () : Vector3[][] => {
     const cuts = cutCornerPolys(reds)
    // //console.log('cuts', cuts)
 
-    cuts.forEach((poly, i) => {
-        const closedPoly = poly.concat(poly, [poly[0]])
-        let li = Mesh.CreateLines('li', closedPoly, globalScene)
-        li.position.y = li.position.y + 0.1
-        li.color = Color3.White()
-    })
+    // cuts.forEach((poly, i) => {
+    //     const closedPoly = poly.concat(poly, [poly[0]])
+    //     let li = Mesh.CreateLines('li', closedPoly, globalScene)
+    //     li.position.y = li.position.y + 0.1
+    //     li.color = Color3.White()
+    // })
 
     return cuts
 }
