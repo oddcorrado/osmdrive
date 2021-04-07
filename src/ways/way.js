@@ -3,7 +3,7 @@ import { ways } from '../map'
 import { ShadowGenerator } from '@babylonjs/core/Lights/Shadows/shadowGenerator'
 import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import { Mesh } from '@babylonjs/core/Meshes/mesh'
-import { Vector3 } from '@babylonjs/core/Maths/math'
+import { Vector3, Matrix } from '@babylonjs/core/Maths/math'
 import { StandardMaterial } from '@babylonjs/core/Materials/standardMaterial'
 import { Color3 } from '@babylonjs/core/Maths/math.color'
 import { Texture } from '@babylonjs/core/Materials/Textures/texture'
@@ -129,7 +129,7 @@ let test = []
                 const diff=markNode.point.subtract(nextPoint)
                 const angle=Math.atan2(diff.z,diff.x)
                 // give that angle to our marking lane
-                let z = MeshBuilder.CreateBox("plane", {depth: 0.4, width: 3.5, height: 0.05})
+                let z = MeshBuilder.CreateBox("plane", {depth: 0.4, width: 3.5, height: 0.01})
                 z.position = markNode.point
                 z.material = markMat
                 z.rotation.y = -angle
@@ -140,8 +140,10 @@ let test = []
         })       
     })
 
-   
-    const x = Mesh.MergeMeshes(test, true, false, undefined, true, false)
+    const x = Mesh.MergeMeshes(test, true, false, undefined, false, false)
+    
+    let idx = x.createInstance('test', ()=>{x.dispose()});
+   // x.dispose()
 }
 
 
