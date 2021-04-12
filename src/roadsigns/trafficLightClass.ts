@@ -34,7 +34,7 @@ export class TrafficLightSq {
                     red: [this.cols['none'], this.cols['none'], this.cols['red']]}
                     
 
-    constructor(scene: Scene, car: Mesh, trafficMesh: Mesh[], pos: Vector3, carbots: CarBot[]){
+    constructor(scene: Scene, car: Mesh, trafficMesh: Mesh[], pos: Vector3, carbots: CarBot[], start: string){
         this.colorNS =  [new StandardMaterial('traffic', scene), new StandardMaterial('traffic', scene), new StandardMaterial('traffic', scene)]
         this.colorEW =  [new StandardMaterial('traffic', scene), new StandardMaterial('traffic', scene), new StandardMaterial('traffic', scene)]
         let meshColor = ['green', 'orange', 'red']
@@ -73,8 +73,8 @@ export class TrafficLightSq {
         mat.emissiveColor = new Color3(1,1,1)
         tmpline.material = mat
         for (let i = 0 ; i<4; i++){
-            let tmp = tmpline.createInstance('tes')
-            tmp.position = pos.add(new Vector3(idx%2 == 0 ? tfPos.x + (idx === 2 ? -2 + -i * 2 : 2 + i * 2) : tfPos.x/1.5, 2, idx%2 == 0 ? tfPos.z/1.5 : tfPos.z + (idx === 1 ? -2 + -i * 2 : 2 + i * 2)))
+            let tmp = tmpline.clone()//tmpline.createInstance('tes')
+            tmp.position = pos.add(new Vector3(idx%2 == 0 ? tfPos.x + (idx === 2 ? -2 + -i * 2 : 2 + i * 2) : tfPos.x/1.5, 0.1, idx%2 == 0 ? tfPos.z/1.5 : tfPos.z + (idx === 1 ? -2 + -i * 2 : 2 + i * 2)))
             tmp.rotation = rot
             //console.log(tmp.position)
         }
@@ -207,11 +207,11 @@ const loadTrafficLight = async(scene: Scene): Promise<Mesh[]> => {
     }) 
 }
 
- export default function spawnTrafficLightSq(scene: Scene, car: Mesh, carbots:CarBot[], positions:Vector3[]):void {
+ export default function spawnTrafficLightSq(scene: Scene, car: Mesh, carbots:CarBot[], positions:Vector3[], starts:string[]):void {
     (async ()=>{
         let traffic = await loadTrafficLight(scene)
         for (let i = 0; i<positions.length; i++){
-            new TrafficLightSq(scene, car, traffic, positions[i], carbots)
+            new TrafficLightSq(scene, car, traffic, positions[i], carbots, starts[i])
         }
     })()
 }

@@ -121,7 +121,7 @@ export default function spawnStop(container, bots, scene, x, y, ori) {
    var trig = line.clone()
    var showLine = line.clone()
    const rotSign = new Vector3(0, ori, 0)
-   const posSign = new Vector3(x, 0, y)
+   const posSign = new Vector3(x - 10, 0, y)
    const lineRot = new Vector3(Math.PI/2, ori/20*8, y)
    const linePos = new Vector3(x, 1, y + 3)
    const showLinePos = new Vector3(x+1, -0.01, y + 2.9)

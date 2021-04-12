@@ -108,21 +108,21 @@ export class BikeFree {
     bikeFreeLoop = () => {   
        
         
-        if (this.bot.position.x < endPos[this.idx].x){
+        //if (this.bot.position.x < endPos[this.idx].x){
             this.bot.position.x -= this.adVector.x/2000
             this.bot.position.z -= this.adVector.z/2000
            // console.log(this.bot.position)
             //console.log(this.bot.position.x-=0.01)
-        } else {
+        //} else {
             
-        }
+        //}
         //this.detector.position = this.bot.position
         //this.detector.rotationQuaternion = this.bot.rotationQuaternion
     }
 }
 
 const addBikeInstanceClass = (mesh: Mesh, i: number, scene: Scene, scripted: boolean): BikeFree => {//
-    let newmesh = mesh.createInstance(`bike${i}`)
+    let newmesh = mesh.createInstance(`bot${i}`)
     return new BikeFree(newmesh, i, scripted)
 }
 

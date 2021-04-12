@@ -38,18 +38,18 @@ export function setSounds(scene){
     speedSound.push(medium)
     speedSound.push(high)
     speedSound[_.MEDIUM].setVolume(0.3)
-    blink.setVolume(0.3)
+    blink.setVolume(0.05)
 }
 
 export function playAccel(isAccel){
     if (togSound){
-        if (!accelSound && isAccel){//COMMENTER POUR ENLEVER LE SON
-            speedSound[_.LOW].play()
-            accelSound = true
-        } else if (accelSound && !isAccel){
-            speedSound[_.LOW].stop()
-            accelSound = false
-        }   //JUSQU'ICI
+        // if (!accelSound && isAccel){//COMMENTER POUR ENLEVER LE SON
+        //     speedSound[_.LOW].play()
+        //     accelSound = true
+        // } else if (accelSound && !isAccel){
+        //     speedSound[_.LOW].stop()
+        //     accelSound = false
+        // }   //JUSQU'ICI
     }
 }
 

@@ -32,14 +32,15 @@ function setSpeedAlert(speed){
 function speedingCheck(speed, approach){
     speedDivBg = speedDivBg ? speedDivBg : document.getElementById('speeddiv');
     setSpeedAlert(speed);
-    if (speed > currentLimit &&  (!approach || approach > 12 )) {
+//console.log(approach)
+    if (speed > currentLimit &&  (!approach || approach > 20 )) {
         if (!inter.fast){
             inter.fast = setInterval(() => {
                 //score.newScore('SPEED_TOO_FAST', -10);
                 score.newScore('speed', false);
             }, 5000)
         }
-    } else if (hasStarted && speed > 0 && speed < (currentLimit*0.6) && (!approach || approach > 12 )) {   
+    } else if (hasStarted && speed > 0 && speed < (currentLimit*0.6) && (!approach || approach > 20 )) {   
         if (!inter.slow){
             inter.slow = setInterval(() => {
                 score.newScore('speed', false);
@@ -85,7 +86,7 @@ function stopCheck(speed, approach, hasStarted){
     }
 }
 
-export let setSpeedLimit = (speed) => {currentLimit = speed}
+export let setSpeedLimit = (speed) => {currentLimit = speed; console.log(speed)}
 
 export default function speedScoring (speed, approach){
     hasStarted = !hasStarted && speed > 0 ? true : hasStarted;

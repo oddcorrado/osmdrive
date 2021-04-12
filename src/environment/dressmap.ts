@@ -91,23 +91,42 @@ export default function dressMap(scene: Scene, container:AssetContainer){
     createTrees(scene);
 
     (async () => {
-        // available panels 110Limit, EndBikeLane, Zone30, EndInterdiction, LowBranches, NoTraffic, OneWay, Yield50, School, Slippery, PedestrianLane, LevelCrossing, PriorityRoad, PrioRight
+        /*
+        ** Available panels:
+        ** 110Limit, EndBikeLane, Zone30, EndInterdiction, LowBranches, NoTraffic, OneWay, Yield50, School, Slippery,
+        ** PedestrianLane, LevelCrossing, PriorityRoad, PrioRight, Traffic50, Stop50m, Reminder50, PrioRoad, Limit50
+        */
         let bots = await createCarBots(scene, 10) 
         let bikes = await createBikeBots(scene, 1)
         let panels: Object = await loadPanels(scene)
         let car: Mesh = await mainCarLoaded(container) 
 
         spawnSpeedSign(container, scene, 30, panels['Zone30'], -195, -270, Math.PI)
+        //spawnPanel(panels['PrioRoad'], [new Vector3(-195, 0, -250), new Vector3(0, Math.PI, 0)])
         spawnPanel(panels['PriorityRoad'], [new Vector3(-195, 0, -250), new Vector3(0, Math.PI, 0)])
-        spawnYield(container, scene, -212.5, -205, -Math.PI/2)
+        spawnYield(container, scene, -212.5, -205, -Math.PI/2)        
         spawnYield(container, scene, -187.5, -195, Math.PI/2)
-        spawnTrafficLightSq(scene, car, bots, [new Vector3(-200, 0, -100), new Vector3(-100, 0, -100), new Vector3(0, 0, -100), new Vector3(0, 0, 0)])
-        spawnPanel(panels['PrioRight'], [new Vector3(75, 0, -5), new Vector3(0, -Math.PI/2, 0)])
+        spawnPanel(panels['Traffic50m'], [new Vector3(-195, 0, -150), new Vector3(0, Math.PI, 0)])        
+        spawnPanel(panels['Traffic50m'], [new Vector3(-165, 0, -105), new Vector3(0, -Math.PI/2, 0)])        
+        spawnPanel(panels['Traffic50m'], [new Vector3(-65, 0, -105), new Vector3(0, -Math.PI/2, 0)])        
+        spawnPanel(panels['Traffic50m'], [new Vector3(5, 0, -65), new Vector3(0, Math.PI, 0)])        
+        spawnPanel(panels['Zone30'], [new Vector3(5, 0, -55), new Vector3(0, Math.PI, 0)])        
+        spawnTrafficLightSq(scene, car, bots, [new Vector3(-200, 0, -100), new Vector3(-100, 0, -100), new Vector3(0, 0, -100), new Vector3(0, 0, 0)], ['red', 'red', 'green', 'green'])
+        spawnPanel(panels['PrioRight'], [new Vector3(45, 0, -5), new Vector3(0, -Math.PI/2, 0)])
+        spawnSpeedSign(container, scene, 50, panels['Zone30End'], 75, -5, -Math.PI/2)
+        
+        spawnPanel(panels['Stop50m'], [new Vector3(130, 0, -5), new Vector3(0, -Math.PI/2, 0)])
+        spawnPanel(panels['50Limit'], [new Vector3(140, 0, -5), new Vector3(0, -Math.PI/2, 0)])//normalement 50 simple, retoucher 
         spawnStop(container, bots, scene, 195, -5, Math.PI)
+        
         spawnPanel(panels['Yield50'], [new Vector3(205, 0, 25), new Vector3(0, Math.PI, 0)])
         spawnYield(container, scene, 205, 87.5, Math.PI)
-        spawnSpeedSign(container, scene, 50, panels['Zone30End'], 205, 124, Math.PI)
+
+        spawnPanel(panels['PrioRoad'], [new Vector3(205, 0, 150), new Vector3(0, Math.PI, 0)])        
         spawnNoEntry(container, scene, 204, 208)
+        
+        spawnPanel(panels['Reminder50'], [new Vector3(250, 0, 195), new Vector3(0, -Math.PI/2, 0)])        
+
         preventCollision(scene, container, bots)
         createScriptTriggers(scene, container, bots, bikes, 6)
         spawnSpeedSign(container, scene, 110, panels['110Limit'], 305, 222,Math.PI)
@@ -117,14 +136,6 @@ export default function dressMap(scene: Scene, container:AssetContainer){
         }
         setStatus('assets')
     })()
-   //botshandler.createBots(scene, container)
-    //AVAILABLE:
-    // spawnTrafficLight(container, scene, 295, -105)
-    // spawnYield(container, scene, 95, -5)
-    // spawnStop(container, scene, 195, -5)
-    // spawnNoEntry(container, scene, 304, 105)
-    // spawnSpeedSign(container, scene, '30', 15, -5)//'50', '100'
-    //
     // spawnPropObj(scene)
   // spawnPropGltf(scene)
 }

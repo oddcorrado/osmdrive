@@ -7,10 +7,11 @@ function createScoreCircle(score: number): string {
     let color = colors[Math.round(score/100*4)-1] 
     let nb = ((score-50)/100)*360 + 270
     let background =  `linear-gradient(270deg, ${color} 50%, transparent 50%)${score > 50 ? `, linear-gradient(${nb}deg, ${color} 50%, #EFF0F6 50%)`: `, linear-gradient(${270}deg, ${color} 50%, #EFF0F6 50%)`}` 
-   let div =
-    `<div style='float: left;width: 23%; height: 70%; border-radius: 100%; margin-left:7%; margin-top: 2%; background-color: #EFF0F6; background: ${background}'>
-        <div style='position: relative; top: 10%; left: 10%; width: 80%; height: 80%; border-radius: 100%; background-color: white'>
-            <div style='height: 100%; padding-top: 15%; font-size: 7vh; font-weight: 700; color: #024179'>${score}%</div>
+    let div =
+    // `<div style='float: left;width: 23%; height: 75%; border-radius: 100%; margin-left:7%; margin-top: 2%; background-color: #EFF0F6; background: ${background}'>
+    `<div style='float: left;width: ${window.innerWidth/8}px; height: ${window.innerHeight/4}px; border-radius: 100%; margin-left:7%; margin-top: 2%; background-color: #EFF0F6; background: ${background}'>
+        <div style='position: relative; top: 10%; left: 10%; width: 81%; height: 81%; border-radius: 100%; background-color: white'>
+            <div style='height: 100%; padding-top: 25%; font-size: 3vw; font-weight: 700; color: #024179'>${score}%</div>
         </div>
     </div>`
 
@@ -30,13 +31,13 @@ export function createEndOfLevel(status: boolean){
                     Votre synthèse :
                 </div>
                 <div style='margin-left:32%; height: 55%; padding-top: 5%'>
-                    <img id='star1' style='height: 10vh; float: left' src='../../images/${sc.tot > 25 ? 'star' : 'stargrey'}.svg'></img>
-                    <img id='star2' style='height: 10vh; float: left; margin-left: 3%' src='../../images/${sc.tot > 50 ? 'star' : 'stargrey'}.svg'></img>
-                    <img id='star3' style='height: 10vh; float: left; margin-left: 3%' src='../../images/${sc.tot > 75 ? 'star' : 'stargrey'}.svg'></img>
+                    <img id='star1' style='height: 10vh; float: left' src='../../images/${status&&sc.tot > 25 ? 'star' : 'stargrey'}.svg'></img>
+                    <img id='star2' style='height: 10vh; float: left; margin-left: 3%' src='../../images/${status&&sc.tot > 50 ? 'star' : 'stargrey'}.svg'></img>
+                    <img id='star3' style='height: 10vh; float: left; margin-left: 3%' src='../../images/${status&&sc.tot > 75 ? 'star' : 'stargrey'}.svg'></img>
                 </div>
             </div>
             <div style='width: 100%; height: 48%; margin-top: 2%;'>
-                <div style='height: 15%; width: 100%; margin: 0'>
+                <div style='height: 15%; width: 100%; margin: 0; font-size: 2vw'>
                     <div style='float: left; margin-left:5%;width:25%'>Regard</div>
                     <div style='float: left; margin-left:5%;width:25%'>Allure</div>
                     <div style='float: left; margin-left:5%;width:25%'>Clignotants</div>
@@ -53,7 +54,6 @@ export function createEndOfLevel(status: boolean){
         </button>
     </div>
     `
-    
     document.body.insertAdjacentHTML('afterbegin', div)
     document.getElementById('reload').addEventListener('click', () => {
         document.location.reload()

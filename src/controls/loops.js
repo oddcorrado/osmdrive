@@ -83,7 +83,7 @@ function setSound(speed){
 function setSpeedWitness(speed){
     speedDiv = speedDiv ? speedDiv : document.getElementById('speed');
     speedDiv.innerText = `${(speed).toFixed()}`;
-    setSound(speed);
+    //setSound(speed);
 }
 
 const jViewHandler = (touch) => {
@@ -103,15 +103,16 @@ const jViewHandler = (touch) => {
 }
 
 const jViewHandlerEnd = () => {
+    Lstick.deltaPosition.x = 0
     if (inter) { clearInterval(inter) }
     viewdiv.style.background = 'none'
     inter = setInterval(() => {
     if (-11 < currentLook && currentLook < 11 ){
         clearInterval(inter)
-        scene.activeCameras[0].lockedTarget.x = currentLook = 0
+        scene.activeCameras[0].lockedTarget.x = 0
+        currentLook = 0
         viewdrag.style.marginLeft = '85%'
-    } else if (currentLook > 0){ currentLook -=10 }
-        else {currentLook += 10}
+    } else if (currentLook > 0){ currentLook -=10 } else {currentLook += 10}
         scene.activeCameras[0].lockedTarget.x = currentLook
         viewdrag.style.marginLeft = `${85 + currentLook}%`
     }, 20)

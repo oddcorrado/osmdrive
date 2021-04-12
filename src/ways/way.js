@@ -142,8 +142,7 @@ let test = []
 
     const x = Mesh.MergeMeshes(test, true, false, undefined, false, false)
     
-    let idx = x.createInstance('test', ()=>{x.dispose()});
-   // x.dispose()
+    let linesInstance = x.createInstance('test', ()=>{x.dispose()});
 }
 
 

@@ -7,10 +7,10 @@ import { MeshBuilder } from '@babylonjs/core/Meshes/meshBuilder'
 import {setSpeedLimit} from '../scoring/speedScoring'
 import { ActionManager, ExecuteCodeAction } from '@babylonjs/core/Actions'
 
-let limit;
-
-async function createAction(scene, trig, container){
+async function createAction(scene, trig, container, limit){
    trig.actionManager = new ActionManager(scene)
+   let pannelDiv = document.getElementById('speedlimit')
+
    return await new Promise (function(resolve) {
       const interval = setInterval(container =>  {
          if (container && container['meshes'].find(car => car.name == 'car')){
@@ -30,6 +30,7 @@ async function createAction(scene, trig, container){
                },
             },
          function(){
+            pannelDiv.src = '../../images/' + limit + '.svg'
             setSpeedLimit(parseInt(limit))
          })
       )
@@ -39,19 +40,19 @@ async function createAction(scene, trig, container){
 export default function spawnSpeedSign(container, scene, speed, mesh, x, y, ori) {
     const rotSign = new Vector3(0, ori, 0);
     const posSign = new Vector3(x, 0, y);
-    let trig = MeshBuilder.CreateBox('trigger', {width:1, height:1.5, depth: 0.3}, scene)
-    const trigRot = new Vector3(Math.PI/2, ori/10*4, y)
-    const trigPos = new Vector3(x - 3, 1, y)
+    let trig = MeshBuilder.CreateBox('trigger', {width:0.5, height:0.3, depth: 0.5}, scene)
+    const trigRot = new Vector3(0, ori, 0)
+   const trigPos = Math.abs(ori)-(Math.PI/2) == 0 ? new Vector3(x+3, 1, y+3) : new Vector3(x-3, 1, y-3)
+   //  const trigPos = new Vector3(x - 3, 1, y)
 
     trig.position = trigPos
     trig.rotation = trigRot
     trig.isVisible = false
       const sign = mesh.clone()
       sign.name = speed
-      limit = speed
       sign.id = 'sign'
       sign.scalingDeterminant = 1
       sign.position = posSign
       sign.rotation = rotSign
-      createAction(scene, trig, container)
+      createAction(scene, trig, container, speed)
 }

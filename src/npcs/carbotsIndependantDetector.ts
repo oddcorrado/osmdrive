@@ -87,6 +87,9 @@ export class CarBot {
     detected: string[][] = []
     Rlig: StandardMaterial
     Llig: StandardMaterial
+    BRlig: StandardMaterial
+    BLlig: StandardMaterial
+    brake: StandardMaterial
     blinkInter: any
     on = new Color3(1,1,1)
     off = new Color3(0,0,0)
@@ -96,13 +99,23 @@ export class CarBot {
         this.go = !scripted
         this.Rlig = new StandardMaterial('blinker', scene)
         this.Llig = new StandardMaterial('blinker', scene)
+        this.BRlig = new StandardMaterial('blinker', scene)
+        this.BLlig = new StandardMaterial('blinker', scene)
+        this.brake = new StandardMaterial('blinker', scene)
+        let BRl = meshes.filter(m => m.id.includes('BRLight'))
+        let BLl = meshes.filter(m => m.id.includes('BLLight'))
         let Rl = meshes.filter(m => m.id.includes('RLight'))
         let Ll = meshes.filter(m => m.id.includes('LLight'))
+       // let br = meshes.filter(m => m.id.includes('LLight'))
         this.Rlig.emissiveColor = this.off
         this.Llig.emissiveColor = this.off
+        this.Rlig.emissiveColor = this.off
+        this.Llig.emissiveColor = this.off
+       
         Rl[0].material = this.Rlig
         Ll[0].material = this.Llig
-
+        BRl[0].material = this.BRlig
+        BLl[0].material = this.BLlig
         let body = meshes.filter(m => m.id.includes('mm1'))
         let mat = new StandardMaterial('body', scene)
         mat.diffuseColor = new Color3(Math.random()*0.5+0.5, Math.random()*0.5+0.5, Math.random()*0.5+0.5)
@@ -130,6 +143,8 @@ export class CarBot {
         this.blinkInter = null 
         this.Llig.emissiveColor = this.off
         this.Rlig.emissiveColor = this.off
+        this.BLlig.emissiveColor = this.off
+        this.BRlig.emissiveColor = this.off
     }
 
     toggleBlinker = () => {
@@ -137,10 +152,12 @@ export class CarBot {
         if (this.selection === 'R'){
             this.blinkInter = setInterval(() => {
                 this.Llig.emissiveColor = this.Llig.emissiveColor === this.on ? this.off : this.on
+                this.BLlig.emissiveColor = this.BLlig.emissiveColor === this.on ? this.off : this.on
             }, 500)
         } else if (this.selection === 'L'){
             this.blinkInter = setInterval(() => {
                 this.Rlig.emissiveColor = this.Rlig.emissiveColor === this.on ? this.off : this.on
+                this.BRlig.emissiveColor = this.BRlig.emissiveColor === this.on ? this.off : this.on
             }, 500)
         }
     }
@@ -191,7 +208,6 @@ export class CarBot {
     }
 
     detectorHandler = () => {
-       // console.log(this.detected[0][0])
         switch(this.detected[0][0]){
             case 'contact':
                 this.contactHandler()
@@ -216,13 +232,7 @@ export class CarBot {
         return this.speed
     }
 
-    // limitedTurn = (): boolean | string => {
-    //     if ()
-    //     let rand = Math.random() * 2 | 0
-    //     // console.log(rand)
-    //     return rand === 1 ? 'L' : 'R'
-    // }
-
+    
     getAvailableTurns = (next): Object[] => {
         let available: Object[]
 
@@ -233,6 +243,7 @@ export class CarBot {
     }
 
     easyTurn = (): string => {
+        return 'L'
         //return null
         let val = Math.random() * 100
         return val < this.turnChancePercentage/2 ? 'L' : val < this.turnChancePercentage ? 'R' : null
@@ -307,7 +318,7 @@ const addBotInstanceClass = (meshes: Mesh[], i: number, scene: Scene, scripted: 
 }
 
 const loadBotModel = async (scene: Scene): Promise<Mesh[]> => {
-    return SceneLoader.ImportMeshAsync('', "../mesh/ClioV3sign/", "clio.obj", scene).then(function(newMesh) {
+    return SceneLoader.ImportMeshAsync('', "../mesh/ClioV3sign/", "cliofinal.obj", scene).then(function(newMesh) {
         let msh = newMesh['meshes'] as Mesh[]
         return msh
     }) 
